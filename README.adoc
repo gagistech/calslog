@@ -1,0 +1,8 @@
+
+:name: calslog
+
+= {name}
+
+|====
+| link:https://github.com/gagistech/{name}/releases[image:https://img.shields.io/github/tag/gagistech/{name}.svg[releases]] | link:https://github.com/gagistech/{name}/actions[image:https://github.com/gagistech/{name}/workflows/ci/badge.svg[ci status]] | link:https://codecov.io/gh/gagistech/{name}[image:https://codecov.io/gh/gagistech/{name}/branch/main/graph/badge.svg?token=LKA3SRSkc3[codecov.io]]
+|====
