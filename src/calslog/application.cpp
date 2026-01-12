@@ -36,7 +36,7 @@ using namespace std::string_view_literals;
 using namespace calslog;
 
 namespace {
-constexpr auto screen_dim = 1080;
+constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 2;
 } // namespace
 
 application::application(
@@ -49,7 +49,7 @@ application::application(
 	res_path(fsif::as_dir(res_path))
 {
 	auto& win = this->make_window({
-		.dims = {screen_dim, screen_dim},
+		.dims = screen_dims,
 		.fullscreen = !windowed
 	});
 
