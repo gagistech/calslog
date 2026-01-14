@@ -1,0 +1,5 @@
+[requires]
+ruisapp/[>=0.2.124]@cppfw/main
+
+[generators]
+AutotoolsDeps

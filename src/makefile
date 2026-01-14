@@ -87,3 +87,13 @@ $(eval $(call calslog_rules,opengles,wayland))
 
 # clean up
 calslog_rules :=
+
+# ==================================================
+# = targets for building with conan and emscripten =
+
+define this__rules
+conan_install:
+$(.RECIPEPREFIX)@echo install conan dependencies
+$(.RECIPEPREFIX)$(a)conan install $(d)../build/emscripten --update --profile:host $(d)../build/emscripten/conan.profile --build=missing --output-folder=$(d)out/emsc --deployer-package="*"
+endef
+$(eval $(this__rules))
