@@ -23,12 +23,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <iomanip>
 
-#include <clargs/parser.hpp>
 #include <fsif/native_file.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <utki/debug.hpp>
 
-#include "gui.hpp"
+#if CFG_OS_NAME != CFG_OS_NAME_EMSCRIPTEN
+#	include <clargs/parser.hpp>
+#endif
+
+#include "gui/gui.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -71,6 +74,10 @@ std::unique_ptr<application> calslog::make_application(
 	utki::span<std::string_view> args
 )
 {
+#if CFG_OS_NAME == CFG_OS_NAME_EMSCRIPTEN
+	bool windowed = true;
+	std::string res_path = "res/"s;
+#else
 	bool windowed = false;
 
 	std::string res_path = []() {
@@ -94,6 +101,7 @@ std::unique_ptr<application> calslog::make_application(
 	});
 
 	p.parse(args);
+#endif
 
 	return std::make_unique<application>(windowed, res_path);
 }
