@@ -1,0 +1,93 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build-dev",
+            "type": "shell",
+            "command": "make config=dev",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "clean-all",
+            "type": "shell",
+            "command": "make clean-all",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "clean-dev",
+            "type": "shell",
+            "command": "make clean config=dev",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "run-app-opengles-xorg",
+            "type": "shell",
+            "command": "make run-app-opengles-xorg",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "run-app-opengles-xorg-dev",
+            "type": "shell",
+            "command": "make run-app-opengles-xorg config=dev",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "run-app-opengles-wayland",
+            "type": "shell",
+            "command": "make run-app-opengles-wayland",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "run-app-opengles-wayland-dev",
+            "type": "shell",
+            "command": "make run-app-opengles-wayland config=dev",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "test_",
+            "type": "shell",
+            "command": "make test",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "test-dev",
+            "type": "shell",
+            "command": "make test config=dev",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "format",
+            "type": "shell",
+            "command": "make format",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "lint",
+            "type": "shell",
+            "command": "make config=lint && make config=lint test",
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ]
+}

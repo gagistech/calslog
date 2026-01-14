@@ -1,7 +1,7 @@
 /*
-calslog - wall calslog control example GUI project
+calslog - Calories logging mobile applcation
 
-Copyright (C) 2025 Gagistech Oy <gagistechoy@gmail.com>
+Copyright (C) 2026-2026 Gagistech Oy <gagisechoy@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,6 +25,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog {
 
-utki::shared_ref<ruis::widget> make_root_widgets(utki::shared_ref<ruis::context> c);
+utki::shared_ref<ruis::widget> make_root_widget(utki::shared_ref<ruis::context> c);
 
 } // namespace calslog

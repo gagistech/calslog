@@ -1,7 +1,7 @@
 /*
-calslog - wall calslog control example GUI project
+calslog - Calories logging mobile applcation
 
-Copyright (C) 2025 Gagistech Oy <gagistechoy@gmail.com>
+Copyright (C) 2026-2026 Gagistech Oy <gagisechoy@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
