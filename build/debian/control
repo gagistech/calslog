@@ -1,4 +1,4 @@
-Source: bedsidemon
+Source: calslog
 Section: misc
 Priority: extra
 Maintainer: Ivan Gagis <igagis@gmail.com>
@@ -10,34 +10,33 @@ Build-Depends:
 	myci,
 	clang-tidy,
 	clang-format,
-	libnitki-dev,
 	libtst-dev,
 	libclargs-dev,
 	libruisapp-dev
 Build-Depends-Indep: doxygen
 Standards-Version: 3.9.2
 
-Package: bedsidemon-opengles-xorg
+Package: calslog-opengles-xorg
 Section: misc
 Architecture: any
 Depends:
 	${shlibs:Depends},
 	${misc:Depends},
-	bedsidemon-data
-Description: Bed side monitor demo app.
-	Demo application of medical bed side monitor.
+	calslog-data
+Description: Calories logging app.
+	Calories logging application.
 
-Package: bedsidemon-opengles-wayland
+Package: calslog-opengles-wayland
 Section: misc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-	bedsidemon-data
-Description: Bed side monitor demo app.
-	Demo application of medical bed side monitor.
+	calslog-data
+Description: Calories logging app.
+	Calories logging application.
 
-Package: bedsidemon-data
+Package: calslog-data
 Section: misc
 Architecture: all
 Depends: ${misc:Depends}
-Description: Bed side monitor demo app.
-	Data files for bedsidemon.
+Description: Data files for calslog.
+	Data files for calslog.
