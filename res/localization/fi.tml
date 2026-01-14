@@ -1,0 +1,61 @@
+vocabulary{
+    settings_menu:title{
+        str{Asetukset}
+    }
+    
+    settings_menu:sweep_speed_title{
+        str{"Lakaisunopeus:"}
+    }
+
+    settings_menu:sweep_speed_value{
+        str{"{0} mm/s"}
+    }
+    
+    settings_menu:language_title{
+        str{"Kieli (Language):"}
+    }
+
+    spo2_settings_menu:title{
+        str{"SpO2 asetukset"}
+    }
+
+    spo2_settings_menu:color_title{
+        str{"Väri:"}
+    }
+
+    about_menu:title{
+        str{"Tietoja ohjelmasta"}
+    }
+
+    about_menu:program_title{
+        str{"Potilasmonitorin DEMO-ohjelma"}
+    }
+
+    about_menu:version{
+        str{"Versio: {0}"}
+    }
+
+    about_menu:powered_by{
+        str{"Tehty käyttäen"}
+    }
+
+    about_menu:copyright{
+        str{"Tekijänoikeus"}
+    }
+
+    spo2_simulation{
+        str{"SpO2 %, SIMULAATIO"}
+    }
+
+    quit_dialog:title{
+        str{"Lopeta ohjelmaa?"}
+    }
+
+    quit_dialog:yes{
+        str{"Kyllä"}
+    }
+
+    quit_dialog:no{
+        str{"Ei"}
+    }
+}

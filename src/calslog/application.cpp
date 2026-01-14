@@ -36,7 +36,7 @@ using namespace std::string_view_literals;
 using namespace calslog;
 
 namespace {
-constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 2;
+constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 3;
 } // namespace
 
 application::application(

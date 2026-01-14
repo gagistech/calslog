@@ -1,0 +1,61 @@
+vocabulary{
+    settings_menu:title{
+        str{Настройки}
+    }
+    
+    settings_menu:sweep_speed_title{
+        str{"Скорость развертки:"}
+    }
+
+    settings_menu:sweep_speed_value{
+        str{"{0} мм/с"}
+    }
+    
+    settings_menu:language_title{
+        str{"Язык (Language):"}
+    }
+
+    spo2_settings_menu:title{
+        str{"Настройки SpO2"}
+    }
+
+    spo2_settings_menu:color_title{
+        str{"Цвет:"}
+    }
+
+    about_menu:title{
+        str{"О программе"}
+    }
+
+    about_menu:program_title{
+        str{"Монитор Наблюдения Пациетов, ДЕМОНСТРАЦИОННАЯ программа"}
+    }
+
+    about_menu:version{
+        str{"Версия: {0}"}
+    }
+
+    about_menu:powered_by{
+        str{"Сделано с использованием"}
+    }
+
+    about_menu:copyright{
+        str{"Авторское право"}
+    }
+
+    spo2_simulation{
+        str{"SpO2 %, СИМУЛЯЦИЯ"}
+    }
+
+    quit_dialog:title{
+        str{"Выйти из программы?"}
+    }
+
+    quit_dialog:yes{
+        str{"Да"}
+    }
+
+    quit_dialog:no{
+        str{"Нет"}
+    }
+}

@@ -1,0 +1,61 @@
+vocabulary{
+    settings_menu:title{
+        str{Settings}
+    }
+    
+    settings_menu:sweep_speed_title{
+        str{"Sweep speed:"}
+    }
+
+    settings_menu:sweep_speed_value{
+        str{"{0} mm/s"}
+    }
+
+    settings_menu:language_title{
+        str{"Language:"}
+    }
+
+    spo2_settings_menu:title{
+        str{"SpO2 settings"}
+    }
+
+    spo2_settings_menu:color_title{
+        str{"Color:"}
+    }
+
+    about_menu:title{
+        str{"About"}
+    }
+
+    about_menu:program_title{
+        str{"Bedside Patient Monitor DEMO program"}
+    }
+
+    about_menu:version{
+        str{"Version: {0}"}
+    }
+
+    about_menu:powered_by{
+        str{"Powered by"}
+    }
+
+    about_menu:copyright{
+        str{"Copyright"}
+    }
+
+    spo2_simulation{
+        str{"SpO2 %, SIMULATION"}
+    }
+
+    quit_dialog:title{
+        str{"Quit program?"}
+    }
+
+    quit_dialog:yes{
+        str{"Yes"}
+    }
+
+    quit_dialog:no{
+        str{"No"}
+    }
+}
