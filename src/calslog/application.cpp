@@ -48,9 +48,9 @@ application::application(
 	}),
 	res_path(fsif::as_dir(res_path))
 {
-	auto& win = this->make_window({
-		.dims = screen_dims,
-		.fullscreen = !windowed
+	auto& win = this->make_window({//
+								   .dims = screen_dims,
+								   .fullscreen = !windowed
 	});
 
 	win.gui.context.get().window().close_handler = [this]() {
