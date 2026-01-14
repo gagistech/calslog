@@ -62,8 +62,15 @@ define calslog_rules
 
     this_ldlibs += $$(this_out_dir)libcalslog.a
 
+    ifeq ($(config), emsc)
+        this_name := $$(this_name).html
+
+        this_ldflags += --embed-file $(d)../res@res
+    else
+        this_ldlibs += -l clargs
+    endif
+
     this_ldlibs += -l fsif
-    this_ldlibs += -l clargs
     this_ldlibs += -l ruis
     this_ldlibs += -l utki
     this_ldlibs += -l m
@@ -80,10 +87,18 @@ define calslog_rules
 
 endef
 
-# $(eval $(call calslog_rules,opengl,xorg))
-$(eval $(call calslog_rules,opengles,xorg))
-# $(eval $(call calslog_rules,opengl,wayland))
-$(eval $(call calslog_rules,opengles,wayland))
+ifneq ($(config), emsc)
+    # non-Emscripten
+
+    # $(eval $(call calslog_rules,opengl,xorg))
+    $(eval $(call calslog_rules,opengles,xorg))
+    # $(eval $(call calslog_rules,opengl,wayland))
+    $(eval $(call calslog_rules,opengles,wayland))
+else
+    # Emscripten
+
+    $(eval $(call calslog_rules,opengles,sdl))
+endif
 
 # clean up
 calslog_rules :=
