@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "gui.hpp"
 
 #include <ruis/widget/group/overlay.hpp>
+#include <ruis/widget/group/touch/tabbed_book.hpp>
 
 #include "style.hpp"
 
@@ -33,18 +34,32 @@ using namespace ruis::length_literals;
 using namespace calslog;
 
 namespace {
-utki::shared_ref<ruis::widget> make_root_widget_structure(utki::shared_ref<ruis::context> c)
+ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 {
 	// clang-format off
-	return m::column(c,
-		{
-			.layout_params = {
-				.dims = {ruis::dim::fill, ruis::dim::fill}
+	return {
+		m::tabbed_book(c,
+			{
+				.layout_params = {
+					.dims = {ruis::dim::fill, ruis::dim::fill}
+				}
+			},
+			{
+				// {
+				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_home"), U"Home"s),
+				// 	make_scroll_area_page(c)
+				// },
+				// {
+				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_list"), U"List"s),
+				// 	make_list_page(c)
+				// },
+				// {
+				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_home"), U"Stuff"s),
+				// 	make_list_page(c) // TODO: make stuff page
+				// }
 			}
-		},
-		{
-		}
-	);
+		)
+	};
 	// clang-format on
 }
 } // namespace
@@ -54,9 +69,7 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(utki::shared_ref<ruis::
 	// clang-format off
 	return m::overlay(c,
 		{},
-		{
-			make_root_widget_structure(c)
-		}
+		make_root_widget_structure(c)
 	);
 	// clang-format on
 }
