@@ -25,6 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <fsif/native_file.hpp>
 #include <ruis/widget/group/overlay.hpp>
+#include <ruis/standard_widgets.hpp>
 #include <utki/debug.hpp>
 
 #if CFG_OS_NAME != CFG_OS_NAME_EMSCRIPTEN
@@ -60,7 +61,10 @@ application::application(
 		this->quit();
 	};
 
-	win.gui.init_standard_widgets(this->get_res_file());
+	ruis::init_standard_widgets(
+		win.gui.context, //
+		this->get_res_file()
+	);
 
 	win.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
 
