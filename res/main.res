@@ -1,3 +1,5 @@
+include_subdirs
+
 img_cog{
     file{cog.svg}
 }

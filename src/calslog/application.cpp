@@ -26,7 +26,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <fsif/native_file.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/standard_widgets.hpp>
+#include <ruis/res/tml.hpp>
 #include <utki/debug.hpp>
+
+#include <tml/tree.hpp>
 
 #if CFG_OS_NAME != CFG_OS_NAME_EMSCRIPTEN
 #	include <clargs/parser.hpp>
@@ -67,6 +70,12 @@ application::application(
 	);
 
 	win.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
+
+	// Load localization
+	win.gui.context.get().localization.get() =
+		ruis::localization(
+			win.gui.context.get().loader().load<ruis::res::tml>("tml_localization_en"sv).get().forest
+		);
 
 	auto c = make_root_widget(win.gui.context);
 

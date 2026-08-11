@@ -30,6 +30,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "style.hpp"
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 using namespace ruis::length_literals;
 
@@ -38,11 +39,11 @@ namespace calslog {
 namespace {
 class history_page_provider : public ruis::list_provider
 {
-	std::vector<std::u32string> items = {
-		U"2026-08-10",
-		U"2026-08-09",
-		U"2026-08-08",
-		U"2026-08-07"
+	std::vector<std::string_view> item_keys = {
+		"history_day1"sv,
+		"history_day2"sv,
+		"history_day3"sv,
+		"history_day4"sv
 	};
 
 public:
@@ -52,7 +53,7 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return this->items.size();
+		return this->item_keys.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
@@ -77,7 +78,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					this->items.at(index)
+					this->context.get().localization.get().get(this->item_keys.at(index))
 				),
 				m::gap(this->context,
 					{

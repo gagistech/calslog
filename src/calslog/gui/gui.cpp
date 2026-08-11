@@ -41,53 +41,60 @@ namespace {
 ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 {
 	// clang-format off
-	return {
-		ruis::touch::make::tabbed_book(c,
+	auto today_page = make_today_page(c);
+	auto foods_page = make_foods_page(c);
+	auto history_page = make_history_page(c);
+
+	auto tabbed_book = ruis::touch::make::tabbed_book(c,
+		{
+			.layout_params = {
+				.dims = {ruis::dim::fill, ruis::dim::fill}
+			}
+		},
+		{
 			{
-				.layout_params = {
-					.dims = {ruis::dim::fill, ruis::dim::fill}
-				}
+				ruis::touch::make::tab_button(c,
+					{
+						.layout_params = {
+							.dims = {ruis::dim::fill, 60_pp},
+							.weight = 1
+						}
+					},
+					c.get().localization.get().get("tabs:foods"sv)
+				),
+				foods_page
 			},
 			{
-				{
-					ruis::touch::make::tab_button(c,
-						{
-							.layout_params = {
-								.dims = {ruis::dim::fill, 60_pp},
-								.weight = 1
-							}
-						},
-						U"Today"s
-					),
-					make_today_page(c)
-				},
-				{
-					ruis::touch::make::tab_button(c,
-						{
-							.layout_params = {
-								.dims = {ruis::dim::fill, 60_pp},
-								.weight = 1
-							}
-						},
-						U"Foods"s
-					),
-					make_foods_page(c)
-				},
-				{
-					ruis::touch::make::tab_button(c,
-						{
-							.layout_params = {
-								.dims = {ruis::dim::fill, 60_pp},
-								.weight = 1
-							}
-						},
-						U"History"s
-					),
-					make_history_page(c)
-				}
+				ruis::touch::make::tab_button(c,
+					{
+						.layout_params = {
+							.dims = {ruis::dim::fill, 60_pp},
+							.weight = 1
+						}
+					},
+					c.get().localization.get().get("tabs:today"sv)
+				),
+				today_page
+			},
+			{
+				ruis::touch::make::tab_button(c,
+					{
+						.layout_params = {
+							.dims = {ruis::dim::fill, 60_pp},
+							.weight = 1
+						}
+					},
+					c.get().localization.get().get("tabs:history"sv)
+				),
+				history_page
 			}
-		)
-	};
+		}
+	);
+
+	// Activate Today page (second tab, index 1) by default
+	today_page.get().activate();
+
+	return {std::move(tabbed_book)};
 	// clang-format on
 }
 } // namespace
