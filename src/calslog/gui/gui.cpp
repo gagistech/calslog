@@ -57,9 +57,9 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 								.weight = 1
 							}
 						},
-						U"Foods"s
+						U"Today"s
 					),
-					make_foods_page(c)
+					make_today_page(c)
 				},
 				{
 					ruis::touch::make::tab_button(c,
@@ -69,9 +69,9 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 								.weight = 1
 							}
 						},
-						U"Today"s
+						U"Foods"s
 					),
-					make_today_page(c)
+					make_foods_page(c)
 				},
 				{
 					ruis::touch::make::tab_button(c,
