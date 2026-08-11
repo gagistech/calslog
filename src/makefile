@@ -71,7 +71,6 @@ define calslog_rules
     endif
 
     this_ldlibs += -l fsif
-    this_ldlibs += -l tml
     this_ldlibs += -l ruis
     this_ldlibs += -l utki
     this_ldlibs += -l m

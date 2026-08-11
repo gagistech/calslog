@@ -10,7 +10,7 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
@@ -30,7 +30,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "style.hpp"
 
 using namespace std::string_literals;
-using namespace std::string_view_literals;
 
 using namespace ruis::length_literals;
 
@@ -39,11 +38,11 @@ namespace calslog {
 namespace {
 class history_page_provider : public ruis::list_provider
 {
-	std::vector<std::string_view> item_keys = {
-		"history_day1"sv,
-		"history_day2"sv,
-		"history_day3"sv,
-		"history_day4"sv
+	std::vector<std::u32string> items = {
+		U"2025-01-15",
+		U"2025-01-16",
+		U"2025-01-17",
+		U"2025-01-18"
 	};
 
 public:
@@ -53,7 +52,7 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return this->item_keys.size();
+		return this->items.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
@@ -78,7 +77,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					this->context.get().localization.get().get(this->item_keys.at(index))
+					this->items.at(index)
 				),
 				m::gap(this->context,
 					{
