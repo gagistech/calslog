@@ -21,9 +21,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "gui.hpp"
 
+#include <ruis/widget/button/touch/tab_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/tabbed_book.hpp>
 
+#include "today_page.hpp"
+#include "history_page.hpp"
 #include "style.hpp"
 
 using namespace std::string_literals;
@@ -38,25 +41,37 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 {
 	// clang-format off
 	return {
-		m::tabbed_book(c,
+		ruis::touch::make::tabbed_book(c,
 			{
 				.layout_params = {
 					.dims = {ruis::dim::fill, ruis::dim::fill}
 				}
 			},
 			{
-				// {
-				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_home"), U"Home"s),
-				// 	make_scroll_area_page(c)
-				// },
-				// {
-				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_list"), U"List"s),
-				// 	make_list_page(c)
-				// },
-				// {
-				// 	make_tab_button(c, c.get().loader().load<ruis::res::image>("img_home"), U"Stuff"s),
-				// 	make_list_page(c) // TODO: make stuff page
-				// }
+				{
+					ruis::touch::make::tab_button(c,
+						{
+							.layout_params = {
+								.dims = {ruis::dim::fill, 60_pp},
+								.weight = 1
+							}
+						},
+						U"Today"s
+					),
+					make_today_page(c)
+				},
+				{
+					ruis::touch::make::tab_button(c,
+						{
+							.layout_params = {
+								.dims = {ruis::dim::fill, 60_pp},
+								.weight = 1
+							}
+						},
+						U"History"s
+					),
+					make_history_page(c)
+				}
 			}
 		)
 	};
