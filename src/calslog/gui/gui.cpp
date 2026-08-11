@@ -27,6 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "today_page.hpp"
 #include "history_page.hpp"
+#include "foods_page.hpp"
 #include "style.hpp"
 
 using namespace std::string_literals;
@@ -48,6 +49,18 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 				}
 			},
 			{
+				{
+					ruis::touch::make::tab_button(c,
+						{
+							.layout_params = {
+								.dims = {ruis::dim::fill, 60_pp},
+								.weight = 1
+							}
+						},
+						U"Foods"s
+					),
+					make_foods_page(c)
+				},
 				{
 					ruis::touch::make::tab_button(c,
 						{
