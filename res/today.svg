@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- White calendar page with thick black outline -->
+  <path
+    d="M5 4.2
+       H27
+       C28.1 4.2 29 5.1 29 6.2
+       V26.8
+       C29 28 28 29 26.8 29
+       H5.2
+       C4 29 3 28 3 26.8
+       V6.2
+       C3 5.1 3.9 4.2 5 4.2 Z"
+    fill="#fff"
+    stroke="#000"
+    stroke-width="2.7"
+    stroke-linejoin="round"/>
+
+  <!-- Thick header divider -->
+  <rect x="3.1" y="12.5" width="25.8" height="2.8" fill="#000"/>
+
+  <!-- Binder holders: white inside, black outline -->
+  <rect
+    x="7.1" y="1.5" width="3.8" height="9.5" rx="1.9"
+    fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <rect
+    x="21.1" y="1.5" width="3.8" height="9.5" rx="1.9"
+    fill="#fff" stroke="#000" stroke-width="1.8"/>
+
+  <!-- Checkmark -->
+  <path transform="scale(0.8, 0.8) translate(4, 7)"
+    d="M10 19.5 L13.8 23.3 L22.2 15"
+    fill="none"
+    stroke="#000"
+    stroke-width="3.1"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+</svg>

@@ -37,6 +37,10 @@ using namespace ruis::length_literals;
 
 using namespace calslog;
 
+namespace{
+constexpr auto tab_bar_height = 70_pp;
+}
+
 namespace {
 ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 {
@@ -55,8 +59,8 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 			{
 				ruis::touch::make::tab_button(c,
 					{
-						.layout_params = {
-							.dims = {ruis::dim::fill, 60_pp},
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
 					},
@@ -67,9 +71,13 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 			{
 				ruis::touch::make::tab_button(c,
 					{
-						.layout_params = {
-							.dims = {ruis::dim::fill, 60_pp},
+						.layout_params{
+							.dims = {ruis::dim::fill, tab_bar_height},
 							.weight = 1
+						},
+						.image_params{
+							.img = c.get().loader().load<ruis::res::image>("img_today"sv),
+							.keep_aspect_ratio = true
 						}
 					},
 					c.get().localization.get().get("tabs:today"sv)
@@ -79,8 +87,8 @@ ruis::widget_list make_root_widget_structure(utki::shared_ref<ruis::context> c)
 			{
 				ruis::touch::make::tab_button(c,
 					{
-						.layout_params = {
-							.dims = {ruis::dim::fill, 60_pp},
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
 					},
