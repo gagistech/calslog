@@ -38,7 +38,7 @@ using namespace ruis::length_literals;
 using namespace calslog;
 
 namespace{
-constexpr auto tab_bar_height = 70_pp;
+constexpr auto tab_bar_height = 60_pp;
 }
 
 namespace {
