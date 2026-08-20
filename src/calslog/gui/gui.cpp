@@ -134,7 +134,7 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 	);
 
 	// Create title text - centered
-	auto title = ruis::make::text(c,
+	auto title = m::text(c,
 		{
 			.layout_params = {
 				.dims = {ruis::dim::min, ruis::dim::min},
@@ -154,7 +154,6 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 	);
 
 	// Create settings button with cog image - fixed size on right
-	auto cog_image = c.get().loader().load<ruis::res::image>("img_cog"sv);
 	auto settings_btn = m::padding(c,
 		{
 			.layout_params = {
@@ -178,12 +177,10 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 						.enabled = true
 					},
 					.image_params = {
-						.img = cog_image,
-						.disabled_img = nullptr,
 						.keep_aspect_ratio = true
 					},
 					.image_button_params = {
-						.unpressed_image = cog_image,
+						.unpressed_image = c.get().loader().load<ruis::res::image>("img_cog"sv),
 						.pressed_image = nullptr
 					}
 				}
