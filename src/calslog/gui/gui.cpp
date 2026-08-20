@@ -244,8 +244,7 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(utki::shared_ref<ruis::
 				{
 					.layout_params = {
 						.dims = {ruis::dim::fill, ruis::dim::fill}
-					},
-					.widget_params = {}
+					}
 				},
 				{
 					make_top_bar(c),
