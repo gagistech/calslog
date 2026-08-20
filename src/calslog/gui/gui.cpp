@@ -113,68 +113,38 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(utki::shared_ref<ruis::cont
 
 utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 {
-	// Get colors from style
-	auto text_color = c.get().style().get_color_text();
-	auto panel_color = c.get().style().get_color_panel();
-
-	// Create background panel
-	auto panel = m::rectangle(c,
+	// clang-format off
+	return m::rectangle(c,
 		{
 			.layout_params = {
 				.dims = {ruis::dim::fill, top_bar_height}
 			},
-			.widget_params = {},
-			.container_params = {},
-			.padding_params = {},
-			.color_params = {
-				.color = panel_color
+			.container_params = {
+				.layout = ruis::layout::pile
 			},
-			.rectangle_params = {}
-		}
-	);
-
-	// Create title text - centered
-	auto title = m::text(c,
-		{
-			.layout_params = {
-				.dims = {ruis::dim::min, ruis::dim::min},
-				.weight = 1,
-				.align = {ruis::align::center, ruis::align::center}
-			},
-			.widget_params = {},
-			.color_params = {
-				.color = text_color
-			},
-			.text_params = {
-				.font_size = 20_pp,
-				.font_face = c.get().loader().load<ruis::res::font>("ruis_fnt_normal"sv)
-			}
-		},
-		U"calslog"
-	);
-
-	// Create settings button with cog image - fixed size on right
-	auto settings_btn = m::padding(c,
-		{
-			.layout_params = {
-				.dims = {settings_button_size, settings_button_size}
-			},
-			.widget_params = {},
-			.container_params = {},
 			.padding_params = {
-				.borders = {0_pp, 16_pp, 0_pp, 0_pp}  // right margin = 16pp
+				.borders = c.get().style().get_len_gap()
+			},
+			.color_params = {
+				.color = c.get().style().get_color_panel()
 			}
 		},
 		{
+			m::text(c,
+				{
+					// TODO: use title font from style
+					// .text_params = {
+					// 	.font_size = 20_pp,
+					// 	.font_face = c.get().loader().load<ruis::res::font>("ruis_fnt_normal"sv)
+					// }
+				},
+				U"calslog"
+			),
 			ruis::make::image_push_button(c,
 				{
 					.layout_params = {
-						.dims = {ruis::dim::fill, ruis::dim::fill}
-					},
-					.widget_params = {},
-					.button_params = {},
-					.blending_params = {
-						.enabled = true
+						.dims = {ruis::dim::min, ruis::dim::fill},
+						.align = {ruis::align::back, ruis::align::center}
 					},
 					.image_params = {
 						.keep_aspect_ratio = true
@@ -187,50 +157,7 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 			)
 		}
 	);
-
-	// Create row with left spacer, title, and button
-	ruis::widget_list row_children;
-	row_children.push_back(m::rectangle(c,
-		{
-			.layout_params = {
-				.dims = {ruis::dim::fill, ruis::dim::fill},
-				.weight = 1
-			},
-			.widget_params = {},
-			.container_params = {},
-			.padding_params = {},
-			.color_params = {
-				.color = 0x00000000  // transparent
-			},
-			.rectangle_params = {}
-		}
-	));
-	row_children.push_back(std::move(title));
-	row_children.push_back(std::move(settings_btn));
-
-	auto row_widget = m::row(c,
-		{
-			.layout_params = {
-				.dims = {ruis::dim::fill, ruis::dim::fill}
-			},
-			.widget_params = {}
-		},
-		std::move(row_children)
-	);
-
-	// Stack panel as background, then row with title and button on top
-	return m::pile(c,
-		{
-			.layout_params = {
-				.dims = {ruis::dim::fill, top_bar_height}
-			},
-			.widget_params = {}
-		},
-		{
-			std::move(panel),
-			std::move(row_widget)
-		}
-	);
+	// clang-format on
 }
 } // namespace
 
