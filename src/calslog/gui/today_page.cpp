@@ -186,7 +186,7 @@ public:
 						.layout = ruis::layout::pile
 					},
 					.rectangle_params{
-						.corner_radii = {28_pp} // TODO: half of size
+						.corner_radii = {16_pp}
 					},
 					.rectangle_button_params{
 						// TODO: what colors?
