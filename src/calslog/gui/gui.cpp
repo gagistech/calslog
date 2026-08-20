@@ -130,11 +130,9 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 		{
 			m::text(c,
 				{
-					// TODO: use title font from style
-					// .text_params = {
-					// 	.font_size = 20_pp,
-					// 	.font_face = c.get().loader().load<ruis::res::font>("ruis_fnt_normal"sv)
-					// }
+					.text_params = {
+						.font_size = c.get().style().get_font_size_title()
+					}
 				},
 				U"calslog"
 			),
