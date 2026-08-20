@@ -189,9 +189,7 @@ public:
 						.corner_radii = {16_pp}
 					},
 					.rectangle_button_params{
-						// TODO: what colors?
-						.pressed_color = ruis::color(0xff1976d2), // Darker blue when pressed
-						.unpressed_color = ruis::color(0xff2196f3) // Blue color
+						.unpressed_color = context.get().style().get_color_special()
 					}
 				},
 				{
