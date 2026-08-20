@@ -43,9 +43,7 @@ using namespace calslog;
 
 namespace{
 constexpr auto tab_bar_height = 60_pp;
-constexpr auto top_bar_height = 40_pp;
-constexpr auto top_bar_border = 16_pp;
-constexpr auto settings_button_size = 24_pp;
+constexpr auto top_bar_height = 45_pp;
 }
 
 namespace {
