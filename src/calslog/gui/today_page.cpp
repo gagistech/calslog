@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "today_page.hpp"
 
+#include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/padding.hpp>
@@ -113,12 +114,18 @@ public:
 } // namespace
 
 namespace {
-class today_page : public ruis::page, private ruis::touch::list
+class today_page : public ruis::page, //
+private ruis::container
 {
-public:
-	today_page(utki::shared_ref<ruis::context> context) :
+private:
+	today_page(
+		utki::shared_ref<ruis::context> context, //
+		utki::shared_ref<ruis::touch::list> list_widget, //
+		utki::shared_ref<ruis::rectangle_push_button> fab_button
+	) :
 		// clang-format off
-		ruis::widget(std::move(context),
+		ruis::widget(
+			std::move(context),
 			{},
 			{
 				.clip = true
@@ -126,18 +133,84 @@ public:
 		),
 		// clang-format on
 		ruis::page(this->context, {}),
-		// clang-format off
-		ruis::touch::list(this->context,
+		ruis::container(this->context,
 			{
-				.oriented_params{
-					.vertical = true
-				},
-				.list_params{
-					.provider = utki::make_shared<today_page_provider>(this->context)
+				.container_params{
+					.layout = ruis::layout::pile
 				}
+			},
+			{
+				std::move(list_widget),
+				m::padding(this->context,
+					{
+						.layout_params{
+							.align = {ruis::align::back, ruis::align::back}
+						},
+						.padding_params{
+							.borders = {16_pp} // TODO: make multiplier of gap?
+						}
+					},
+					{
+						std::move(fab_button)
+					}
+				)
 			}
 		)
-	// clang-format on
+	{}
+
+public:
+	today_page(utki::shared_ref<ruis::context> context) :
+		today_page(
+			std::move(context),
+			// Create the list widget
+			ruis::touch::make::list(context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.oriented_params{
+						.vertical = true
+					},
+					.list_params{
+						.provider = utki::make_shared<today_page_provider>(context)
+					}
+				}
+			),
+			// Create the floating action button (FAB)
+			m::rectangle_push_button(context,
+				{
+					.layout_params{
+						.dims = {56_pp} // TODO: why this size?
+					},
+					.container_params{
+						.layout = ruis::layout::pile
+					},
+					.rectangle_params{
+						.corner_radii = {28_pp} // TODO: half of size
+					},
+					.rectangle_button_params{
+						// TODO: what colors?
+						.pressed_color = ruis::color(0xff1976d2), // Darker blue when pressed
+						.unpressed_color = ruis::color(0xff2196f3) // Blue color
+					}
+				},
+				{
+					// Plus sign in the center
+					// TODO: use icon
+					ruis::make::text(context,
+						{
+							.color_params{
+								.color = ruis::color(0xffffffff) // White color for the plus sign
+							},
+							.text_params{
+								.font_size = ruis::length::make_pp(28)
+							}
+						},
+						U"+"
+					)
+				}
+			)
+		)
 	{}
 };
 } // namespace
