@@ -22,15 +22,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "today_page.hpp"
 
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
+#include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <ruis/widget/label/image.hpp>
 #include <utki/string.hpp>
 
 #include "style.hpp"
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 using namespace ruis::length_literals;
 
@@ -180,31 +183,32 @@ public:
 			m::rectangle_push_button(context,
 				{
 					.layout_params{
-						.dims = {56_pp} // TODO: why this size?
+						.dims = {56_pp}
 					},
 					.container_params{
 						.layout = ruis::layout::pile
 					},
+					.padding_params{
+						.borders = {14_pp}
+					},
 					.rectangle_params{
-						.corner_radii = {16_pp}
+						.corner_radii = {14_pp}
 					},
 					.rectangle_button_params{
 						.unpressed_color = context.get().style().get_color_special()
 					}
 				},
 				{
-					// Plus sign in the center
-					// TODO: use icon
-					ruis::make::text(context,
+					// Add icon in the center
+					ruis::make::image(context,
 						{
-							.color_params{
-								.color = ruis::color(0xffffffff) // White color for the plus sign
+							.layout_params{
+								.dims = {ruis::dim::fill}
 							},
-							.text_params{
-								.font_size = ruis::length::make_pp(28)
+							.image_params{
+								.img = context.get().loader().load<ruis::res::image>("img_add"sv)
 							}
-						},
-						U"+"
+						}
 					)
 				}
 			)

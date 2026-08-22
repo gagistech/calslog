@@ -15,3 +15,7 @@ img_close{
 img_today{
     file{today.svg}
 }
+
+img_add{
+    file{add.svg}
+}

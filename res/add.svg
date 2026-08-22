@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="256"
+     height="256"
+     viewBox="0 0 256 256">
+  <path d="M116 24H140V116H232V140H140V232H116V140H24V116H116Z"
+        fill="white" stroke="black"/>
+</svg>
