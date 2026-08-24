@@ -5,17 +5,15 @@
 #include <chrono>
 #include <limits>
 
-namespace calslog::model{
+#include <fsif/file.hpp>
 
-using food_id_type = uint32_t;
-constexpr food_id_type invalid_food_id = std::numeric_limits<food_id_type>::max();
+namespace calslog::model{
 
 struct entry{
     std::u32string name;
-    float weight_grams;
-    float kcal_per_100_grams;
-
-    food_id_type food_id = invalid_food_id;
+    unsigned pcs; // number of pieces
+    float mass; // mass of 1 piece in grams
+    float kcal; // per 100 grams
 };
 
 struct day{
@@ -24,7 +22,9 @@ struct day{
 };
 
 struct food{
-    float kcal_per_100_grams;
+    std::u32string name;
+    float kcal; // per 100 grams
+    float mass; // mass of 1 piece in grams
 };
 
 struct root{
@@ -32,7 +32,10 @@ struct root{
 
     day today;
 
-    std::map<food_id_type, food> foods;
+    std::vector<food> foods;
 };
+
+root read(const fsif::file& fi);
+void write(const root& r, fsif::file& fi);
 
 }

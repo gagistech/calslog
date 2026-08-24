@@ -6,6 +6,9 @@ project(calslog)
 # Otherwise VCPKG does not set the CMAKE_PREFIX_PATH to find packages.
 find_package(myci CONFIG REQUIRED)
 
+# =======================================
+# === application library for testing ===
+
 set(srcs)
 myci_add_source_files(srcs
     DIRECTORY
@@ -13,9 +16,24 @@ myci_add_source_files(srcs
     RECURSIVE
 )
 
-myci_declare_application(${PROJECT_NAME}-opengles
+list(FILTER srcs EXCLUDE REGEX ".*/main.cpp$")
+
+myci_declare_library(${PROJECT_NAME}
     SOURCES
         ${srcs}
+    PRIVATE_INCLUDE_DIRECTORIES
+        ../../src
+    DEPENDENCIES
+        clargs
+        ruisapp::ruisapp-opengles
+)
+
+# =======================
+# === the application ===
+
+myci_declare_application(${PROJECT_NAME}-opengles
+    SOURCES
+        ../../src/${PROJECT_NAME}/main.cpp
     RESOURCE_DIRECTORY
         ../../res
     INCLUDE_DIRECTORIES
@@ -23,7 +41,33 @@ myci_declare_application(${PROJECT_NAME}-opengles
     DEPENDENCIES
         clargs
         ruisapp::ruisapp-opengles
+        ${PROJECT_NAME}::${PROJECT_NAME}
     RUN_ARGUMENTS
         --res-path=res
         --window
+)
+
+# =============
+# === tests ===
+
+set(test_unit_srcs)
+myci_add_source_files(test_unit_srcs
+    DIRECTORY
+        ../../tests/unit/src
+    RECURSIVE
+)
+
+myci_declare_application(${PROJECT_NAME}-test-unit
+    SOURCES
+        ${test_unit_srcs}
+    INCLUDE_DIRECTORIES
+        ../../src
+    DEPENDENCIES
+        tst
+        ${PROJECT_NAME}::${PROJECT_NAME}
+)
+
+myci_declare_test(
+    RUN_TARGET
+        run-${PROJECT_NAME}-test-unit
 )
