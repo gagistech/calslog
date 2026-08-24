@@ -58,6 +58,14 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		// === history ===
 		tst::check_eq(root.history.size(), size_t(1));
 
+        tst::check_eq(
+            root.history.at(0).date, //
+            std::chrono::year_month_day{
+                std::chrono::year{2026},
+                std::chrono::month{8},
+                std::chrono::day{24}
+            }
+        );
 		tst::check_eq(root.history.at(0).entries.size(), size_t(2));
 
 		tst::check_eq(root.history.at(0).entries.at(0).name, U"egg"s);
