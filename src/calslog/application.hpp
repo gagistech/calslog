@@ -23,6 +23,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ruisapp/application.hpp>
 
+#include "model/model.hpp"
+
 namespace calslog {
 
 class application : public ruisapp::application
@@ -30,7 +32,10 @@ class application : public ruisapp::application
 public:
 	const std::string res_path;
 
-	application(bool window, std::string_view res_path);
+	calslog::model::root model;
+
+	application(bool window,//
+		 std::string_view res_path);
 
 	static application& inst()
 	{

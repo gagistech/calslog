@@ -47,7 +47,7 @@ constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 3;
 } // namespace
 
 application::application(
-	bool windowed, //
+	bool window, //
 	std::string_view res_path
 ) :
 	ruisapp::application({
@@ -57,7 +57,7 @@ application::application(
 {
 	auto& win = this->make_window({//
 								   .dims = screen_dims,
-								   .fullscreen = !windowed
+								   .fullscreen = !window
 	});
 
 	win.gui.context.get().window().close_handler = [this]() {
