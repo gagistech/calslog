@@ -21,20 +21,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "gui.hpp"
 
-#include <ruis/widget/button/touch/tab_button.hpp>
-#include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
+#include <ruis/widget/button/impl/rectangle_push_button.hpp>
+#include <ruis/widget/button/touch/tab_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/tabbed_book.hpp>
-#include <ruis/widget/label/text.hpp>
+#include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
-#include <ruis/widget/label/image.hpp>
+#include <ruis/widget/label/text.hpp>
 
-#include "today_page.hpp"
-#include "history_page.hpp"
 #include "foods_page.hpp"
+#include "history_page.hpp"
 #include "style.hpp"
+#include "today_page.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -43,13 +43,14 @@ using namespace ruis::length_literals;
 
 using namespace calslog;
 
-namespace{
+namespace {
 constexpr auto tab_bar_height = 60_pp;
 constexpr auto top_bar_height = 45_pp;
-}
+} // namespace
 
 namespace {
-utki::shared_ref<ruis::tabbed_book> make_tabbed_book(utki::shared_ref<ruis::context> c,//
+utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
+	utki::shared_ref<ruis::context> c, //
 	ruis::layout::parameters layout_params
 )
 {

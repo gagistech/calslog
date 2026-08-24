@@ -142,9 +142,7 @@ public:
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_foods_page(
-	utki::shared_ref<ruis::context> context
-)
+utki::shared_ref<ruis::page> make_foods_page(utki::shared_ref<ruis::context> context)
 {
 	return utki::make_shared<foods_page>(std::move(context));
 }

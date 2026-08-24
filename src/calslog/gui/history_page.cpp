@@ -38,12 +38,7 @@ namespace calslog {
 namespace {
 class history_page_provider : public ruis::list_provider
 {
-	std::vector<std::u32string> items = {
-		U"2025-01-15",
-		U"2025-01-16",
-		U"2025-01-17",
-		U"2025-01-18"
-	};
+	std::vector<std::u32string> items = {U"2025-01-15", U"2025-01-16", U"2025-01-17", U"2025-01-18"};
 
 public:
 	history_page_provider(utki::shared_ref<ruis::context> context) :
@@ -134,9 +129,7 @@ public:
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_history_page(
-	utki::shared_ref<ruis::context> context
-)
+utki::shared_ref<ruis::page> make_history_page(utki::shared_ref<ruis::context> context)
 {
 	return utki::make_shared<history_page>(std::move(context));
 }

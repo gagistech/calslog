@@ -22,17 +22,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include <ruis/widget/group/book.hpp>
-
 #include <utki/shared_ref.hpp>
 
 namespace ruis {
 class context;
-}
+} // namespace ruis
 
 namespace calslog {
 
-utki::shared_ref<ruis::page> make_foods_page(
-	utki::shared_ref<ruis::context> context
-);
+utki::shared_ref<ruis::page> make_foods_page(utki::shared_ref<ruis::context> context);
 
 } // namespace calslog

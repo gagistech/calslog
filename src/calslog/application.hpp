@@ -34,8 +34,10 @@ public:
 
 	calslog::model::root model;
 
-	application(bool window,//
-		 std::string_view res_path);
+	application(
+		bool window, //
+		std::string_view res_path
+	);
 
 	static application& inst()
 	{

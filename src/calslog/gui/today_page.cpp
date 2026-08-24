@@ -21,13 +21,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "today_page.hpp"
 
-#include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
+#include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
+#include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
-#include <ruis/widget/label/image.hpp>
 #include <utki/string.hpp>
 
 #include "style.hpp"
@@ -117,8 +117,9 @@ public:
 } // namespace
 
 namespace {
-class today_page : public ruis::page, //
-private ruis::container
+class today_page :
+	public ruis::page, //
+	private ruis::container
 {
 private:
 	today_page(
@@ -136,7 +137,9 @@ private:
 		),
 		// clang-format on
 		ruis::page(this->context, {}),
-		ruis::container(this->context,
+		// clang-format off
+		ruis::container(
+			this->context,
 			{
 				.container_params{
 					.layout = ruis::layout::pile
@@ -144,21 +147,23 @@ private:
 			},
 			{
 				std::move(list_widget),
-				m::padding(this->context,
-					{
+			 	m::padding(
+					this->context,
+				 	{
 						.layout_params{
 							.align = {ruis::align::back, ruis::align::back}
 						},
-						.padding_params{
-							.borders = {16_pp} // TODO: make multiplier of gap?
-						}
+				  		.padding_params{
+					  		.borders = {16_pp} // TODO: make multiplier of gap?
+				  		}
 					},
-					{
+				 	{
 						std::move(fab_button)
 					}
-				)
+			 	)
 			}
 		)
+	// clang-format on
 	{}
 
 public:
@@ -166,21 +171,24 @@ public:
 		today_page(
 			std::move(context),
 			// Create the list widget
-			ruis::touch::make::list(context,
+			// clang-format off
+			ruis::touch::make::list(
+				context,
 				{
 					.layout_params{
 						.dims = {ruis::dim::fill, ruis::dim::fill}
 					},
-					.oriented_params{
+				 	.oriented_params{
 						.vertical = true
 					},
-					.list_params{
+				 	.list_params{
 						.provider = utki::make_shared<today_page_provider>(context)
 					}
 				}
 			),
 			// Create the floating action button (FAB)
-			m::rectangle_push_button(context,
+			m::rectangle_push_button(
+				context,
 				{
 					.layout_params{
 						.dims = {56_pp}
@@ -199,27 +207,26 @@ public:
 					}
 				},
 				{
-					// Add icon in the center
-					ruis::make::image(context,
-						{
+					ruis::make::image(
+						context,
+					 	{
 							.layout_params{
 								.dims = {ruis::dim::fill}
 							},
-							.image_params{
+					  		.image_params{
 								.img = context.get().loader().load<ruis::res::image>("img_add"sv)
 							}
 						}
 					)
 				}
 			)
+			// clang-format on
 		)
 	{}
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_today_page(
-	utki::shared_ref<ruis::context> context
-)
+utki::shared_ref<ruis::page> make_today_page(utki::shared_ref<ruis::context> context)
 {
 	return utki::make_shared<today_page>(std::move(context));
 }
