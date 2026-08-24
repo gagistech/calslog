@@ -22,8 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "gui.hpp"
 
 #include <ruis/widget/button/touch/tab_button.hpp>
-#include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
+#include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/tabbed_book.hpp>
 #include <ruis/widget/label/text.hpp>
@@ -138,8 +138,8 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 				},
 				U"calslog"
 			),
-			// Settings button - rectangle_push_button with rounded corners (circular) and cog icon
-			ruis::make::rectangle_push_button(c, // TODO: make round button
+			// Settings button
+			m::ellipse_push_button(c,
 				{
 					.layout_params = {
 						.dims = {ruis::dim::min, ruis::dim::fill},
@@ -148,13 +148,7 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 					.container_params = {
 						.layout = ruis::layout::pile
 					},
-					.padding_params{
-						.borders = {c.get().style().get_len_gap()}
-					},
-					.rectangle_params = {
-						.corner_radii = {14_pp}
-					},
-					.rectangle_button_params = {
+					.ellipse_button_params = {
 						.unpressed_color = c.get().style().get_color_panel()
 					}
 				},
