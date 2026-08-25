@@ -12,6 +12,9 @@ this__libcalslog := ../../src/out/$(c)/libcalslog.a
 this_ldlibs += $(this__libcalslog)
 
 this_ldlibs += -l tst
+this_ldlibs += -l utki
+this_ldlibs += -l fsif
+this_ldlibs += -l tml
 
 this_no_install := true
 
