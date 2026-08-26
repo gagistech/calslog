@@ -8,7 +8,7 @@
 			"name": "(gdb) app",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/src/out/dev/bedsidemon-opengles-xorg",
+			"program": "${workspaceFolder}/src/out/dev/calslog-opengles-xorg",
 			"args": ["--window", "--res-path=res"],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",

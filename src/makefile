@@ -73,6 +73,7 @@ define calslog_rules
     this_ldlibs += -l fsif
     this_ldlibs += -l ruis
     this_ldlibs += -l utki
+    this_ldlibs += -l tml
     this_ldlibs += -l m
 
     this_ldlibs += -l ruisapp-$1-$2
