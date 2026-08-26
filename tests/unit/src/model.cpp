@@ -28,14 +28,12 @@ const tst::set set("calslog", [](tst::suite& suite) {
 
             history{
                 2026-08-24{
-                    e{
-                        name{egg}
+                    egg{
                         kcal{145}
                         mass{55}
                         pcs{2}
                     }
-                    e{
-                        name{"small egg"}
+                    "small egg"{
                         kcal{145}
                         mass{50}
                         pcs{13}
@@ -115,14 +113,12 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n" //
 			"history{" //
 			"\n\t2026-08-24{" //
-			"\n\t\te{" //
-			"\n\t\t\tname{egg}" //
+			"\n\t\tegg{" //
 			"\n\t\t\tkcal{145}" //
 			"\n\t\t\tpcs{2}" //
 			"\n\t\t\tmass{55}" //
 			"\n\t\t}" //
-			"\n\t\te{" //
-			"\n\t\t\tname{\"small egg\"}" //
+			"\n\t\t\"small egg\"{" //
 			"\n\t\t\tkcal{145}" //
 			"\n\t\t\tpcs{13}" //
 			"\n\t\t\tmass{50}" //

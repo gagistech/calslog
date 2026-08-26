@@ -42,8 +42,7 @@ foods{
 
 history{
     <YYYY-MM-DD>{
-        e{
-            name{<food-name>}
+        <name>{
             kcal{<kcal-per-100-g>}
             pcs{<number-of-portions>}
             mass{<grams-per-portion>}
@@ -57,7 +56,6 @@ history{
 namespace {
 constexpr auto kcal_word = "kcal"sv;
 constexpr auto mass_word = "mass"sv;
-constexpr auto name_word = "name"sv;
 constexpr auto pcs_word = "pcs"sv;
 } // namespace
 
@@ -111,26 +109,24 @@ std::chrono::year_month_day parse_yyyy_mm_dd(std::string_view str)
 } // namespace
 
 namespace {
-model::entry parse_entry(const tml::forest& forest)
+model::entry parse_entry(const tml::tree& tree)
 {
 	float kcal = 0;
 	float mass = 0;
 	uint32_t pcs = 0;
-	std::u32string name;
 
-	for (auto& c : forest) {
+	for (auto& c : tree.children) {
 		if (c.value == kcal_word) {
 			kcal = c.children.at(0).value.to_float();
 		} else if (c.value == mass_word) {
 			mass = c.children.at(0).value.to_float();
 		} else if (c.value == pcs_word) {
 			pcs = c.children.at(0).value.to_uint32();
-		} else if (c.value == name_word) {
-			name = utki::to_utf32(c.children.at(0).value.string);
 		}
 	}
 
-	return {.name = std::move(name), .pcs = pcs, .mass = mass, .kcal = kcal};
+	return {.name = utki::to_utf32(tree.value.string),//
+		 .pcs = pcs, .mass = mass, .kcal = kcal};
 }
 } // namespace
 
@@ -140,10 +136,11 @@ model::day parse_day(const tml::tree& tree)
 	std::vector<model::entry> entries;
 
 	for (auto& e : tree.children) {
-		entries.push_back(parse_entry(e.children));
+		entries.push_back(parse_entry(e));
 	}
 
-	return {.date = parse_yyyy_mm_dd(tree.value.string), .entries = std::move(entries)};
+	return {.date = parse_yyyy_mm_dd(tree.value.string),//
+		 .entries = std::move(entries)};
 }
 } // namespace
 
@@ -218,8 +215,7 @@ tml::tree make_food_node(const model::food& f)
 namespace {
 tml::tree make_entry_node(const model::entry& e)
 {
-	auto node = tml::tree("e"sv);
-	node.children.push_back(make_key_value_node(name_word, tml::leaf(utki::to_utf8(e.name))));
+	auto node = tml::tree(utki::to_utf8(e.name));
 	node.children.push_back(make_key_value_node(kcal_word, tml::leaf(e.kcal)));
 	node.children.push_back(make_key_value_node(pcs_word, tml::leaf(e.pcs)));
 	node.children.push_back(make_key_value_node(mass_word, tml::leaf(e.mass)));
