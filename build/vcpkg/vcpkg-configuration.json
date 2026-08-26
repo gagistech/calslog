@@ -1,0 +1,40 @@
+{
+  "default-registry": {
+    "kind": "git",
+    "baseline": "d9ccd77bb554e67137f3f754a2e2f11f4188c82c",
+    "repository": "https://github.com/microsoft/vcpkg"
+  },
+  "registries": [
+    {
+      "kind": "artifact",
+      "location": "https://github.com/microsoft/vcpkg-ce-catalog/archive/refs/heads/main.zip",
+      "name": "microsoft"
+    },
+    {
+      "kind": "git",
+      "repository": "https://github.com/cppfw/vcpkg-repo/",
+      "baseline": "45ca566240acb2723c33a97fa68562086dc073ef",
+      "reference": "main",
+      "packages": [
+        "myci",
+        "utki",
+        "fsif",
+        "r4",
+        "agg",
+        "svgren",
+        "svgdom",
+        "cssom",
+        "mikroxml",
+        "tml",
+        "rasterimage",
+        "veg",
+        "clargs",
+        "nitki",
+        "opros",
+        "tst",
+        "ruis",
+        "ruisapp"
+      ]
+    }
+  ]
+}
