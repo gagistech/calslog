@@ -43,6 +43,7 @@ using namespace calslog;
 
 namespace {
 constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 3;
+constexpr auto data_filename = "data.tml"sv;
 } // namespace
 
 application::application(
@@ -54,6 +55,16 @@ application::application(
 	}),
 	res_path(fsif::as_dir(res_path))
 {
+	// Make sure the application data directory exists
+	{
+		fsif::native_file data_dir(this->directory.data);
+		data_dir.make_dir();
+	}
+
+	if (fsif::native_file data_file(utki::cat(this->directory.data, data_filename)); data_file.exists()) {
+		this->model = calslog::model::read(data_file);
+	}
+
 	auto& win = this->make_window({//
 								   .dims = screen_dims,
 								   .fullscreen = !window
@@ -77,6 +88,20 @@ application::application(
 	auto c = make_root_widget(win.gui.context);
 
 	win.gui.set_root(c);
+}
+
+application::~application()
+{
+	this->save();
+}
+
+void application::save()noexcept{
+	try{
+		fsif::native_file data_file(utki::cat(this->directory.data, data_filename));
+		calslog::model::write(this->model, data_file);
+	}catch(...){
+		utki::logcat_debug("ERROR: saving data failed");
+	}
 }
 
 std::unique_ptr<application> calslog::make_application(
