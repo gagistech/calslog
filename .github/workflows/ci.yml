@@ -48,12 +48,12 @@ jobs:
         # due to some bug in gcov, we need to use --gcov-ignore-parse-errors=negative_hits.warn
         run: pipx run gcovr --gcov-ignore-parse-errors=negative_hits.warn --exclude-throw-branches --filter src/ --cobertura > cobertura.xml
       - name: upload coverage report to artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cobertura.xml
           path: cobertura.xml
       - name: upload coverage data to codecov.io
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         if: always() # even if previous steps fail, this one needs to be run
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -66,9 +66,10 @@ jobs:
           verbose: true # optional (default = false)
       - name: upload test report to codecov.io
         if: always() # even if previous steps fail, this one needs to be run
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
           # do not search for coverage files automatically, upload only specified files
           disable_search: true
           files: tests/unit/out/gcov/junit.xml
@@ -255,3 +256,50 @@ jobs:
           echo "${{ secrets.GAGISTECH_SSH_KEY }}" > gagistech_ssh_key && chmod 600 gagistech_ssh_key
           myci-upload-ssh.sh --key gagistech_ssh_key --server gagistech.com --user gagistech --dir /srv/gagistech/apps src/out/emsc/${PACKAGE_NAME}-opengles-sdl.html
         if: startsWith(github.ref, 'refs/tags/')
+##### vcpkg-linux #####
+  vcpkg-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: debian, codename: trixie, image_owner: }
+          # - {os: debian, codename: trixie, image_owner: i386/, labels: [i386,docker]}
+          # - {os: debian, codename: trixie, image_owner: arm32v7/, labels: [ubuntu-24.04-arm]}
+          # - {os: debian, codename: trixie, image_owner: arm64v8/, labels: [ubuntu-24.04-arm]}
+    runs-on: ${{ (matrix.labels == '' && 'ubuntu-latest') || matrix.labels }}
+    container: ${{ matrix.image_owner }}${{ matrix.os }}:${{ matrix.codename }}
+    name: vcpkg - linux | ${{ matrix.labels[0] }}
+    steps:
+      - name: add cppfw deb repo
+        uses: myci-actions/add-deb-repo@main
+        with:
+          repo: deb https://gagis.hopto.org/repo/cppfw/${{ matrix.os }} ${{ matrix.codename }} main
+          repo-name: cppfw
+          keys-asc: https://gagis.hopto.org/repo/cppfw/pubkey.gpg
+          install: myci cmake git curl zip unzip tar nodejs pkg-config
+      - name: git clone
+        uses: myci-actions/checkout@main
+      - name: install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git vcpkg-installation
+          (cd vcpkg-installation; ./bootstrap-vcpkg.sh)
+      - name: set VCPKG_ROOT
+        uses: myci-actions/export-env-var@main
+        with: {name: VCPKG_ROOT, value: "$(pwd)/vcpkg-installation"}
+      - name: add VCPKG_ROOT to PATH
+        uses: myci-actions/export-env-var@main
+        with: {name: PATH, value: "$PATH:$VCPKG_ROOT"}
+      - name: build and test
+        run: |
+          cd build/vcpkg
+          cmake .
+          make --jobs=$(nproc)
+          make test
+      - name: upload vcpkg logs to artifacts
+        if: always() # even if previous steps fail, this one needs to be run
+        uses: actions/upload-artifact@v7
+        with:
+          name: vcpkg_linux_logs
+          path: |
+            vcpkg-installation/buildtrees/${{ env.PACKAGE_NAME }}/
+            build/vcpkg/**/*.log
