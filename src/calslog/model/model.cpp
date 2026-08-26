@@ -176,3 +176,81 @@ calslog::model::root calslog::model::read(const fsif::file& fi)
 
 	return r;
 }
+
+namespace {
+std::string make_date_string(std::chrono::year_month_day d)
+{
+	char buf[16];
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+	std::snprintf(
+		buf, //
+		sizeof buf, //
+		"%04d-%02u-%02u", //
+		static_cast<int>(d.year()), //
+		static_cast<unsigned>(d.month()), //
+		static_cast<unsigned>(d.day())
+	);
+	return buf;
+} // make_date_string
+} // namespace
+
+namespace {
+// creates a tree node with the given name and a single child leaf with the given value,
+// i.e. <name>{<value>}
+tml::tree make_key_value_node(std::string_view key, tml::leaf value)
+{
+	auto node = tml::tree(key);
+	node.children.push_back(std::move(value));
+	return node;
+}
+} // namespace
+
+namespace {
+tml::tree make_food_node(const model::food& f)
+{
+	auto node = tml::tree(utki::to_utf8(f.name));
+	node.children.push_back(make_key_value_node(kcal_word, tml::leaf(f.kcal)));
+	node.children.push_back(make_key_value_node(mass_word, tml::leaf(f.mass)));
+	return node;
+}
+} // namespace
+
+namespace {
+tml::tree make_entry_node(const model::entry& e)
+{
+	auto node = tml::tree("e"sv);
+	node.children.push_back(make_key_value_node(name_word, tml::leaf(utki::to_utf8(e.name))));
+	node.children.push_back(make_key_value_node(kcal_word, tml::leaf(e.kcal)));
+	node.children.push_back(make_key_value_node(pcs_word, tml::leaf(e.pcs)));
+	node.children.push_back(make_key_value_node(mass_word, tml::leaf(e.mass)));
+	return node;
+}
+} // namespace
+
+namespace {
+tml::tree make_day_node(const model::day& d)
+{
+	auto node = tml::tree(make_date_string(d.date));
+	for (const auto& e : d.entries) {
+		node.children.push_back(make_entry_node(e));
+	}
+	return node;
+}
+} // namespace
+
+void calslog::model::write(const root& r, fsif::file& fi)
+{
+	auto foods = tml::tree("foods"sv);
+	for (const auto& f : r.foods) {
+		foods.children.push_back(make_food_node(f));
+	}
+
+	auto history = tml::tree("history"sv);
+	for (const auto& d : r.history) {
+		history.children.push_back(make_day_node(d));
+	}
+
+	tml::forest forest{std::move(foods), std::move(history)};
+
+	tml::write(forest, fi);
+}
