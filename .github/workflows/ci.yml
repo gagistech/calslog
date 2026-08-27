@@ -293,8 +293,8 @@ jobs:
         run: |
           cd build/vcpkg
           cmake .
-          make --jobs=$(nproc)
-          make test
+          cmake --build . --parallel
+          cmake --build . --parallel --target test
       - name: upload vcpkg logs to artifacts
         if: always() # even if previous steps fail, this one needs to be run
         uses: actions/upload-artifact@v7
@@ -303,3 +303,144 @@ jobs:
           path: |
             vcpkg-installation/buildtrees/${{ env.PACKAGE_NAME }}/
             build/vcpkg/**/*.log
+##### vcpkg-windows #####
+  vcpkg-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+    name: vcpkg - windows
+    steps:
+    - name: git clone
+      uses: actions/checkout@v6
+    - name: get myci scripts
+      uses: actions/checkout@v6
+      with:
+        repository: cppfw/myci
+        ref: latest
+        path: myci
+    - name: add myci to PATH
+      uses: myci-actions/export-env-var-powershell@main
+      with: {name: PATH, value: "$env:Path;myci/src/powershell"}
+    - name: set VCPKG_ROOT
+      uses: myci-actions/export-env-var-powershell@main
+      # accorging to github actions windows image docs, it should define VCPKG_INSTALLATION_ROOT env var,
+      # but on practice it is not set, so specify vcpkg root path explicitly
+      with: {name: VCPKG_ROOT, value: "C:/vcpkg/"}
+    - name: make local symbolic link to VCPKG installation directory
+      # this is needed at least for actions/upload-artifact to be able to find vcpkg install logs
+      shell: powershell
+      run: New-Item -ItemType SymbolicLink -Path vcpkg-installation -Target $env:VCPKG_ROOT
+    - name: build and test
+      run: |
+        cd build/vcpkg
+        cmake .
+        cmake --build . --parallel
+        cmake --build . --parallel --target test
+    - name: upload vcpkg logs to artifacts
+      if: always() # even if previous steps fail, this one needs to be run
+      uses: actions/upload-artifact@v7
+      with:
+        name: vcpkg_windows_logs
+        path: |
+          vcpkg-installation/buildtrees/**/*.log
+          build/vcpkg/**/*.log
+##### vcpkg-macos #####
+  vcpkg-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - Debug
+          - Release
+    name: vcpkg - macos | ${{ matrix.config }}
+    steps:
+    - name: workaround python2 and python3 issue when upgrading python
+      run : |
+        rm -rf /usr/local/bin/2to3*
+        rm -rf /usr/local/bin/idle3*
+        rm -rf /usr/local/bin/pydoc3*
+        rm -rf /usr/local/bin/python3
+        rm -rf /usr/local/bin/python3-config
+        rm -rf /usr/local/bin/python3*
+        rm -rf /usr/local/bin/python3*-config
+    - name: git clone
+      uses: myci-actions/checkout@main
+      with:
+        submodules: true #  non-recursive, no remote
+    - name: install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git vcpkg-installation
+        (cd vcpkg-installation; ./bootstrap-vcpkg.sh)
+    - name: set VCPKG_ROOT
+      uses: myci-actions/export-env-var@main
+      with: {name: VCPKG_ROOT, value: "$(pwd)/vcpkg-installation"}
+    - name: add VCPKG_ROOT to PATH
+      uses: myci-actions/export-env-var@main
+      with: {name: PATH, value: "$PATH:$VCPKG_ROOT"}
+    - name: install ci tools
+      run: brew install cmake
+    - name: build and test
+      run: |
+        cd build/vcpkg
+        cmake .
+        cmake --build . --parallel --config ${{ matrix.config }}
+        cmake --build . --parallel --config ${{ matrix.config }} --target test
+    - name: upload vcpkg logs to artifacts
+      if: always() # even if previous steps fail, this one needs to be run
+      uses: actions/upload-artifact@v7
+      with:
+        name: vcpkg_macos_${{ matrix.config }}_logs
+        path: |
+          vcpkg-installation/buildtrees/**/*.log
+          build/vcpkg/**/*.log
+##### vcpkg-ios #####
+  vcpkg-ios:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - Debug
+          - Release
+    name: vcpkg - ios | ${{ matrix.config }}
+    steps:
+    - name: workaround python2 and python3 issue when upgrading python
+      run : |
+        rm -rf /usr/local/bin/2to3*
+        rm -rf /usr/local/bin/idle3*
+        rm -rf /usr/local/bin/pydoc3*
+        rm -rf /usr/local/bin/python3
+        rm -rf /usr/local/bin/python3-config
+        rm -rf /usr/local/bin/python3*
+        rm -rf /usr/local/bin/python3*-config
+    - name: git clone
+      uses: myci-actions/checkout@main
+      with:
+        submodules: true #  non-recursive, no remote
+    - name: install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git vcpkg-installation
+        (cd vcpkg-installation; ./bootstrap-vcpkg.sh)
+    - name: set VCPKG_ROOT
+      uses: myci-actions/export-env-var@main
+      with: {name: VCPKG_ROOT, value: "$(pwd)/vcpkg-installation"}
+    - name: add VCPKG_ROOT to PATH
+      uses: myci-actions/export-env-var@main
+      with: {name: PATH, value: "$PATH:$VCPKG_ROOT"}
+    - name: install ci tools
+      run: brew install cmake
+    - name: build
+      run: |
+        cd build/vcpkg
+        cmake -G Xcode -D CMAKE_SYSTEM_NAME=iOS -D VCPKG_TARGET_TRIPLET=arm64-ios-simulator .
+        cmake --build . --parallel --config ${{ matrix.config }} -- -sdk iphonesimulator -arch arm64
+    - name: upload vcpkg logs to artifacts
+      if: always() # even if previous steps fail, this one needs to be run
+      uses: actions/upload-artifact@v7
+      with:
+        name: vcpkg_ios_${{ matrix.config }}_logs
+        path: |
+          vcpkg-installation/buildtrees/**/*.log
+          build/vcpkg/**/*.log
