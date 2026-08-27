@@ -31,6 +31,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <utki/string.hpp>
 
 #include "style.hpp"
+#include "../application.hpp"
+#include "../model/model.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -42,21 +44,6 @@ namespace calslog {
 namespace {
 class today_page_provider : public ruis::list_provider
 {
-	std::vector<std::u32string> items = {
-		U"Apple",
-		U"Banana",
-		U"Orange",
-		U"Milk",
-		U"Bread",
-		U"Cheese",
-		U"Eggs",
-		U"Chicken",
-		U"Rice",
-		U"Pasta",
-		U"Tomato",
-		U"Cucumber"
-	};
-
 public:
 	today_page_provider(utki::shared_ref<ruis::context> context) :
 		ruis::list_provider(std::move(context))
@@ -64,11 +51,14 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return this->items.size();
+		return application::inst().model.today.entries.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
+		const auto& entry = application::inst().model.today.entries.at(index);
+		const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+
 		// clang-format off
 		return m::padding(this->context,
 			{
@@ -89,7 +79,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					this->items.at(index)
+					entry.name
 				),
 				m::gap(this->context,
 					{
@@ -107,7 +97,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					utki::to_utf32(utki::cat(index + 1)) + U" kcal"
+					utki::to_utf32(utki::cat(entry.pcs)) + U" x " + utki::to_utf32(utki::cat(entry.mass)) + U"g = " + utki::to_utf32(utki::cat(total_kcal)) + U" kcal"
 				)
 			}
 		);

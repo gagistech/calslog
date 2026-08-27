@@ -28,6 +28,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <utki/string.hpp>
 
 #include "style.hpp"
+#include "../application.hpp"
+#include "../model/model.hpp"
 
 using namespace std::string_literals;
 
@@ -38,21 +40,6 @@ namespace calslog {
 namespace {
 class foods_page_provider : public ruis::list_provider
 {
-	std::vector<std::u32string> items = {
-		U"Apple",
-		U"Banana",
-		U"Orange",
-		U"Milk",
-		U"Bread",
-		U"Cheese",
-		U"Eggs",
-		U"Chicken",
-		U"Rice",
-		U"Pasta",
-		U"Tomato",
-		U"Cucumber"
-	};
-
 public:
 	foods_page_provider(utki::shared_ref<ruis::context> context) :
 		ruis::list_provider(std::move(context))
@@ -60,11 +47,13 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return this->items.size();
+		return application::inst().model.foods.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
+		const auto& food = application::inst().model.foods.at(index);
+
 		// clang-format off
 		return m::padding(this->context,
 			{
@@ -85,7 +74,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					this->items.at(index)
+					food.name
 				),
 				m::gap(this->context,
 					{
@@ -103,7 +92,7 @@ public:
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
-					utki::to_utf32(utki::cat(index + 1)) + U" kcal"
+					utki::to_utf32(utki::cat(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::cat(food.mass)) + U"g/portion"
 				)
 			}
 		);

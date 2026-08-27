@@ -1,7 +1,74 @@
 foods{
-    
+    "Apple"{
+        kcal{52}
+        mass{182}
+    }
+    "Banana"{
+        kcal{89}
+        mass{118}
+    }
+    "Orange"{
+        kcal{47}
+        mass{131}
+    }
+    "Milk (3.2%)"{
+        kcal{60}
+        mass{200}
+    }
+    "Bread"{
+        kcal{265}
+        mass{40}
+    }
+    "Cheese"{
+        kcal{402}
+        mass{30}
+    }
+    "Egg"{
+        kcal{155}
+        mass{50}
+    }
+    "Chicken breast"{
+        kcal{165}
+        mass{150}
+    }
+    "Rice (cooked)"{
+        kcal{130}
+        mass{158}
+    }
+    "Pasta (cooked)"{
+        kcal{131}
+        mass{140}
+    }
 }
 
 history{
-
+    "2026-01-15"{
+        "Apple"{
+            kcal{52}
+            pcs{2}
+            mass{182}
+        }
+        "Bread"{
+            kcal{265}
+            pcs{2}
+            mass{40}
+        }
+        "Cheese"{
+            kcal{402}
+            pcs{1}
+            mass{30}
+        }
+    }
+    "2026-01-16"{
+        "Banana"{
+            kcal{89}
+            pcs{1}
+            mass{118}
+        }
+        "Yogurt"{
+            kcal{59}
+            pcs{1}
+            mass{150}
+        }
+    }
 }

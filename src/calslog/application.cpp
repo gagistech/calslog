@@ -65,6 +65,11 @@ application::application(
 		this->model = calslog::model::read(data_file);
 	}
 
+	// Populate today from the most recent history entry if today is empty
+	if (this->model.today.entries.empty() && !this->model.history.empty()) {
+		this->model.today = this->model.history.back();
+	}
+
 	auto& win = this->make_window({//
 								   .dims = screen_dims,
 								   .fullscreen = !window
