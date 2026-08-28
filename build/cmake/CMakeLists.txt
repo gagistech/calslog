@@ -6,9 +6,6 @@ project(calslog)
 # Otherwise VCPKG does not set the CMAKE_PREFIX_PATH to find packages.
 find_package(myci CONFIG REQUIRED)
 
-# =======================================
-# === application library for testing ===
-
 set(srcs)
 myci_add_source_files(srcs
     DIRECTORY
@@ -18,20 +15,17 @@ myci_add_source_files(srcs
 
 list(FILTER srcs EXCLUDE REGEX ".*/main.cpp$")
 
-myci_declare_library(${PROJECT_NAME}
-    SOURCES
-        ${srcs}
-    PRIVATE_INCLUDE_DIRECTORIES
-        ../../src
-    DEPENDENCIES
-        clargs
-        ruisapp::ruisapp-opengles
-)
+function(calslog_declare_library_and_application variant)
+    myci_declare_library(lib${PROJECT_NAME}-${variant}
+        SOURCES
+            ${srcs}
+        PRIVATE_INCLUDE_DIRECTORIES
+            ../../src
+        DEPENDENCIES
+            clargs
+            ruisapp::ruisapp-${variant}
+    )
 
-# =======================
-# === the application ===
-
-function(calslog_declare_application variant)
     myci_declare_application(${PROJECT_NAME}-${variant}
         SOURCES
             ../../src/${PROJECT_NAME}/main.cpp
@@ -41,18 +35,23 @@ function(calslog_declare_application variant)
             ../../src
         DEPENDENCIES
             clargs
-            ruisapp::ruisapp-${variant}
-            ${PROJECT_NAME}::${PROJECT_NAME}
+            ${PROJECT_NAME}::lib${PROJECT_NAME}-${variant}
         RUN_ARGUMENTS
             --res-path=res
             --window
     )
 endfunction()
 
-if(APPLE AND NOT IOS)
-    calslog_declare_application(opengl)
+if(IOS)
+    set(unit_test_variant opengles)
+    calslog_declare_library_and_application(opengles)
+elseif(APPLE)
+    set(unit_test_variant opengl)
+    calslog_declare_library_and_application(opengl)
 else()
-    calslog_declare_application(opengles)
+    set(unit_test_variant opengl)
+    calslog_declare_library_and_application(opengl)
+    calslog_declare_library_and_application(opengles)
 endif()
 
 # =============
@@ -71,8 +70,8 @@ myci_declare_application(${PROJECT_NAME}-test-unit
     INCLUDE_DIRECTORIES
         ../../src
     DEPENDENCIES
+        ${PROJECT_NAME}::lib${PROJECT_NAME}-${unit_test_variant}
         tst
-        ${PROJECT_NAME}::${PROJECT_NAME}
 )
 
 myci_declare_test(
