@@ -31,21 +31,29 @@ myci_declare_library(${PROJECT_NAME}
 # =======================
 # === the application ===
 
-myci_declare_application(${PROJECT_NAME}-opengles
-    SOURCES
-        ../../src/${PROJECT_NAME}/main.cpp
-    RESOURCE_DIRECTORY
-        ../../res
-    INCLUDE_DIRECTORIES
-        ../../src
-    DEPENDENCIES
-        clargs
-        ruisapp::ruisapp-opengles
-        ${PROJECT_NAME}::${PROJECT_NAME}
-    RUN_ARGUMENTS
-        --res-path=res
-        --window
-)
+function(calslog_declare_application variant)
+    myci_declare_application(${PROJECT_NAME}-${variant}
+        SOURCES
+            ../../src/${PROJECT_NAME}/main.cpp
+        RESOURCE_DIRECTORY
+            ../../res
+        INCLUDE_DIRECTORIES
+            ../../src
+        DEPENDENCIES
+            clargs
+            ruisapp::ruisapp-${variant}
+            ${PROJECT_NAME}::${PROJECT_NAME}
+        RUN_ARGUMENTS
+            --res-path=res
+            --window
+    )
+endfunction()
+
+if(APPLE AND NOT IOS)
+    calslog_declare_application(opengl)
+else()
+    calslog_declare_application(opengles)
+endif()
 
 # =============
 # === tests ===
