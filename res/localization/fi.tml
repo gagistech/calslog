@@ -1,5 +1,7 @@
 vocabulary{
-    "tabs:today"{str{Tänään}}
-    "tabs:foods"{str{Ruoat}}
-    "tabs:history"{str{Historia}}
+    tabs:today{str{Tänään}}
+    tabs:foods{str{Ruoat}}
+    tabs:history{str{Historia}}
+    log_food_dialog:title{str{Kirjaa ruoka}}
+    log_food_dialog:add_button{str{Lisää}}
 }

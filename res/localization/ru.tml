@@ -1,5 +1,7 @@
 vocabulary{
-    "tabs:today"{str{Сегодня}}
-    "tabs:foods"{str{Еда}}
-    "tabs:history"{str{История}}
+    tabs:today{str{Сегодня}}
+    tabs:foods{str{Еда}}
+    tabs:history{str{История}}
+    log_food_dialog:title{str{Записать еду}}
+    log_food_dialog:add_button{str{Добавить}}
 }

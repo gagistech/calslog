@@ -1,5 +1,7 @@
 vocabulary{
-    "tabs:today"{str{Today}}
-    "tabs:foods"{str{Foods}}
-    "tabs:history"{str{History}}
+    tabs:today{str{Today}}
+    tabs:foods{str{Foods}}
+    tabs:history{str{History}}
+    log_food_dialog:title{str{"Log Food"}}
+    log_food_dialog:add_button{str{Add}}
 }

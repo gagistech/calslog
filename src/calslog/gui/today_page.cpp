@@ -23,11 +23,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
+#include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <ruis/widget/proxy/click_proxy.hpp>
+#include <ruis/widget/proxy/key_proxy.hpp>
+#include <ruis/widget/proxy/mouse_proxy.hpp>
 #include <utki/string.hpp>
 
 #include "style.hpp"
@@ -45,180 +49,412 @@ namespace {
 class today_page_provider : public ruis::list_provider
 {
 public:
-	today_page_provider(utki::shared_ref<ruis::context> context) :
-		ruis::list_provider(std::move(context))
-	{}
+    today_page_provider(utki::shared_ref<ruis::context> context) :
+        ruis::list_provider(std::move(context))
+    {}
 
-	size_t count() const noexcept override
-	{
-		return application::inst().model.today.entries.size();
-	}
+    size_t count() const noexcept override
+    {
+        return application::inst().model.today.entries.size();
+    }
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
-	{
-		const auto& entry = application::inst().model.today.entries.at(index);
-		const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+    utki::shared_ref<ruis::widget> get_widget(size_t index) override
+    {
+        const auto& entry = application::inst().model.today.entries.at(index);
+        const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
 
-		// clang-format off
-		return m::padding(this->context,
-			{
-				.layout_params{
-					.dims = {ruis::dim::fill, ruis::dim::min}
-				},
-				.container_params{
-					.layout = ruis::layout::row
-				},
-				.padding_params{
-					.borders = {ruis::length::make_pp(10)}
-				}
-			},
-			{
-				m::text(this->context,
-					{
-						.text_params{
-							.font_size = ruis::length::make_pp(20)
-						}
-					},
-					entry.name
-				),
-				m::gap(this->context,
-					{
-						.layout_params{
-							.dims = {ruis::dim::fill, ruis::dim::min}
-						}
-					}
-				),
-				m::text(this->context,
-					{
-						.color_params{
-							.color = 0xff808080
-						},
-						.text_params{
-							.font_size = ruis::length::make_pp(20)
-						}
-					},
-					utki::to_utf32(utki::cat(entry.pcs)) + U" x " + utki::to_utf32(utki::cat(entry.mass)) + U"g = " + utki::to_utf32(utki::cat(total_kcal)) + U" kcal"
-				)
-			}
-		);
-		// clang-format on
-	}
+        // clang-format off
+        return m::padding(this->context,
+            {
+                .layout_params{
+                    .dims = {ruis::dim::fill, ruis::dim::min}
+                },
+                .container_params{
+                    .layout = ruis::layout::row
+                },
+                .padding_params{
+                    .borders = {ruis::length::make_pp(10)}
+                }
+            },
+            {
+                m::text(this->context,
+                    {
+                        .text_params{
+                            .font_size = ruis::length::make_pp(20)
+                        }
+                    },
+                    entry.name
+                ),
+                m::gap(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, ruis::dim::min}
+                        }
+                    }
+                ),
+                m::text(this->context,
+                    {
+                        .color_params{
+                            .color = 0xff808080
+                        },
+                        .text_params{
+                            .font_size = ruis::length::make_pp(20)
+                        }
+                    },
+                    utki::to_utf32(utki::cat(entry.pcs)) + U" x " + utki::to_utf32(utki::cat(entry.mass)) + U"g = " + utki::to_utf32(utki::cat(total_kcal)) + U" kcal"
+                )
+            }
+        );
+        // clang-format on
+    }
 };
 } // namespace
 
 namespace {
+void show_add_dialog(ruis::widget& parent_widget)
+{
+    const utki::shared_ref<ruis::context>& c = parent_widget.context;
+
+    auto& olay = parent_widget.get_ancestor<ruis::overlay>();
+
+    // Background click proxy to close dialog when clicking outside
+    // clang-format off
+    auto bg_click_proxy = ruis::make::click_proxy(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::fill}
+            }
+        }
+    );
+    // clang-format on
+
+    // Key proxy to handle Escape key and Android back key
+    // clang-format off
+    auto key_proxy = ruis::make::key_proxy(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::fill}
+            }
+        },
+        {}
+    );
+    // clang-format on
+
+    // Create the Add button separately so we can set its click handler
+    // clang-format off
+    auto add_button = m::rectangle_push_button(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::min, ruis::dim::min}
+            },
+            .padding_params{
+                .borders = {c.get().style().get_len_button_padding()}
+            },
+            .rectangle_params{
+                .corner_radii = {c.get().style().get_len_button_padding()}
+            },
+            .rectangle_button_params{
+                .unpressed_color = c.get().style().get_color_special()
+            }
+        },
+        {
+            m::text(c,
+                {
+                    .text_params{
+                        .font_size = c.get().style().get_font_size_normal()
+                    }
+                },
+                c.get().localization.get().get("log_food_dialog:add_button"sv)
+            )
+        }
+    );
+    // clang-format on
+
+    // Dialog content
+    // clang-format off
+    auto dialog_content = ruis::make::column(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::min}
+            }
+        },
+        {
+            m::text(c,
+                {
+                    .text_params{
+                        .font_size = c.get().style().get_font_size_title()
+                    }
+                },
+                c.get().localization.get().get("log_food_dialog:title"sv)
+            ),
+            m::gap(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
+                    }
+                }
+            ),
+            m::padding(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, ruis::dim::min}
+                    },
+                    .container_params{
+                        .layout = ruis::layout::row
+                    },
+                    .padding_params{
+                        .borders = {c.get().style().get_len_gap()}
+                    }
+                },
+                {
+                    m::gap(c,
+                        {
+                            .layout_params{
+                                .dims = {ruis::dim::fill, ruis::dim::min},
+                                .weight = 1
+                            }
+                        }
+                    ),
+                    std::move(add_button)
+                }
+            )
+        }
+    );
+    // clang-format on
+
+    // Dialog background rectangle
+    // clang-format off
+    auto dialog_bg = ruis::make::rectangle(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::fill}
+            },
+            .padding_params{
+                .borders = {c.get().style().get_len_dialog_padding()}
+            },
+            .color_params{
+                .color = c.get().style().get_color_panel()
+            },
+            .rectangle_params{
+                .corner_radii = {c.get().style().get_len_dialog_padding()}
+            }
+        },
+        {
+            std::move(dialog_content)
+        }
+    );
+    // clang-format on
+
+    // Dialog container with padding for margins
+    // clang-format off
+    auto dialog_container = m::padding(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::fill}
+            },
+            .padding_params{
+                .borders = {c.get().style().get_len_dialog_margin()}
+            }
+        },
+        {
+            // Mouse proxy to consume mouse events inside dialog
+            ruis::make::mouse_proxy(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, ruis::dim::fill}
+                    },
+                    .mouse_proxy_params{
+                        .mouse_button_handler = [](auto&, auto&) { return ruis::event_status::consumed; },
+                        .mouse_move_handler = [](auto&, auto&) { return ruis::event_status::consumed; }
+                    }
+                }
+            ),
+            std::move(dialog_bg)
+        }
+    );
+    // clang-format on
+
+    // Root widget containing background, key proxy, and dialog
+    // clang-format off
+    auto root = ruis::make::pile(c,
+        {
+            .layout_params{
+                .dims = {ruis::dim::fill, ruis::dim::fill}
+            }
+        },
+        {
+            // Dimming background
+            ruis::make::rectangle(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, ruis::dim::fill}
+                    },
+                    .widget_params{
+                        .rectangle = {0, 0, 0, 0}
+                    },
+                    .color_params{
+                        .color = c.get().style().get_color_dimmed()
+                    }
+                }
+            ),
+            bg_click_proxy,
+            key_proxy,
+            std::move(dialog_container)
+        }
+    );
+    // clang-format on
+
+    // Set the weak_root for key_proxy after root is created
+    auto root_weak = utki::make_weak(root);
+    key_proxy.get().key_handler = [root_weak](ruis::key_proxy& kp, const ruis::key_event& e) -> ruis::event_status {
+        if (e.action == ruis::button_action::press && e.combo.key == ruis::key::escape) {
+            if (auto r = root_weak.lock()) {
+                r->context.get().post_to_ui_thread([r]() {
+                    r->remove_from_parent();
+                });
+            }
+            return ruis::event_status::consumed;
+        }
+        return ruis::event_status::propagate;
+    };
+
+    // Set click handler for background to close dialog
+    bg_click_proxy.get().click_handler = [root_weak](ruis::click_proxy&) {
+        if (auto r = root_weak.lock()) {
+            r->context.get().post_to_ui_thread([r]() {
+                r->remove_from_parent();
+            });
+        }
+    };
+
+    // Show the dialog
+    c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), root]() {
+        olay.get().push_back(root);
+    });
+}
+
 class today_page :
-	public ruis::page, //
-	private ruis::container
+    public ruis::page, //
+    private ruis::container
 {
 private:
-	today_page(
-		utki::shared_ref<ruis::context> context, //
-		utki::shared_ref<ruis::touch::list> list_widget, //
-		utki::shared_ref<ruis::rectangle_push_button> fab_button
-	) :
-		// clang-format off
-		ruis::widget(
-			std::move(context),
-			{},
-			{
-				.clip = true
-			}
-		),
-		// clang-format on
-		ruis::page(this->context, {}),
-		// clang-format off
-		ruis::container(
-			this->context,
-			{
-				.container_params{
-					.layout = ruis::layout::pile
-				}
-			},
-			{
-				std::move(list_widget),
-			 	m::padding(
-					this->context,
-				 	{
-						.layout_params{
-							.align = {ruis::align::back, ruis::align::back}
-						},
-				  		.padding_params{
-					  		.borders = {16_pp} // TODO: make multiplier of gap?
-				  		}
-					},
-				 	{
-						std::move(fab_button)
-					}
-			 	)
-			}
-		)
-	// clang-format on
-	{}
+    utki::shared_ref<ruis::rectangle_push_button> fab_button;
+
+    today_page(
+        utki::shared_ref<ruis::context> context, //
+        utki::shared_ref<ruis::touch::list> list_widget, //
+        utki::shared_ref<ruis::rectangle_push_button> fab_button_param
+    ) :
+        // clang-format off
+        ruis::widget(
+            std::move(context),
+            {},
+            {
+                .clip = true
+            }
+        ),
+        // clang-format on
+        ruis::page(this->context, {}),
+        // clang-format off
+        ruis::container(
+            this->context,
+            {
+                .container_params{
+                    .layout = ruis::layout::pile
+                }
+            },
+            {
+                std::move(list_widget),
+                m::padding(
+                    this->context,
+                    {
+                        .layout_params{
+                            .align = {ruis::align::back, ruis::align::back}
+                        },
+                        .padding_params{
+                            .borders = {16_pp} // TODO: make multiplier of gap?
+                        }
+                    },
+                    {
+                        fab_button_param
+                    }
+                )
+            }
+        ),
+        fab_button(fab_button_param)
+    // clang-format on
+    {}
 
 public:
-	today_page(utki::shared_ref<ruis::context> context) :
-		today_page(
-			std::move(context),
-			// Create the list widget
-			// clang-format off
-			ruis::touch::make::list(
-				context,
-				{
-					.layout_params{
-						.dims = {ruis::dim::fill, ruis::dim::fill}
-					},
-				 	.oriented_params{
-						.vertical = true
-					},
-				 	.list_params{
-						.provider = utki::make_shared<today_page_provider>(context)
-					}
-				}
-			),
-			// Create the floating action button (FAB)
-			m::rectangle_push_button(
-				context,
-				{
-					.layout_params{
-						.dims = {56_pp}
-					},
-					.container_params{
-						.layout = ruis::layout::pile
-					},
-					.padding_params{
-						.borders = {14_pp}
-					},
-					.rectangle_params{
-						.corner_radii = {14_pp}
-					},
-					.rectangle_button_params{
-						.unpressed_color = context.get().style().get_color_special()
-					}
-				},
-				{
-					ruis::make::image(
-						context,
-					 	{
-							.layout_params{
-								.dims = {ruis::dim::fill}
-							},
-					  		.image_params{
-								.img = context.get().loader().load<ruis::res::image>("img_add"sv)
-							}
-						}
-					)
-				}
-			)
-			// clang-format on
-		)
-	{}
+    today_page(utki::shared_ref<ruis::context> context) :
+        today_page(
+            std::move(context),
+            // Create the list widget
+            // clang-format off
+            ruis::touch::make::list(
+                context,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, ruis::dim::fill}
+                    },
+                    .oriented_params{
+                        .vertical = true
+                    },
+                    .list_params{
+                        .provider = utki::make_shared<today_page_provider>(context)
+                    }
+                }
+            ),
+            // Create the floating action button (FAB)
+            m::rectangle_push_button(
+                context,
+                {
+                    .layout_params{
+                        .dims = {56_pp}
+                    },
+                    .container_params{
+                        .layout = ruis::layout::pile
+                    },
+                    .padding_params{
+                        .borders = {14_pp}
+                    },
+                    .rectangle_params{
+                        .corner_radii = {14_pp}
+                    },
+                    .rectangle_button_params{
+                        .unpressed_color = context.get().style().get_color_special()
+                    }
+                },
+                {
+                    ruis::make::image(
+                        context,
+                        {
+                            .layout_params{
+                                .dims = {ruis::dim::fill}
+                            },
+                            .image_params{
+                                .img = context.get().loader().load<ruis::res::image>("img_add"sv)
+                            }
+                        }
+                    )
+                }
+            )
+            // clang-format on
+        )
+    {
+        // Set click handler on the FAB button
+        // Capture 'this' as raw pointer and create weak_ptr inside handler,
+        // because shared_from_this() doesn't work during construction.
+        this->fab_button.get().click_handler = [](ruis::push_button& b) {
+            show_add_dialog(b);
+        };
+    }
 };
 } // namespace
 
 utki::shared_ref<ruis::page> make_today_page(utki::shared_ref<ruis::context> context)
 {
-	return utki::make_shared<today_page>(std::move(context));
+    return utki::make_shared<today_page>(std::move(context));
 }
 
 } // namespace calslog
