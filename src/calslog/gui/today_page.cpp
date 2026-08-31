@@ -151,6 +151,9 @@ void show_add_dialog(ruis::widget& parent_widget)
         {
             .layout_params{
                 .dims = {ruis::dim::fill, ruis::dim::fill}
+            },
+            .container_params{
+                .layout = ruis::layout::column
             }
         },
         {
