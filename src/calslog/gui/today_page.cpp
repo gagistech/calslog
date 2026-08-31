@@ -24,14 +24,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
+#include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
-#include <ruis/widget/proxy/click_proxy.hpp>
-#include <ruis/widget/proxy/key_proxy.hpp>
-#include <ruis/widget/proxy/mouse_proxy.hpp>
 #include <utki/string.hpp>
 
 #include "style.hpp"
@@ -117,29 +115,6 @@ void show_add_dialog(ruis::widget& parent_widget)
 
     auto& olay = parent_widget.get_ancestor<ruis::overlay>();
 
-    // Background click proxy to close dialog when clicking outside
-    // clang-format off
-    auto bg_click_proxy = ruis::make::click_proxy(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            }
-        }
-    );
-    // clang-format on
-
-    // Key proxy to handle Escape key and Android back key
-    // clang-format off
-    auto key_proxy = ruis::make::key_proxy(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            }
-        },
-        {}
-    );
-    // clang-format on
-
     // Create the Add button separately so we can set its click handler
     // clang-format off
     auto add_button = m::rectangle_push_button(c,
@@ -170,12 +145,12 @@ void show_add_dialog(ruis::widget& parent_widget)
     );
     // clang-format on
 
-    // Dialog content
+    // Create the dialog with its content
     // clang-format off
-    auto dialog_content = ruis::make::column(c,
+    auto dialog = ruis::touch::make::dialog(c,
         {
             .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::min}
+                .dims = {ruis::dim::fill, ruis::dim::fill}
             }
         },
         {
@@ -222,114 +197,9 @@ void show_add_dialog(ruis::widget& parent_widget)
     );
     // clang-format on
 
-    // Dialog background rectangle
-    // clang-format off
-    auto dialog_bg = ruis::make::rectangle(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            },
-            .padding_params{
-                .borders = {c.get().style().get_len_dialog_padding()}
-            },
-            .color_params{
-                .color = c.get().style().get_color_panel()
-            },
-            .rectangle_params{
-                .corner_radii = {c.get().style().get_len_dialog_padding()}
-            }
-        },
-        {
-            std::move(dialog_content)
-        }
-    );
-    // clang-format on
-
-    // Dialog container with padding for margins
-    // clang-format off
-    auto dialog_container = m::padding(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            },
-            .padding_params{
-                .borders = {c.get().style().get_len_dialog_margin()}
-            }
-        },
-        {
-            // Mouse proxy to consume mouse events inside dialog
-            ruis::make::mouse_proxy(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, ruis::dim::fill}
-                    },
-                    .mouse_proxy_params{
-                        .mouse_button_handler = [](auto&, auto&) { return ruis::event_status::consumed; },
-                        .mouse_move_handler = [](auto&, auto&) { return ruis::event_status::consumed; }
-                    }
-                }
-            ),
-            std::move(dialog_bg)
-        }
-    );
-    // clang-format on
-
-    // Root widget containing background, key proxy, and dialog
-    // clang-format off
-    auto root = ruis::make::pile(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            }
-        },
-        {
-            // Dimming background
-            ruis::make::rectangle(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, ruis::dim::fill}
-                    },
-                    .widget_params{
-                        .rectangle = {0, 0, 0, 0}
-                    },
-                    .color_params{
-                        .color = c.get().style().get_color_dimmed()
-                    }
-                }
-            ),
-            bg_click_proxy,
-            key_proxy,
-            std::move(dialog_container)
-        }
-    );
-    // clang-format on
-
-    // Set the weak_root for key_proxy after root is created
-    auto root_weak = utki::make_weak(root);
-    key_proxy.get().key_handler = [root_weak](ruis::key_proxy& kp, const ruis::key_event& e) -> ruis::event_status {
-        if (e.action == ruis::button_action::press && e.combo.key == ruis::key::escape) {
-            if (auto r = root_weak.lock()) {
-                r->context.get().post_to_ui_thread([r]() {
-                    r->remove_from_parent();
-                });
-            }
-            return ruis::event_status::consumed;
-        }
-        return ruis::event_status::propagate;
-    };
-
-    // Set click handler for background to close dialog
-    bg_click_proxy.get().click_handler = [root_weak](ruis::click_proxy&) {
-        if (auto r = root_weak.lock()) {
-            r->context.get().post_to_ui_thread([r]() {
-                r->remove_from_parent();
-            });
-        }
-    };
-
     // Show the dialog
-    c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), root]() {
-        olay.get().push_back(root);
+    c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), dialog]() {
+        olay.get().push_back(dialog);
     });
 }
 
