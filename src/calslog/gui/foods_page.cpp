@@ -102,7 +102,8 @@ public:
 } // namespace
 
 namespace {
-class foods_page : public ruis::page, private ruis::touch::list
+class foods_page : public ruis::page,//
+ private ruis::touch::list
 {
 public:
 	foods_page(const utki::shared_ref<ruis::context>& context) :
@@ -114,15 +115,15 @@ public:
 			}
 		),
 		// clang-format on
-		ruis::page(this->context, {}),
+		ruis::page(context, {}),
 		// clang-format off
-		ruis::touch::list(this->context,
+		ruis::touch::list(context,
 			{
 				.oriented_params{
 					.vertical = true
 				},
 				.list_params{
-					.provider = utki::make_shared<foods_page_provider>(this->context)
+					.provider = utki::make_shared<foods_page_provider>(context)
 				}
 			}
 		)

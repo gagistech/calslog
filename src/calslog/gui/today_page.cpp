@@ -111,7 +111,7 @@ public:
 namespace {
 void show_add_dialog(ruis::widget& parent_widget)
 {
-    utki::shared_ref<ruis::context> c = parent_widget.context;
+    auto& c = parent_widget.context;
 
     auto& olay = parent_widget.get_ancestor<ruis::overlay>();
 
@@ -227,10 +227,10 @@ private:
             }
         ),
         // clang-format on
-        ruis::page(this->context, {}),
+        ruis::page(context, {}),
         // clang-format off
         ruis::container(
-            this->context,
+            context,
             {
                 .container_params{
                     .layout = ruis::layout::pile
@@ -239,7 +239,7 @@ private:
             {
                 std::move(list_widget),
                 m::padding(
-                    this->context,
+                    context,
                     {
                         .layout_params{
                             .align = {ruis::align::back, ruis::align::back}
