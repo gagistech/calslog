@@ -41,8 +41,8 @@ namespace {
 class foods_page_provider : public ruis::list_provider
 {
 public:
-	foods_page_provider(utki::shared_ref<ruis::context> context) :
-		ruis::list_provider(std::move(context))
+	foods_page_provider(const utki::shared_ref<ruis::context>& context) :
+		ruis::list_provider(context)
 	{}
 
 	size_t count() const noexcept override
@@ -105,9 +105,9 @@ namespace {
 class foods_page : public ruis::page, private ruis::touch::list
 {
 public:
-	foods_page(utki::shared_ref<ruis::context> context) :
+	foods_page(const utki::shared_ref<ruis::context>& context) :
 		// clang-format off
-		ruis::widget(std::move(context),
+		ruis::widget(context,
 			{},
 			{
 				.clip = true
@@ -131,9 +131,9 @@ public:
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_foods_page(utki::shared_ref<ruis::context> context)
+utki::shared_ref<ruis::page> make_foods_page(const utki::shared_ref<ruis::context>& context)
 {
-	return utki::make_shared<foods_page>(std::move(context));
+	return utki::make_shared<foods_page>(context);
 }
 
 } // namespace calslog

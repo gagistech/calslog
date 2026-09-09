@@ -30,6 +30,6 @@ class context;
 
 namespace calslog {
 
-utki::shared_ref<ruis::page> make_foods_page(utki::shared_ref<ruis::context> context);
+utki::shared_ref<ruis::page> make_foods_page(const utki::shared_ref<ruis::context>& context);
 
 } // namespace calslog

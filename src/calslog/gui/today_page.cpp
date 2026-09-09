@@ -47,8 +47,8 @@ namespace {
 class today_page_provider : public ruis::list_provider
 {
 public:
-    today_page_provider(utki::shared_ref<ruis::context> context) :
-        ruis::list_provider(std::move(context))
+    today_page_provider(const utki::shared_ref<ruis::context>& context) :
+        ruis::list_provider(context)
     {}
 
     size_t count() const noexcept override
@@ -111,7 +111,7 @@ public:
 namespace {
 void show_add_dialog(ruis::widget& parent_widget)
 {
-    const utki::shared_ref<ruis::context>& c = parent_widget.context;
+    utki::shared_ref<ruis::context> c = parent_widget.context;
 
     auto& olay = parent_widget.get_ancestor<ruis::overlay>();
 
@@ -214,13 +214,13 @@ private:
     utki::shared_ref<ruis::rectangle_push_button> fab_button;
 
     today_page(
-        utki::shared_ref<ruis::context> context, //
+        const utki::shared_ref<ruis::context>& context, //
         utki::shared_ref<ruis::touch::list> list_widget, //
         utki::shared_ref<ruis::rectangle_push_button> fab_button_param
     ) :
         // clang-format off
         ruis::widget(
-            std::move(context),
+            context,
             {},
             {
                 .clip = true
@@ -259,9 +259,9 @@ private:
     {}
 
 public:
-    today_page(utki::shared_ref<ruis::context> context) :
+    today_page(const utki::shared_ref<ruis::context>& context) :
         today_page(
-            std::move(context),
+            context,
             // Create the list widget
             // clang-format off
             ruis::touch::make::list(
@@ -325,9 +325,9 @@ public:
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_today_page(utki::shared_ref<ruis::context> context)
+utki::shared_ref<ruis::page> make_today_page(const utki::shared_ref<ruis::context>& context)
 {
-    return utki::make_shared<today_page>(std::move(context));
+    return utki::make_shared<today_page>(context);
 }
 
 } // namespace calslog

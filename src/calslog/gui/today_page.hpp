@@ -30,6 +30,6 @@ class context;
 
 namespace calslog {
 
-utki::shared_ref<ruis::page> make_today_page(utki::shared_ref<ruis::context> context);
+utki::shared_ref<ruis::page> make_today_page(const utki::shared_ref<ruis::context>& context);
 
 } // namespace calslog

@@ -50,7 +50,7 @@ constexpr auto top_bar_height = 45_pp;
 
 namespace {
 utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
-	utki::shared_ref<ruis::context> c, //
+	const utki::shared_ref<ruis::context>& c, //
 	ruis::layout::parameters layout_params
 )
 {
@@ -112,7 +112,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 	return tabbed_book;
 }
 
-utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
+utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context>& c)
 {
 	// clang-format off
 	return m::rectangle(c,
@@ -173,7 +173,7 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 }
 } // namespace
 
-utki::shared_ref<ruis::widget> calslog::make_root_widget(utki::shared_ref<ruis::context> c)
+utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<ruis::context>& c)
 {
 	// clang-format off
 	return m::overlay(c,

@@ -41,8 +41,8 @@ class history_page_provider : public ruis::list_provider
 	std::vector<std::u32string> items = {U"2025-01-15", U"2025-01-16", U"2025-01-17", U"2025-01-18"};
 
 public:
-	history_page_provider(utki::shared_ref<ruis::context> context) :
-		ruis::list_provider(std::move(context))
+	history_page_provider(const utki::shared_ref<ruis::context>& context) :
+		ruis::list_provider(context)
 	{}
 
 	size_t count() const noexcept override
@@ -103,9 +103,9 @@ namespace {
 class history_page : public ruis::page, private ruis::touch::list
 {
 public:
-	history_page(utki::shared_ref<ruis::context> context) :
+	history_page(const utki::shared_ref<ruis::context>& context) :
 		// clang-format off
-		ruis::widget(std::move(context),
+		ruis::widget(context,
 			{},
 			{
 				.clip = true
@@ -129,9 +129,9 @@ public:
 };
 } // namespace
 
-utki::shared_ref<ruis::page> make_history_page(utki::shared_ref<ruis::context> context)
+utki::shared_ref<ruis::page> make_history_page(const utki::shared_ref<ruis::context>& context)
 {
-	return utki::make_shared<history_page>(std::move(context));
+	return utki::make_shared<history_page>(context);
 }
 
 } // namespace calslog
