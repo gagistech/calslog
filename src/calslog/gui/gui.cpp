@@ -126,8 +126,8 @@ utki::shared_ref<ruis::widget> make_top_bar(utki::shared_ref<ruis::context> c)
 			.padding_params = {
 				.borders = c.get().style().get_len_gap()
 			},
-			.color_params = {
-				.color = c.get().style().get_color_panel()
+			.rectangle_params = {
+				.fill_color = c.get().style().get_color_panel()
 			}
 		},
 		{
