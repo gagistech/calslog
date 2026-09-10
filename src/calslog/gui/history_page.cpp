@@ -69,7 +69,9 @@ public:
 				m::text(this->context,
 					{
 						.text_params{
-							.font_size = ruis::length::make_pp(20)
+							.font_params{
+								.size = ruis::length::make_pp(20)
+							}
 						}
 					},
 					this->items.at(index)
@@ -87,7 +89,9 @@ public:
 							.color_params{
 								.color = 0xff808080
 							},
-							.font_size = ruis::length::make_pp(20)
+							.font_params{
+								.size = ruis::length::make_pp(20)
+							}
 						}
 					},
 					U"0 kcal"

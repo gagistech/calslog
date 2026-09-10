@@ -71,7 +71,9 @@ public:
 				m::text(this->context,
 					{
 						.text_params{
-							.font_size = ruis::length::make_pp(20)
+							.font_params{
+								.size = ruis::length::make_pp(20)
+							}
 						}
 					},
 					food.name
@@ -89,7 +91,9 @@ public:
 							.color_params{
 								.color = 0xff808080
 							},
-							.font_size = ruis::length::make_pp(20)
+							.font_params{
+								.size = ruis::length::make_pp(20)
+							}
 						}
 					},
 					utki::to_utf32(utki::cat(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::cat(food.mass)) + U"g/portion"

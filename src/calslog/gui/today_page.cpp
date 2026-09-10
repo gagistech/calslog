@@ -78,7 +78,9 @@ public:
                 m::text(this->context,
                     {
                         .text_params{
-                            .font_size = ruis::length::make_pp(20)
+                            .font_params{
+                                .size = ruis::length::make_pp(20)
+                            }
                         }
                     },
                     entry.name
@@ -96,7 +98,9 @@ public:
                             .color_params{
                                 .color = 0xff808080
                             },
-                            .font_size = ruis::length::make_pp(20)
+                            .font_params{
+                                .size = ruis::length::make_pp(20)
+                            }
                         }
                     },
                     utki::to_utf32(utki::cat(entry.pcs)) + U" x " + utki::to_utf32(utki::cat(entry.mass)) + U"g = " + utki::to_utf32(utki::cat(total_kcal)) + U" kcal"
@@ -136,7 +140,9 @@ void show_add_dialog(ruis::widget& parent_widget)
             m::text(c,
                 {
                     .text_params{
-                        .font_size = c.get().style().get_font_size_normal()
+                        .font_params{
+                            .size = c.get().style().get_font_size_normal()
+                        }
                     }
                 },
                 c.get().localization.get().get("log_food_dialog:add_button"sv)
@@ -160,7 +166,9 @@ void show_add_dialog(ruis::widget& parent_widget)
             m::text(c,
                 {
                     .text_params{
-                        .font_size = c.get().style().get_font_size_title()
+                        .font_params{
+                            .size = c.get().style().get_font_size_title()
+                        }
                     }
                 },
                 c.get().localization.get().get("log_food_dialog:title"sv)
