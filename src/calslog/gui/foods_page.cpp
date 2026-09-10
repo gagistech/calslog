@@ -85,10 +85,10 @@ public:
 				),
 				m::text(this->context,
 					{
-						.color_params{
-							.color = 0xff808080
-						},
 						.text_params{
+							.color_params{
+								.color = 0xff808080
+							},
 							.font_size = ruis::length::make_pp(20)
 						}
 					},
