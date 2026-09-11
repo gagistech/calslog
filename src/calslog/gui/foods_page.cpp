@@ -70,7 +70,7 @@ public:
 			{
 				m::text(this->context,
 					{
-						.text_params{
+						.params{
 							.font_params{
 								.size = ruis::length::make_pp(20)
 							}
@@ -87,7 +87,7 @@ public:
 				),
 				m::text(this->context,
 					{
-						.text_params{
+						.params{
 							.color_params{
 								.color = 0xff808080
 							},

@@ -77,7 +77,7 @@ public:
             {
                 m::text(this->context,
                     {
-                        .text_params{
+                        .params{
                             .font_params{
                                 .size = ruis::length::make_pp(20)
                             }
@@ -94,7 +94,7 @@ public:
                 ),
                 m::text(this->context,
                     {
-                        .text_params{
+                        .params{
                             .color_params{
                                 .color = 0xff808080
                             },
@@ -139,7 +139,7 @@ void show_add_dialog(ruis::widget& parent_widget)
         {
             m::text(c,
                 {
-                    .text_params{
+                    .params{
                         .font_params{
                             .size = c.get().style().get_font_size_normal()
                         }
@@ -165,7 +165,7 @@ void show_add_dialog(ruis::widget& parent_widget)
         {
             m::text(c,
                 {
-                    .text_params{
+                    .params{
                         .font_params{
                             .size = c.get().style().get_font_size_title()
                         }
