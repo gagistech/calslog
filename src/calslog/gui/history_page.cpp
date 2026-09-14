@@ -55,14 +55,16 @@ public:
 		// clang-format off
 		return m::padding(this->context,
 			{
-				.layout_params{
+				.layout{
 					.dims = {ruis::dim::fill, ruis::dim::min}
 				},
-				.container_params{
-					.layout = ruis::layout::row
-				},
-				.padding_params{
-					.borders = {ruis::length::make_pp(10)}
+				.params{
+					.container{
+						.layout = ruis::layout::row
+					},
+					.specific{
+						.borders = {ruis::length::make_pp(10)}
+					}
 				}
 			},
 			{

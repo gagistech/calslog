@@ -121,11 +121,13 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 				.dims = {ruis::dim::fill, top_bar_height}
 			},
 			.params{
-				.container_params{
-					.layout = ruis::layout::pile
-				},
-				.padding_params{
-					.borders = c.get().style().get_len_gap()
+				.padding{
+					.container{
+						.layout = ruis::layout::pile
+					},
+					.specific{
+						.borders = c.get().style().get_len_gap()
+					}
 				},
 				.specific{
 					.fill_color = c.get().style().get_color_panel()

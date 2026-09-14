@@ -64,14 +64,16 @@ public:
         // clang-format off
         return m::padding(this->context,
             {
-                .layout_params{
+                .layout{
                     .dims = {ruis::dim::fill, ruis::dim::min}
                 },
-                .container_params{
-                    .layout = ruis::layout::row
-                },
-                .padding_params{
-                    .borders = {ruis::length::make_pp(10)}
+                .params{
+                    .container{
+                        .layout = ruis::layout::row
+                    },
+                    .specific{
+                        .borders = {ruis::length::make_pp(10)}
+                    }
                 }
             },
             {
@@ -123,18 +125,24 @@ void show_add_dialog(ruis::widget& parent_widget)
     // clang-format off
     auto add_button = m::rectangle_push_button(c,
         {
-            .layout_params{
+            .layout{
                 .dims = {ruis::dim::min, ruis::dim::min}
             },
             .params{
-                .padding_params{
-                    .borders = {c.get().style().get_len_button_padding()}
-                },
-                .rectangle_params{
-                    .corner_radii = {c.get().style().get_len_button_padding()}
-                },
-                .rectangle_button_params{
-                    .unpressed_color = c.get().style().get_color_special()
+                .rectangle_button{
+                    .rectangle{
+                        .padding{
+                            .specific{
+                                .borders = {c.get().style().get_len_button_padding()}
+                            }
+                        },
+                        .specific{
+                            .corner_radii = {c.get().style().get_len_button_padding()}
+                        }
+                    },
+                    .specific{
+                        .unpressed_color = c.get().style().get_color_special()
+                    }
                 }
             }
         },
@@ -184,14 +192,16 @@ void show_add_dialog(ruis::widget& parent_widget)
             ),
             m::padding(c,
                 {
-                    .layout_params{
+                    .layout{
                         .dims = {ruis::dim::fill, ruis::dim::min}
                     },
-                    .container_params{
-                        .layout = ruis::layout::row
-                    },
-                    .padding_params{
-                        .borders = {c.get().style().get_len_gap()}
+                    .params{
+                        .container{
+                            .layout = ruis::layout::row
+                        },
+                        .specific{
+                            .borders = {c.get().style().get_len_gap()}
+                        }
                     }
                 },
                 {
@@ -251,11 +261,13 @@ private:
                 m::padding(
                     context,
                     {
-                        .layout_params{
+                        .layout{
                             .align = {ruis::align::back, ruis::align::back}
                         },
-                        .padding_params{
-                            .borders = {16_pp} // TODO: make multiplier of gap?
+                        .params{
+                            .specific{
+                                .borders = {16_pp} // TODO: make multiplier of gap?
+                            }
                         }
                     },
                     {
@@ -292,21 +304,27 @@ public:
             m::rectangle_push_button(
                 context,
                 {
-                    .layout_params{
+                    .layout{
                         .dims = {56_pp}
                     },
                     .params{
-                        .container_params{
-                            .layout = ruis::layout::pile
-                        },
-                        .padding_params{
-                            .borders = {14_pp}
-                        },
-                        .rectangle_params{
-                            .corner_radii = {14_pp}
-                        },
-                        .rectangle_button_params{
-                            .unpressed_color = context.get().style().get_color_special()
+                        .rectangle_button{
+                            .rectangle{
+                                .padding{
+                                    .container{
+                                        .layout = ruis::layout::pile
+                                    },
+                                    .specific{
+                                        .borders = {14_pp}
+                                    }
+                                },
+                                .specific{
+                                    .corner_radii = {14_pp}
+                                }
+                            },
+                            .specific{
+                                .unpressed_color = context.get().style().get_color_special()
+                            }
                         }
                     }
                 },
