@@ -71,7 +71,7 @@ public:
 				m::text(this->context,
 					{
 						.params{
-							.font_params{
+							.font{
 								.size = ruis::length::make_pp(20)
 							}
 						}
@@ -91,7 +91,7 @@ public:
 							.color{
 								.normal = 0xff808080
 							},
-							.font_params{
+							.font{
 								.size = ruis::length::make_pp(20)
 							}
 						}
