@@ -161,7 +161,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 							.layout_params = {
 								.dims = {ruis::dim::min, ruis::dim::fill}
 							},
-							.image_params = {
+							.params{
 								.img = c.get().loader().load<ruis::res::image>("img_cog"sv),
 								.keep_aspect_ratio = true
 							}

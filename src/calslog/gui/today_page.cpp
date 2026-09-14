@@ -313,7 +313,7 @@ public:
                             .layout_params{
                                 .dims = {ruis::dim::fill}
                             },
-                            .image_params{
+                            .params{
                                 .img = context.get().loader().load<ruis::res::image>("img_add"sv)
                             }
                         }
