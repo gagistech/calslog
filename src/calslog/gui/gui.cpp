@@ -117,17 +117,19 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 	// clang-format off
 	return m::rectangle(c,
 		{
-			.layout_params = {
+			.layout{
 				.dims = {ruis::dim::fill, top_bar_height}
 			},
-			.container_params = {
-				.layout = ruis::layout::pile
-			},
-			.padding_params = {
-				.borders = c.get().style().get_len_gap()
-			},
-			.rectangle_params = {
-				.fill_color = c.get().style().get_color_panel()
+			.params{
+				.container_params{
+					.layout = ruis::layout::pile
+				},
+				.padding_params{
+					.borders = c.get().style().get_len_gap()
+				},
+				.specific{
+					.fill_color = c.get().style().get_color_panel()
+				}
 			}
 		},
 		{

@@ -126,14 +126,16 @@ void show_add_dialog(ruis::widget& parent_widget)
             .layout_params{
                 .dims = {ruis::dim::min, ruis::dim::min}
             },
-            .padding_params{
-                .borders = {c.get().style().get_len_button_padding()}
-            },
-            .rectangle_params{
-                .corner_radii = {c.get().style().get_len_button_padding()}
-            },
-            .rectangle_button_params{
-                .unpressed_color = c.get().style().get_color_special()
+            .params{
+                .padding_params{
+                    .borders = {c.get().style().get_len_button_padding()}
+                },
+                .rectangle_params{
+                    .corner_radii = {c.get().style().get_len_button_padding()}
+                },
+                .rectangle_button_params{
+                    .unpressed_color = c.get().style().get_color_special()
+                }
             }
         },
         {
@@ -293,17 +295,19 @@ public:
                     .layout_params{
                         .dims = {56_pp}
                     },
-                    .container_params{
-                        .layout = ruis::layout::pile
-                    },
-                    .padding_params{
-                        .borders = {14_pp}
-                    },
-                    .rectangle_params{
-                        .corner_radii = {14_pp}
-                    },
-                    .rectangle_button_params{
-                        .unpressed_color = context.get().style().get_color_special()
+                    .params{
+                        .container_params{
+                            .layout = ruis::layout::pile
+                        },
+                        .padding_params{
+                            .borders = {14_pp}
+                        },
+                        .rectangle_params{
+                            .corner_radii = {14_pp}
+                        },
+                        .rectangle_button_params{
+                            .unpressed_color = context.get().style().get_color_special()
+                        }
                     }
                 },
                 {
