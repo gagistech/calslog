@@ -148,15 +148,23 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 			// Settings button
 			m::ellipse_push_button(c,
 				{
-					.layout_params = {
+					.layout{
 						.dims = {ruis::dim::min, ruis::dim::fill},
 						.align = {ruis::align::back, ruis::align::center}
 					},
-					.container_params = {
-						.layout = ruis::layout::pile
-					},
-					.ellipse_button_params = {
-						.unpressed_color = c.get().style().get_color_panel()
+					.params{
+						.ellipse_button{
+							.ellipse{
+								.padding{
+									.container{
+										.layout = ruis::layout::pile
+									}
+								}
+							},
+							.specific{
+								.unpressed_color = c.get().style().get_color_panel()
+							}
+						}
 					}
 				},
 				{
