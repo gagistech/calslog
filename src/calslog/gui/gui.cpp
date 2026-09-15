@@ -82,8 +82,10 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 							.weight = 1
 						},
 						.image_params{
-							.img = c.get().loader().load<ruis::res::image>("img_today"sv),
-							.keep_aspect_ratio = true
+							.specific{
+								.img = c.get().loader().load<ruis::res::image>("img_today"sv),
+								.keep_aspect_ratio = true
+							}
 						}
 					},
 					c.get().localization.get().get("tabs:today"sv)
@@ -170,12 +172,14 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 				{
 					ruis::make::image(c,
 						{
-							.layout_params = {
+							.layout{
 								.dims = {ruis::dim::min, ruis::dim::fill}
 							},
 							.params{
-								.img = c.get().loader().load<ruis::res::image>("img_cog"sv),
-								.keep_aspect_ratio = true
+								.specific{
+									.img = c.get().loader().load<ruis::res::image>("img_cog"sv),
+									.keep_aspect_ratio = true
+								}
 							}
 						}
 					)

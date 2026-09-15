@@ -332,11 +332,13 @@ public:
                     ruis::make::image(
                         context,
                         {
-                            .layout_params{
+                            .layout{
                                 .dims = {ruis::dim::fill}
                             },
                             .params{
-                                .img = context.get().loader().load<ruis::res::image>("img_add"sv)
+                                .specific{
+                                    .img = context.get().loader().load<ruis::res::image>("img_add"sv)
+                                }
                             }
                         }
                     )
