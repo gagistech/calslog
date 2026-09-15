@@ -337,7 +337,7 @@ public:
                             },
                             .params{
                                 .specific{
-                                    .img = context.get().loader().load<ruis::res::image>("img_add"sv)
+                                    .source = context.get().loader().load<ruis::res::image>("img_add"sv)
                                 }
                             }
                         }
