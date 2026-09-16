@@ -26,7 +26,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/input/labeled_text_field.hpp>
 #include <ruis/widget/label/gap.hpp>
-#include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <ruis/widget/widget.hpp>
 
@@ -48,7 +47,7 @@ void show_log_food_dialog(ruis::widget& parent_widget)
     auto add_button = m::rectangle_push_button(c,
         {
             .layout_params{
-                .dims = {ruis::dim::min, ruis::dim::min}
+                .dims = {ruis::dim::fill, ruis::dim::min}
             },
             .params{
                 .rectangle_button{
@@ -91,6 +90,17 @@ void show_log_food_dialog(ruis::widget& parent_widget)
         );
     };
 
+    // Helper to create a gap with the standard vertical spacing
+    auto make_gap = [&c]() {
+        return m::gap(c,
+            {
+                .layout_params{
+                    .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
+                }
+            }
+        );
+    };
+
     // Create the dialog with its content
     // clang-format off
     auto dialog = ruis::touch::make::dialog(c,
@@ -113,58 +123,13 @@ void show_log_food_dialog(ruis::widget& parent_widget)
                 },
                 c.get().localization.get().get("log_food_dialog:title"sv)
             ),
-            // TODO: create local helper for gap and use it
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
+            make_gap(),
             make_field("log_food_dialog:food_name"sv),
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
+            make_gap(),
             make_field("log_food_dialog:calories_per_100g"sv),
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
+            make_gap(),
             make_field("log_food_dialog:food_mass"sv),
-            // TODO: remove the padding, make add button to fill the horizontal space
-            m::padding(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, ruis::dim::min}
-                    },
-                    .params{
-                        .container{
-                            .layout = ruis::layout::row
-                        },
-                        .specific{
-                            .borders = {c.get().style().get_len_gap()}
-                        }
-                    }
-                },
-                {
-                    m::gap(c,
-                        {
-                            .layout_params{
-                                .dims = {ruis::dim::fill, ruis::dim::min},
-                                .weight = 1
-                            }
-                        }
-                    ),
-                    std::move(add_button)
-                }
-            )
+            std::move(add_button)
         }
     );
     // clang-format on
