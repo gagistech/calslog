@@ -57,7 +57,7 @@ public:
 		// clang-format off
 		return m::padding(this->context,
 			{
-				.layout{
+				.layout_params{
 					.dims = {ruis::dim::fill, ruis::dim::min}
 				},
 				.params{
@@ -82,7 +82,7 @@ public:
 				),
 				m::gap(this->context,
 					{
-						.layout{
+						.layout_params{
 							.dims = {ruis::dim::fill, ruis::dim::min}
 						}
 					}

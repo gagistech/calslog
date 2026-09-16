@@ -59,13 +59,13 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 	// clang-format off
 	auto tabbed_book = m::tabbed_book(c,
 		{
-			.layout = std::move(layout_params)
+			.layout_params = std::move(layout_params)
 		},
 		{
 			{
 				m::tab_button(c,
 					{
-						.layout{
+						.layout_params{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
@@ -77,7 +77,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 			{
 				m::tab_button(c,
 					{
-						.layout{
+						.layout_params{
 							.dims = {ruis::dim::fill, tab_bar_height},
 							.weight = 1
 						},
@@ -97,7 +97,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 			{
 				m::tab_button(c,
 					{
-						.layout{
+						.layout_params{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
@@ -121,7 +121,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 	// clang-format off
 	return m::rectangle(c,
 		{
-			.layout{
+			.layout_params{
 				.dims = {ruis::dim::fill, top_bar_height}
 			},
 			.params{
@@ -152,7 +152,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 			// Settings button
 			m::ellipse_push_button(c,
 				{
-					.layout{
+					.layout_params{
 						.dims = {ruis::dim::min, ruis::dim::fill},
 						.align = {ruis::align::back, ruis::align::center}
 					},
@@ -174,7 +174,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 				{
 					ruis::make::image(c,
 						{
-							.layout{
+							.layout_params{
 								.dims = {ruis::dim::min, ruis::dim::fill}
 							},
 							.params{
@@ -201,7 +201,7 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<
 		{
 			m::column(c,
 				{
-					.layout = {
+					.layout_params = {
 						.dims = {ruis::dim::fill, ruis::dim::fill}
 					}
 				},

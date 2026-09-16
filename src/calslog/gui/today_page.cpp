@@ -64,7 +64,7 @@ public:
         // clang-format off
         return m::padding(this->context,
             {
-                .layout{
+                .layout_params{
                     .dims = {ruis::dim::fill, ruis::dim::min}
                 },
                 .params{
@@ -89,7 +89,7 @@ public:
                 ),
                 m::gap(this->context,
                     {
-                        .layout{
+                        .layout_params{
                             .dims = {ruis::dim::fill, ruis::dim::min}
                         }
                     }
@@ -125,7 +125,7 @@ void show_add_dialog(ruis::widget& parent_widget)
     // clang-format off
     auto add_button = m::rectangle_push_button(c,
         {
-            .layout{
+            .layout_params{
                 .dims = {ruis::dim::min, ruis::dim::min}
             },
             .params{
@@ -165,7 +165,7 @@ void show_add_dialog(ruis::widget& parent_widget)
     // clang-format off
     auto dialog = ruis::touch::make::dialog(c,
         {
-            .layout{
+            .layout_params{
                 .dims = {ruis::dim::fill, ruis::dim::fill}
             },
             .params{
@@ -185,14 +185,14 @@ void show_add_dialog(ruis::widget& parent_widget)
             ),
             m::gap(c,
                 {
-                    .layout{
+                    .layout_params{
                         .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
                     }
                 }
             ),
             m::padding(c,
                 {
-                    .layout{
+                    .layout_params{
                         .dims = {ruis::dim::fill, ruis::dim::min}
                     },
                     .params{
@@ -207,7 +207,7 @@ void show_add_dialog(ruis::widget& parent_widget)
                 {
                     m::gap(c,
                         {
-                            .layout{
+                            .layout_params{
                                 .dims = {ruis::dim::fill, ruis::dim::min},
                                 .weight = 1
                             }
@@ -261,7 +261,7 @@ private:
                 m::padding(
                     context,
                     {
-                        .layout{
+                        .layout_params{
                             .align = {ruis::align::back, ruis::align::back}
                         },
                         .params{
@@ -289,7 +289,7 @@ public:
             ruis::touch::make::list(
                 context,
                 {
-                    .layout{
+                    .layout_params{
                         .dims = {ruis::dim::fill, ruis::dim::fill}
                     },
                     .oriented_params{
@@ -304,7 +304,7 @@ public:
             m::rectangle_push_button(
                 context,
                 {
-                    .layout{
+                    .layout_params{
                         .dims = {56_pp}
                     },
                     .params{
@@ -332,7 +332,7 @@ public:
                     ruis::make::image(
                         context,
                         {
-                            .layout{
+                            .layout_params{
                                 .dims = {ruis::dim::fill}
                             },
                             .params{
