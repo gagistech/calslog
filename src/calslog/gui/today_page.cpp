@@ -23,16 +23,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
-#include <ruis/widget/group/overlay.hpp>
-#include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/group/touch/list.hpp>
-#include <ruis/widget/input/labeled_text_field.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
+#include "log_food_dialog.hpp"
 #include "style.hpp"
 #include "../application.hpp"
 #include "../model/model.hpp"
@@ -116,151 +114,6 @@ public:
 } // namespace
 
 namespace {
-void show_add_dialog(ruis::widget& parent_widget)
-{
-    auto& c = parent_widget.context;
-
-    auto& olay = parent_widget.get_ancestor<ruis::overlay>();
-
-    // Create the Add button separately so we can set its click handler
-    // clang-format off
-    auto add_button = m::rectangle_push_button(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::min, ruis::dim::min}
-            },
-            .params{
-                .rectangle_button{
-                    .rectangle{
-                        .padding{
-                            .specific{
-                                .borders = {c.get().style().get_len_button_padding()}
-                            }
-                        },
-                        .specific{
-                            .corner_radii = {c.get().style().get_len_button_padding()}
-                        }
-                    },
-                    .specific{
-                        .unpressed_color = c.get().style().get_color_special()
-                    }
-                }
-            }
-        },
-        {
-            m::text(c,
-                {
-                    .params{
-                        .font{
-                            .size = c.get().style().get_font_size_normal()
-                        }
-                    }
-                },
-                c.get().localization.get().get("log_food_dialog:add_button"sv)
-            )
-        }
-    );
-    // clang-format on
-
-    // Helper to create a labeled text field with a localized label
-    auto make_field = [&c](std::string_view label_loc_id) {
-        return m::labeled_text_field(c,
-            {
-                .layout_params{
-                    .dims = {ruis::dim::fill, ruis::dim::min}
-                },
-                .params{
-                    .label{
-                        .string = c.get().localization.get().get(label_loc_id)
-                    }
-                }
-            },
-            ruis::string()
-        );
-    };
-
-    // Create the dialog with its content
-    // clang-format off
-    auto dialog = ruis::touch::make::dialog(c,
-        {
-            .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::fill}
-            },
-            .params{
-                .layout = ruis::layout::column
-            }
-        },
-        {
-            m::text(c,
-                {
-                    .params{
-                        .font{
-                            .size = c.get().style().get_font_size_title()
-                        }
-                    }
-                },
-                c.get().localization.get().get("log_food_dialog:title"sv)
-            ),
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
-            make_field("log_food_dialog:food_name"sv),
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
-            make_field("log_food_dialog:calories_per_100g"sv),
-            m::gap(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
-                    }
-                }
-            ),
-            make_field("log_food_dialog:food_mass"sv),
-            m::padding(c,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, ruis::dim::min}
-                    },
-                    .params{
-                        .container{
-                            .layout = ruis::layout::row
-                        },
-                        .specific{
-                            .borders = {c.get().style().get_len_gap()}
-                        }
-                    }
-                },
-                {
-                    m::gap(c,
-                        {
-                            .layout_params{
-                                .dims = {ruis::dim::fill, ruis::dim::min},
-                                .weight = 1
-                            }
-                        }
-                    ),
-                    std::move(add_button)
-                }
-            )
-        }
-    );
-    // clang-format on
-
-    // Show the dialog
-    c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), dialog]() {
-        olay.get().push_back(dialog);
-    });
-}
-
 class today_page :
     public ruis::page, //
     private ruis::container
@@ -386,7 +239,7 @@ public:
         // Capture 'this' as raw pointer and create weak_ptr inside handler,
         // because shared_from_this() doesn't work during construction.
         this->fab_button.get().click_handler = [](ruis::push_button& b) {
-            show_add_dialog(b);
+            show_log_food_dialog(b);
         };
     }
 };
