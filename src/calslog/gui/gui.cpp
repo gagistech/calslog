@@ -51,7 +51,7 @@ constexpr auto top_bar_height = 45_pp;
 namespace {
 utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 	const utki::shared_ref<ruis::context>& c, //
-	ruis::layout::parameters layout_params
+	ruis::layout_parameters layout_params
 )
 {
 	auto today_page = make_today_page(c);
@@ -208,7 +208,7 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<
 				{
 					make_top_bar(c),
 					make_tabbed_book(c,
-						ruis::layout::parameters{
+						ruis::layout_parameters{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
