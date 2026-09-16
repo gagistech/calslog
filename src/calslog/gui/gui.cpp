@@ -81,10 +81,12 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 							.dims = {ruis::dim::fill, tab_bar_height},
 							.weight = 1
 						},
-						.image_params{
-							.specific{
-								.source = c.get().loader().load<ruis::res::image>("img_today"sv),
-								.keep_aspect_ratio = true
+						.params{
+							.image{
+								.specific{
+									.source = c.get().loader().load<ruis::res::image>("img_today"sv),
+									.keep_aspect_ratio = true
+								}
 							}
 						}
 					},
