@@ -82,7 +82,7 @@ public:
 				),
 				m::gap(this->context,
 					{
-						.layout_params{
+						.layout{
 							.dims = {ruis::dim::fill, ruis::dim::min}
 						}
 					}

@@ -59,13 +59,13 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 	// clang-format off
 	auto tabbed_book = m::tabbed_book(c,
 		{
-			.layout_params = std::move(layout_params)
+			.layout = std::move(layout_params)
 		},
 		{
 			{
 				m::tab_button(c,
 					{
-						.layout_params{
+						.layout{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
@@ -77,7 +77,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 			{
 				m::tab_button(c,
 					{
-						.layout_params{
+						.layout{
 							.dims = {ruis::dim::fill, tab_bar_height},
 							.weight = 1
 						},
@@ -95,7 +95,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 			{
 				m::tab_button(c,
 					{
-						.layout_params{
+						.layout{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
 						}
@@ -199,7 +199,7 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<
 		{
 			m::column(c,
 				{
-					.layout_params = {
+					.layout = {
 						.dims = {ruis::dim::fill, ruis::dim::fill}
 					}
 				},

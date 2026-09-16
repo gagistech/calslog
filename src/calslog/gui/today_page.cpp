@@ -89,7 +89,7 @@ public:
                 ),
                 m::gap(this->context,
                     {
-                        .layout_params{
+                        .layout{
                             .dims = {ruis::dim::fill, ruis::dim::min}
                         }
                     }
@@ -165,7 +165,7 @@ void show_add_dialog(ruis::widget& parent_widget)
     // clang-format off
     auto dialog = ruis::touch::make::dialog(c,
         {
-            .layout_params{
+            .layout{
                 .dims = {ruis::dim::fill, ruis::dim::fill}
             },
             .params{
@@ -185,7 +185,7 @@ void show_add_dialog(ruis::widget& parent_widget)
             ),
             m::gap(c,
                 {
-                    .layout_params{
+                    .layout{
                         .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
                     }
                 }
@@ -207,7 +207,7 @@ void show_add_dialog(ruis::widget& parent_widget)
                 {
                     m::gap(c,
                         {
-                            .layout_params{
+                            .layout{
                                 .dims = {ruis::dim::fill, ruis::dim::min},
                                 .weight = 1
                             }
@@ -289,7 +289,7 @@ public:
             ruis::touch::make::list(
                 context,
                 {
-                    .layout_params{
+                    .layout{
                         .dims = {ruis::dim::fill, ruis::dim::fill}
                     },
                     .oriented_params{
