@@ -26,6 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/group/touch/list.hpp>
+#include <ruis/widget/input/labeled_text_field.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
@@ -161,6 +162,23 @@ void show_add_dialog(ruis::widget& parent_widget)
     );
     // clang-format on
 
+    // Helper to create a labeled text field with a localized label
+    auto make_field = [&c](std::string_view label_loc_id) {
+        return m::labeled_text_field(c,
+            {
+                .layout_params{
+                    .dims = {ruis::dim::fill, ruis::dim::min}
+                },
+                .params{
+                    .label{
+                        .string = c.get().localization.get().get(label_loc_id)
+                    }
+                }
+            },
+            ruis::string()
+        );
+    };
+
     // Create the dialog with its content
     // clang-format off
     auto dialog = ruis::touch::make::dialog(c,
@@ -190,6 +208,23 @@ void show_add_dialog(ruis::widget& parent_widget)
                     }
                 }
             ),
+            make_field("log_food_dialog:food_name"sv),
+            m::gap(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
+                    }
+                }
+            ),
+            make_field("log_food_dialog:calories_per_100g"sv),
+            m::gap(c,
+                {
+                    .layout_params{
+                        .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
+                    }
+                }
+            ),
+            make_field("log_food_dialog:food_mass"sv),
             m::padding(c,
                 {
                     .layout_params{

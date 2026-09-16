@@ -34,7 +34,6 @@ function(calslog_declare_library_and_application variant)
         INCLUDE_DIRECTORIES
             ../../src
         DEPENDENCIES
-            clargs
             ${PROJECT_NAME}::lib${PROJECT_NAME}-${variant}
         RUN_ARGUMENTS
             --res-path=res
