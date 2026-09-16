@@ -47,7 +47,9 @@ void show_log_food_dialog(ruis::widget& parent_widget)
     auto add_button = m::rectangle_push_button(c,
         {
             .layout_params{
-                .dims = {ruis::dim::fill, ruis::dim::min}
+                .dims = {ruis::dim::fill, ruis::dim::min},
+                .weight = 1,
+                .align = {ruis::align::center, ruis::align::back}
             },
             .params{
                 .rectangle_button{
