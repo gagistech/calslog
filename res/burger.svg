@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 122.88 105.47"
+   style="enable-background:new 0 0 122.88 105.47"
+   xml:space="preserve"
+   sodipodi:docname="burger.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:zoom="7.5850952"
+   inkscape:cx="61.436276"
+   inkscape:cy="52.735001"
+   inkscape:window-width="1920"
+   inkscape:window-height="1011"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+    <style
+   type="text/css"
+   id="style1">
+        .st0{
+            fill-rule:evenodd;
+            clip-rule:evenodd;
+            fill: white;
+        }
+    </style>
+    <g
+   id="g1"
+   transform="matrix(0.85124267,0,0,0.85124267,9.0502849,8.0413729)">
+    <path
+   class="st0"
+   d="m 4.99,83.59 c 37.32,-0.07 74.61,-0.11 111.93,0 2.22,0.01 4.04,1.82 4.04,4.04 0,6.03 -2.53,17.83 -16.17,17.83 -29.23,0 -58.45,0 -87.68,0 -13.64,0 -16.17,-11.8 -16.17,-17.83 0,-2.22 1.82,-4.03 4.05,-4.04 z M 88.55,13.6 c 3.43,0 6.22,2.78 6.22,6.22 0,3.43 -2.78,6.22 -6.22,6.22 -3.43,0 -6.22,-2.78 -6.22,-6.22 0.01,-3.43 2.79,-6.22 6.22,-6.22 z m -54.22,0.44 c 3.43,0 6.22,2.78 6.22,6.22 0,3.43 -2.78,6.22 -6.22,6.22 -3.43,0 -6.22,-2.78 -6.22,-6.22 0,-3.44 2.78,-6.22 6.22,-6.22 z M 61.22,8.11 c 3.43,0 6.22,2.78 6.22,6.22 0,3.43 -2.78,6.22 -6.22,6.22 -3.43,0 -6.22,-2.78 -6.22,-6.22 0.01,-3.44 2.79,-6.22 6.22,-6.22 z m 50.41,36.52 H 11.57 C 5.21,44.63 0,39.43 0,33.07 v 0 C 0,16.6 32.81,0.28 60.36,0 c 54.21,-0.54 78.54,44.63 51.27,44.63 z m 9.06,17.58 c 0.17,0.29 0.26,0.6 0.26,0.93 0,0.21 -0.01,0.44 -0.02,0.67 0.02,0.23 0.02,0.46 0.02,0.67 0,0.33 -0.09,0.64 -0.26,0.93 -0.92,4.01 -4.6,9.26 -15.9,9.26 -29.23,0 -58.45,0 -87.68,0 -11.31,0 -14.98,-5.24 -15.9,-9.26 -0.17,-0.29 -0.26,-0.6 -0.26,-0.93 0,-0.21 0.01,-0.44 0.02,-0.67 -0.02,-0.23 -0.02,-0.46 -0.02,-0.67 0,-0.33 0.09,-0.64 0.26,-0.93 0.92,-4.01 4.6,-9.26 15.9,-9.26 h 45.4 L 79.25,70.24 95.88,52.95 h 8.91 c 11.31,0.01 14.98,5.25 15.9,9.26 z"
+   id="path1" />
+    </g>
+</svg>

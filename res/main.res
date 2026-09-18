@@ -12,6 +12,10 @@ img_close{
     file{close.svg}
 }
 
+img_burger{
+    file{burger.svg}
+}
+
 img_today{
     file{today.svg}
 }
