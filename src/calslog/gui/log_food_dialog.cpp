@@ -109,9 +109,6 @@ void show_log_food_dialog(ruis::widget& parent_widget)
         {
             .layout_params{
                 .dims = {ruis::dim::fill, ruis::dim::fill}
-            },
-            .params{
-                .layout = ruis::layout::column
             }
         },
         {
