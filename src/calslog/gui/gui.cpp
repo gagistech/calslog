@@ -138,7 +138,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 						.layout = ruis::layout::pile
 					},
 					.specific{
-						.borders = c.get().style().get_len_gap()
+						.borders = c.get().style().get_len_gap_small()
 					}
 				},
 				.specific{

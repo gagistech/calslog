@@ -65,7 +65,7 @@ void show_log_food_dialog(ruis::widget& parent_widget)
                 {
                     .params{
                         .font{
-                            .size = c.get().style().get_font_size_normal()
+                            .size = c.get().style().get_font_size_primary()
                         }
                     }
                 },
@@ -97,7 +97,7 @@ void show_log_food_dialog(ruis::widget& parent_widget)
         return m::gap(c,
             {
                 .layout_params{
-                    .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
+                    .dims = {ruis::dim::fill, c.get().style().get_len_gap_small()}
                 }
             }
         );
