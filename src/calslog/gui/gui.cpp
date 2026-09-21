@@ -108,6 +108,14 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 						.layout_params{
 							.dims = {ruis::dim::fill, ruis::dim::fill},
 							.weight = 1
+						},
+						.params{
+							.image{
+								.specific{
+									.source = c.get().loader().load<ruis::res::image>("img_history"sv),
+									.keep_aspect_ratio = true
+								}
+							}
 						}
 					},
 					c.get().localization.get().get("tabs:history"sv)
