@@ -75,8 +75,8 @@ void show_log_food_dialog(ruis::widget& parent_widget)
     );
     // clang-format on
 
-    // Helper to create a labeled text field with a localized label
-    auto make_field = [&c](std::string_view label_loc_id) {
+    // Helper to create a labeled text field with a localized label and hint
+    auto make_field = [&c](std::string_view label_loc_id, std::string_view hint_loc_id) {
         return m::labeled_text_field(c,
             {
                 .layout_params{
@@ -85,6 +85,11 @@ void show_log_food_dialog(ruis::widget& parent_widget)
                 .params{
                     .label{
                         .string = c.get().localization.get().get(label_loc_id)
+                    },
+                    .text_input{
+                        .specific{
+                            .hint = c.get().localization.get().get(hint_loc_id)
+                        }
                     }
                 }
             },
@@ -97,7 +102,7 @@ void show_log_food_dialog(ruis::widget& parent_widget)
         return m::gap(c,
             {
                 .layout_params{
-                    .dims = {ruis::dim::fill, c.get().style().get_len_gap_small()}
+                    .dims = {ruis::dim::fill, c.get().style().get_len_gap()}
                 }
             }
         );
@@ -123,11 +128,12 @@ void show_log_food_dialog(ruis::widget& parent_widget)
                 c.get().localization.get().get("log_food_dialog:title"sv)
             ),
             make_gap(),
-            make_field("log_food_dialog:food_name"sv),
+            make_field("log_food_dialog:food_name"sv, "log_food_dialog:food_name_hint"sv),
             make_gap(),
-            make_field("log_food_dialog:calories_per_100g"sv),
+            make_field("log_food_dialog:calories_per_100g"sv, "log_food_dialog:calories_per_100g_hint"sv),
             make_gap(),
-            make_field("log_food_dialog:food_mass"sv),
+            make_field("log_food_dialog:food_mass"sv, "log_food_dialog:food_mass_hint"sv),
+            make_gap(),
             std::move(add_button)
         }
     );

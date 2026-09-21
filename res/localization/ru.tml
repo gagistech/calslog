@@ -7,4 +7,7 @@ vocabulary{
     log_food_dialog:food_name{str{"Название продукта"}}
     log_food_dialog:calories_per_100g{str{"Калории на 100 г"}}
     log_food_dialog:food_mass{str{"Масса продукта (г)"}}
+    log_food_dialog:food_name_hint{str{"напр. Яблоко"}}
+    log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}
+    log_food_dialog:food_mass_hint{str{"напр. 200"}}
 }

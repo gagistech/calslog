@@ -7,4 +7,7 @@ vocabulary{
     log_food_dialog:food_name{str{"Food name"}}
     log_food_dialog:calories_per_100g{str{"Calories per 100g"}}
     log_food_dialog:food_mass{str{"Food mass (g)"}}
+    log_food_dialog:food_name_hint{str{"e.g. Apple"}}
+    log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
+    log_food_dialog:food_mass_hint{str{"e.g. 200"}}
 }
