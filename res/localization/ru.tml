@@ -4,10 +4,10 @@ vocabulary{
     tabs:history{str{История}}
     log_food_dialog:title{str{Записать еду}}
     log_food_dialog:add_button{str{Добавить}}
-    log_food_dialog:food_name{str{"Название продукта"}}
-    log_food_dialog:calories_per_100g{str{"Калории на 100 г"}}
-    log_food_dialog:food_mass{str{"Масса продукта (г)"}}
+    log_food_dialog:food_name{str{"Название"}}
+    log_food_dialog:food_mass{str{"Масса (г)"}}
     log_food_dialog:food_name_hint{str{"напр. Яблоко"}}
+    log_food_dialog:calories_per_100g{str{"ккал / 100 г"}}
     log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}
     log_food_dialog:food_mass_hint{str{"напр. 200"}}
 }

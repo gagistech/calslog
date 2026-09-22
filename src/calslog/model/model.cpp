@@ -125,8 +125,12 @@ model::entry parse_entry(const tml::tree& tree)
 		}
 	}
 
-	return {.name = utki::to_utf32(tree.value.string),//
-		 .pcs = pcs, .mass = mass, .kcal = kcal};
+	return {
+		.name = utki::to_utf32(tree.value.string), //
+		.pcs = pcs,
+		.mass = mass,
+		.kcal = kcal
+	};
 }
 } // namespace
 
@@ -139,8 +143,10 @@ model::day parse_day(const tml::tree& tree)
 		entries.push_back(parse_entry(e));
 	}
 
-	return {.date = parse_yyyy_mm_dd(tree.value.string),//
-		 .entries = std::move(entries)};
+	return {
+		.date = parse_yyyy_mm_dd(tree.value.string), //
+		.entries = std::move(entries)
+	};
 }
 } // namespace
 

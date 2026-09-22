@@ -30,10 +30,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
-#include "log_food_dialog.hpp"
-#include "style.hpp"
 #include "../application.hpp"
 #include "../model/model.hpp"
+
+#include "log_food_dialog.hpp"
+#include "style.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -46,21 +47,21 @@ namespace {
 class today_page_provider : public ruis::list_provider
 {
 public:
-    today_page_provider(const utki::shared_ref<ruis::context>& context) :
-        ruis::list_provider(context)
-    {}
+	today_page_provider(const utki::shared_ref<ruis::context>& context) :
+		ruis::list_provider(context)
+	{}
 
-    size_t count() const noexcept override
-    {
-        return application::inst().model.today.entries.size();
-    }
+	size_t count() const noexcept override
+	{
+		return application::inst().model.today.entries.size();
+	}
 
-    utki::shared_ref<ruis::widget> get_widget(size_t index) override
-    {
-        const auto& entry = application::inst().model.today.entries.at(index);
-        const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	{
+		const auto& entry = application::inst().model.today.entries.at(index);
+		const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
 
-        // clang-format off
+		// clang-format off
         return m::padding(this->context,
             {
                 .layout_params{
@@ -108,25 +109,25 @@ public:
                 )
             }
         );
-        // clang-format on
-    }
+		// clang-format on
+	}
 };
 } // namespace
 
 namespace {
 class today_page :
-    public ruis::page, //
-    private ruis::container
+	public ruis::page, //
+	private ruis::container
 {
 private:
-    utki::shared_ref<ruis::rectangle_push_button> fab_button;
+	utki::shared_ref<ruis::rectangle_push_button> fab_button;
 
-    today_page(
-        const utki::shared_ref<ruis::context>& context, //
-        utki::shared_ref<ruis::touch::list> list_widget, //
-        utki::shared_ref<ruis::rectangle_push_button> fab_button_param
-    ) :
-        // clang-format off
+	today_page(
+		const utki::shared_ref<ruis::context>& context, //
+		utki::shared_ref<ruis::touch::list> list_widget, //
+		utki::shared_ref<ruis::rectangle_push_button> fab_button_param
+	) :
+		// clang-format off
         ruis::widget(
             context,
             {},
@@ -134,9 +135,9 @@ private:
                 .clip = true
             }
         ),
-        // clang-format on
-        ruis::page(context, {}),
-        // clang-format off
+		// clang-format on
+		ruis::page(context, {}),
+		// clang-format off
         ruis::container(
             context,
             {
@@ -165,15 +166,15 @@ private:
             }
         ),
         fab_button(fab_button_param)
-    // clang-format on
-    {}
+	// clang-format on
+	{}
 
 public:
-    today_page(const utki::shared_ref<ruis::context>& context) :
-        today_page(
-            context,
-            // Create the list widget
-            // clang-format off
+	today_page(const utki::shared_ref<ruis::context>& context) :
+		today_page(
+			context,
+			// Create the list widget
+			// clang-format off
             ruis::touch::make::list(
                 context,
                 {
@@ -232,22 +233,22 @@ public:
                     )
                 }
             )
-            // clang-format on
-        )
-    {
-        // Set click handler on the FAB button
-        // Capture 'this' as raw pointer and create weak_ptr inside handler,
-        // because shared_from_this() doesn't work during construction.
-        this->fab_button.get().click_handler = [](ruis::push_button& b) {
-            show_log_food_dialog(b);
-        };
-    }
+			// clang-format on
+		)
+	{
+		// Set click handler on the FAB button
+		// Capture 'this' as raw pointer and create weak_ptr inside handler,
+		// because shared_from_this() doesn't work during construction.
+		this->fab_button.get().click_handler = [](ruis::push_button& b) {
+			show_log_food_dialog(b);
+		};
+	}
 };
 } // namespace
 
 utki::shared_ref<ruis::page> make_today_page(const utki::shared_ref<ruis::context>& context)
 {
-    return utki::make_shared<today_page>(context);
+	return utki::make_shared<today_page>(context);
 }
 
 } // namespace calslog

@@ -27,9 +27,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
-#include "style.hpp"
 #include "../application.hpp"
 #include "../model/model.hpp"
+
+#include "style.hpp"
 
 using namespace std::string_literals;
 
@@ -108,8 +109,9 @@ public:
 } // namespace
 
 namespace {
-class foods_page : public ruis::page,//
- private ruis::touch::list
+class foods_page :
+	public ruis::page, //
+	private ruis::touch::list
 {
 public:
 	foods_page(const utki::shared_ref<ruis::context>& context) :

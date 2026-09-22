@@ -100,11 +100,12 @@ application::~application()
 	this->save();
 }
 
-void application::save()noexcept{
-	try{
+void application::save() noexcept
+{
+	try {
 		fsif::native_file data_file(utki::cat(this->directory.data, data_filename));
 		calslog::model::write(this->model, data_file);
-	}catch(...){
+	} catch (...) {
 		utki::logcat_debug("ERROR: saving data failed");
 	}
 }

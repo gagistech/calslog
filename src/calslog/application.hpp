@@ -41,7 +41,7 @@ public:
 
 	~application() override;
 
-	void save()noexcept;
+	void save() noexcept;
 
 	static application& inst()
 	{

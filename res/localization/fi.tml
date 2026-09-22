@@ -4,10 +4,10 @@ vocabulary{
     tabs:history{str{Historia}}
     log_food_dialog:title{str{Kirjaa ruoka}}
     log_food_dialog:add_button{str{Lisää}}
-    log_food_dialog:food_name{str{"Ruuan nimi"}}
-    log_food_dialog:calories_per_100g{str{"Kalorit per 100 g"}}
-    log_food_dialog:food_mass{str{"Ruuan massa (g)"}}
+    log_food_dialog:food_name{str{"Nimi"}}
+    log_food_dialog:food_mass{str{"Massa (g)"}}
     log_food_dialog:food_name_hint{str{"esim. Omena"}}
+    log_food_dialog:calories_per_100g{str{"kcal / 100 g"}}
     log_food_dialog:calories_per_100g_hint{str{"esim. 52"}}
     log_food_dialog:food_mass_hint{str{"esim. 200"}}
 }

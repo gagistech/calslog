@@ -4,10 +4,10 @@ vocabulary{
     tabs:history{str{History}}
     log_food_dialog:title{str{"Log Food"}}
     log_food_dialog:add_button{str{Add}}
-    log_food_dialog:food_name{str{"Food name"}}
-    log_food_dialog:calories_per_100g{str{"Calories per 100g"}}
-    log_food_dialog:food_mass{str{"Food mass (g)"}}
+    log_food_dialog:food_name{str{"Name"}}
+    log_food_dialog:food_mass{str{"Mass (g)"}}
     log_food_dialog:food_name_hint{str{"e.g. Apple"}}
+    log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
     log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
     log_food_dialog:food_mass_hint{str{"e.g. 200"}}
 }
