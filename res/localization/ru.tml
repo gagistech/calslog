@@ -4,6 +4,7 @@ vocabulary{
     tabs:history{str{История}}
     log_food_dialog:title{str{Записать еду}}
     log_food_dialog:add_button{str{Добавить}}
+    log_food_dialog:cancel_button{str{Отмена}}
     log_food_dialog:food_name{str{"Название"}}
     log_food_dialog:food_mass{str{"Масса (г)"}}
     log_food_dialog:food_name_hint{str{"напр. Яблоко"}}

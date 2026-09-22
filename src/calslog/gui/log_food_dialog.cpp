@@ -60,29 +60,38 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 
 	auto& olay = parent_widget.get_ancestor<ruis::overlay>();
 
-	// Create the Add button separately so we can set its click handler
-	// clang-format off
-	auto add_button = m::rectangle_push_button(c,
-		{
-			.layout_params{
-				.dims = {ruis::dim::fill, ruis::dim::min},
-				.weight = 1,
-				.align = {ruis::align::center, ruis::align::back}
-			},
-			.params{
-				.rectangle_button{
-					.specific{
-						// TODO: add special button?
-						.unpressed_color = c.get().style().get_color_special()
+	// Helper to create a push button with a localized caption and the given color.
+	auto make_button = [&c](std::string_view text_loc_id, ruis::styled<ruis::color> color) {
+		// clang-format off
+		return m::rectangle_push_button(c,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::min},
+					.weight = 1
+				},
+				.params{
+					.rectangle_button{
+						.specific{
+							.unpressed_color = color
+						}
 					}
 				}
+			},
+			{
+				m::text(c, {}, c.get().localization.get().get(text_loc_id))
 			}
-		},
-		{
-			m::text(c, {}, c.get().localization.get().get("log_food_dialog:add_button"sv))
-		}
-	);
-	// clang-format on
+		);
+		// clang-format on
+	};
+
+	// Create the Add button separately so we can reference it in the validator below.
+	auto add_button = make_button("log_food_dialog:add_button"sv, c.get().style().get_color_special());
+	auto cancel_button = make_button("log_food_dialog:cancel_button"sv, c.get().style().get_color_primary());
+
+	// The Cancel button closes the dialog.
+	cancel_button.get().click_handler = [](ruis::push_button& b) {
+		b.get_ancestor<ruis::touch::dialog>().close();
+	};
 
 	// Helper to create a labeled text field with a localized label and hint.
 	// An optional input filter may be provided to restrict what can be typed.
@@ -105,8 +114,13 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 	};
 
 	// Helper to create a gap with the standard vertical spacing
-	auto make_gap = [&c]() {
+	auto make_vert_gap = [&c]() {
 		return m::gap(c, {.layout_params{.dims = {ruis::dim::fill, c.get().style().get_len_gap()}}});
+	};
+
+	// Helper to create a horizontal gap (used to separate the dialog buttons)
+	auto make_hori_gap = [&c]() {
+		return m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap(), ruis::dim::fill}}});
 	};
 
 	// Input filter that restricts a field to a numeric value:
@@ -199,14 +213,27 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 				},
 				c.get().localization.get().get("log_food_dialog:title"sv)
 			),
-			make_gap(),
+			make_vert_gap(),
 			std::move(food_name_field),
-			make_gap(),
+			make_vert_gap(),
 			std::move(calories_field),
-			make_gap(),
+			make_vert_gap(),
 			std::move(mass_field),
-			make_gap(),
-			std::move(add_button)
+			make_vert_gap(),
+			m::row(c,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::min},
+						.weight = 1,
+						.align = {ruis::align::front, ruis::align::back}
+					}
+				},
+				{
+					std::move(cancel_button),
+					make_hori_gap(),
+					std::move(add_button)
+				}
+			)
 		}
 	);
 	// clang-format on

@@ -4,6 +4,7 @@ vocabulary{
     tabs:history{str{Historia}}
     log_food_dialog:title{str{Kirjaa ruoka}}
     log_food_dialog:add_button{str{Lisää}}
+    log_food_dialog:cancel_button{str{Peru}}
     log_food_dialog:food_name{str{"Nimi"}}
     log_food_dialog:food_mass{str{"Massa (g)"}}
     log_food_dialog:food_name_hint{str{"esim. Omena"}}
