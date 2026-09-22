@@ -11,4 +11,5 @@ vocabulary{
     log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
     log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
     log_food_dialog:food_mass_hint{str{"e.g. 200"}}
+    log_food_dialog:total{str{"Total: {0} kcal"}}
 }

@@ -31,6 +31,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <ruis/widget/widget.hpp>
+#include <utki/string.hpp>
+#include <utki/unicode.hpp>
 
 #include "style.hpp"
 
@@ -48,6 +50,16 @@ bool has_decimal_point(std::u32string_view s)
 		}
 	}
 	return false;
+}
+
+// Converts a numeric UTF-32 string to a float.
+// Empty or unparsable input yields 0.
+float to_float(const std::u32string& s)
+{
+	auto s8 = utki::to_utf8(s);
+	float value = 0;
+	utki::from_chars(s8.data(), s8.data() + s8.size(), value);
+	return value;
 }
 
 } // namespace
@@ -181,18 +193,55 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 		add_btn.set_enabled(all_filled);
 	};
 
-	// Watch the text of each field and recompute the button enabled state on change.
-	auto watch_field = [update_add_button_enabled](auto& input) {
-		input.text_change_handler = [update_add_button_enabled](ruis::text_widget&) {
-			update_add_button_enabled();
+	// The label showing the total kcal for the entered kcal/100g and mass.
+	auto total_label = m::text(
+		c,
+		{
+			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+			.params{
+				.font{
+					.size = c.get().style().get_font_size_primary()
+				}
+			}
+		},
+		std::u32string{}
+	);
+
+	// Recompute and apply the total label text from the current field values.
+	// Total kcal = (entered kcal/100g) * (entered mass in grams) / 100.
+	auto update_total_label = [c, //
+								 &total_lbl = total_label.get(),
+								 &cal_input,
+								 &mass_input]() //
+	{
+		const float kcal_per_100g = to_float(cal_input.get_string());
+		const float mass_g = to_float(mass_input.get_string());
+		const float total_kcal = kcal_per_100g * mass_g / 100.f;
+		const auto total_str = utki::to_utf32(utki::cat(total_kcal));
+		total_lbl.set_text(
+			c.get().localization.get().get("log_food_dialog:total"sv).format({total_str}).string()
+		);
+	};
+
+	// Recompute both the Add button enabled state and the total label on any field change.
+	auto update_all = [update_add_button_enabled, update_total_label]() //
+	{
+		update_add_button_enabled();
+		update_total_label();
+	};
+
+	// Watch the text of each field and recompute the button enabled state and total on change.
+	auto watch_field = [update_all](auto& input) {
+		input.text_change_handler = [update_all](ruis::text_widget&) {
+			update_all();
 		};
 	};
 	watch_field(fn_input);
 	watch_field(cal_input);
 	watch_field(mass_input);
 
-	// Set the initial enabled state (all fields are empty -> the button is disabled).
-	update_add_button_enabled();
+	// Set the initial state (all fields are empty -> the button is disabled and the total is 0).
+	update_all();
 
 	// Create the dialog with its content
 	// clang-format off
@@ -219,6 +268,8 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 			std::move(calories_field),
 			make_vert_gap(),
 			std::move(mass_field),
+			make_vert_gap(),
+			std::move(total_label),
 			make_vert_gap(),
 			m::row(c,
 				{
