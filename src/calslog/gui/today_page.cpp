@@ -257,7 +257,7 @@ private:
                         }
                     },
                     {
-                        m::row(
+                        m::column(
                             context,
                             {
                                 .layout_params{
@@ -265,55 +265,70 @@ private:
                                 }
                             },
                             {
-                                // Total kcal and weight fields, take the remaining width
-                                m::column(
+                                // First row: total kcal
+                                total_kcal_text_param,
+                                m::gap(context,
+                                    {
+                                        .layout_params{
+                                            .dims = {0_pp, context.get().style().get_len_gap_small()}
+                                        }
+                                    }
+                                ),
+                                // Second row: weight and the edit button right next to it, centered horizontally
+                                m::row(
                                     context,
                                     {
                                         .layout_params{
-                                            .dims = {ruis::dim::fill, ruis::dim::min},
-                                            .weight = 1
+                                            .dims = {ruis::dim::min, ruis::dim::min},
+                                            .align = {ruis::align::center, ruis::align::center}
                                         }
                                     },
                                     {
-                                        total_kcal_text_param,
+                                        weight_text_param,
                                         m::gap(context,
                                             {
                                                 .layout_params{
-                                                    .dims = {0_pp, context.get().style().get_len_gap_small()}
+                                                    .dims = {context.get().style().get_len_gap_small(), 0_pp}
                                                 }
                                             }
                                         ),
-                                        weight_text_param
-                                    }
-                                ),
-                                // Edit button on the right side, at the window edge
-                                m::ellipse_push_button(
-                                    context,
-                                    {
-                                        .layout_params{
-                                            .dims = {ruis::dim::min, ruis::dim::fill}
-                                        },
-                                        .params{
-                                            .ellipse_button{
-                                                .specific{
-                                                    .unpressed_color = ruis::color::transparent
-                                                }
-                                            }
-                                        }
-                                    },
-                                    {
-                                        m::image(
+                                        // Edit button right next to the weight
+                                        m::ellipse_push_button(
                                             context,
                                             {
                                                 .layout_params{
                                                     .dims = {ruis::dim::min, ruis::dim::fill}
                                                 },
                                                 .params{
-                                                    .specific{
-                                                        .source = context.get().loader().load<ruis::res::image>("img_edit"sv),
-                                                        .keep_aspect_ratio = true
+                                                    .ellipse_button{
+                                                        .ellipse{
+                                                            .padding{
+                                                                .specific{
+                                                                    .borders = {context.get().style().get_len_gap_small()}
+                                                                }
+                                                            }
+                                                        },
+                                                        .specific{
+                                                            .unpressed_color = ruis::color::transparent
+                                                        }
                                                     }
                                                 }
+                                            },
+                                            {
+                                                m::image(
+                                                    context,
+                                                    {
+                                                        .layout_params{
+                                                            .dims = {ruis::dim::min, ruis::dim::fill}
+                                                        },
+                                                        .params{
+                                                            .specific{
+                                                                .source = context.get().loader().load<ruis::res::image>("img_edit"sv),
+                                                                .keep_aspect_ratio = true
+                                                            }
+                                                        }
+                                                    }
+                                                )
                                             }
                                         )
                                     }
