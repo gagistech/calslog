@@ -61,7 +61,7 @@ public:
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
 		const auto& entry = application::inst().model.today.entries.at(index);
-		const uint32_t total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+		const uint32_t total_kcal = entry.calc_total_kcal();
 
 		const auto& style = this->context.get().style();
 		const auto len_border = style.get_len_border();
@@ -227,25 +227,60 @@ private:
             context,
             {
                 .params{
-                    .layout = ruis::layout::pile
+                    .layout = ruis::layout::column
                 }
             },
             {
-                std::move(list_widget),
+                // Total kcal field at the top of the page
                 m::padding(
                     context,
                     {
                         .layout_params{
-                            .align = {ruis::align::back, ruis::align::back}
+                            .dims = {ruis::dim::fill, ruis::dim::min}
                         },
                         .params{
                             .specific{
-                                .borders = {16_pp} // TODO: make multiplier of gap?
+                                .borders = {context.get().style().get_len_gap_small()}
                             }
                         }
                     },
                     {
-                        fab_button_param
+                        m::text(context,
+                            {},
+                            context.get().localization.get()
+                                .get("total_kcal"sv)
+                                .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+                                .string()
+                        )
+                    }
+                ),
+                // List and the floating action button on top of it
+                m::pile(
+                    context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, ruis::dim::fill},
+                            .weight = 1
+                        }
+                    },
+                    {
+                        std::move(list_widget),
+                        m::padding(
+                            context,
+                            {
+                                .layout_params{
+                                    .align = {ruis::align::back, ruis::align::back}
+                                },
+                                .params{
+                                    .specific{
+                                        .borders = {context.get().style().get_len_gap_big()}
+                                    }
+                                }
+                            },
+                            {
+                                fab_button_param
+                            }
+                        )
                     }
                 )
             }

@@ -298,7 +298,7 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 		} else {
 			total_str = std::u32string(U"?");
 		}
-		total_lbl.set_text(c.get().localization.get().get("log_food_dialog:total"sv).format({total_str}).string());
+		total_lbl.set_text(c.get().localization.get().get("total_kcal"sv).format({total_str}).string());
 	};
 
 	// Recompute both the Add button enabled state and the labels on any field change.

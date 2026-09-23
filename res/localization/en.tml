@@ -13,8 +13,8 @@ vocabulary{
     log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
     log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
     log_food_dialog:food_mass_hint{str{"e.g. 200"}}
-    log_food_dialog:total{str{"Total: {0} kcal"}}
     log_food_dialog:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
     today_page:total_kcal{str{"{0} kcal"}}
+    total_kcal{str{"Total: {0} kcal"}}
     today_page:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
 }
