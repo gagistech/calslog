@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/padding.hpp>
+#include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
@@ -55,52 +56,87 @@ public:
 	{
 		const auto& food = application::inst().model.foods.at(index);
 
+		const auto& style = this->context.get().style();
+		const auto len_border = style.get_len_border();
+		const auto len_gap = style.get_len_gap();
+		const auto len_gap_small = style.get_len_gap_small();
+		const auto color_primary = style.get_color_primary();
+		const auto font_size_secondary = style.get_font_size_secondary();
+		const auto color_text_secondary = style.get_color_text_secondary();
+
 		// clang-format off
-		return m::padding(this->context,
-			{
-				.layout_params{
-					.dims = {ruis::dim::fill, ruis::dim::min}
-				},
-				.params{
-					.container{
-						.layout = ruis::layout::row
-					},
-					.specific{
-						.borders = {ruis::length::make_pp(10)}
-					}
-				}
-			},
-			{
-				m::text(this->context,
-					{
-						.params{
-							.font{
-								.size = ruis::length::make_pp(20)
-							}
-						}
-					},
-					food.name
-				),
-				m::gap(this->context,
-					{
-						.layout_params{
-							.dims = {ruis::dim::fill, ruis::dim::min}
-						}
-					}
-				),
-				m::text(this->context,
-					{
-						.params{
-							.color = 0xff808080,
-							.font{
-								.size = ruis::length::make_pp(20)
-							}
-						}
-					},
-					utki::to_utf32(utki::to_string(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::to_string(food.mass)) + U"g/portion"
-				)
-			}
-		);
+        return m::column(this->context,
+            // column for item content and separator
+            {
+                .layout_params{
+                    .dims = {ruis::dim::fill, ruis::dim::min}
+                }
+            },
+            {
+                // Item content
+                m::padding(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, ruis::dim::min}
+                        },
+                        .params{
+                            .container{
+                                .layout = ruis::layout::column
+                            },
+                            .specific{
+                                .borders = {len_gap}
+                            }
+                        }
+                    },
+                    {
+                        // Line 1: food name, default font
+                        m::text(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {ruis::dim::fill, ruis::dim::min}
+                                }
+                            },
+                            food.name
+                        ),
+                        m::gap(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {0_pp, len_gap_small}
+                                }
+                            }
+                        ),
+                        // Line 2: kcal/100g and mass per serving, secondary text style
+                        m::text(this->context,
+                            {
+                                .layout_params{
+                                    .align = {ruis::align::front, ruis::align::front}
+                                },
+                                .params{
+                                    .color = color_text_secondary,
+                                    .font{
+                                        .size = font_size_secondary
+                                    }
+                                }
+                            },
+                            utki::to_utf32(utki::to_string(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::to_string(food.mass)) + U" g/serving"
+                        )
+                    }
+                ),
+                // separator
+                m::rectangle(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, len_border}
+                        },
+                        .params{
+                            .specific{
+                                .fill_color = color_primary
+                            }
+                        }
+                    }
+                )
+            }
+        );
 		// clang-format on
 	}
 };
