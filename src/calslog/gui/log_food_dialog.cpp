@@ -41,29 +41,6 @@ using namespace std::string_view_literals;
 
 namespace {
 
-// Returns true if the given string contains a decimal point.
-bool has_decimal_point(std::u32string_view s)
-{
-	for (auto ch : s) {
-		if (ch == U'.') {
-			return true;
-		}
-	}
-	return false;
-}
-
-// Counts the digits in the given string.
-size_t count_digits(std::u32string_view s)
-{
-	size_t count = 0;
-	for (auto ch : s) {
-		if (ch >= U'0' && ch <= U'9') {
-			++count;
-		}
-	}
-	return count;
-}
-
 // Converts a numeric UTF-32 string to a float.
 // Empty or unparsable input yields 0.
 float to_float(const std::u32string& s)
@@ -147,35 +124,21 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 		return m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap(), ruis::dim::fill}}});
 	};
 
-	// Input filter that restricts a field to a numeric value:
-	// only digits and at most a single decimal point are allowed, and the total
-	// number of digits in the resulting string is limited to 4.
+	// Input filter that restricts a field to a positive integer:
+	// only digits are allowed and the resulting string is limited to 4 digits.
 	// The filter is stateless, so it is stored once and copied into each field that needs it.
 	auto numeric_filter =
 		[](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert) {
-			bool insert_has_dot = false;
 			for (auto ch : to_insert) {
-				if (ch == U'.') {
-					if (insert_has_dot) {
-						return false;
-					}
-					insert_has_dot = true;
-				} else if (ch < U'0' || ch > U'9') {
+				if (ch < U'0' || ch > U'9') {
 					return false;
 				}
 			}
-			const bool remaining_has_dot = has_decimal_point(std::u32string_view(original.data(), replace_start)) || //
-				has_decimal_point(std::u32string_view(original.data() + replace_end, original.size() - replace_end));
-			if (remaining_has_dot && insert_has_dot) {
-				return false;
-			}
-			// Count the digits of the resulting string: the unchanged prefix and suffix
-			// of the original string plus the digits of the inserted text.
-			const size_t total_digits = //
-				count_digits(std::u32string_view(original.data(), replace_start)) + //
-				count_digits(to_insert) + //
-				count_digits(std::u32string_view(original.data() + replace_end, original.size() - replace_end));
-			return total_digits <= 4;
+			// Limit the resulting string to at most 4 digits. The result is the
+			// original string with the [replace_start, replace_end) range replaced
+			// by to_insert.
+			const size_t result_length = original.size() - (replace_end - replace_start) + to_insert.size();
+			return result_length <= 4;
 		};
 
 	// Create the input fields as separate variables so that the validator below
