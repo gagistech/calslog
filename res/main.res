@@ -27,3 +27,7 @@ img_history{
 img_add{
     file{add.svg}
 }
+
+img_edit{
+    file{edit.svg}
+}

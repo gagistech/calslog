@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <functional>
 
 #include <ruis/widget/button/impl/check_box.hpp>
+#include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
@@ -69,13 +70,7 @@ public:
 		// When toggled, the entry's enabled state in the model is updated and the
 		// model's model_changed_signal is emitted so that dependent UI (the day
 		// total kcal display) is refreshed.
-		auto check_box_widget = m::check_box(this->context,
-			{
-				.button{
-					.pressed = entry.enabled
-				}
-			}
-		);
+		auto check_box_widget = m::check_box(this->context, {.button{.pressed = entry.enabled}});
 		check_box_widget.get().pressed_change_handler = [index](ruis::button& b) {
 			auto& e = application::inst().model.today.entries.at(index);
 			e.enabled = b.is_pressed();
@@ -262,7 +257,7 @@ private:
                         }
                     },
                     {
-                        m::column(
+                        m::row(
                             context,
                             {
                                 .layout_params{
@@ -270,15 +265,59 @@ private:
                                 }
                             },
                             {
-                                total_kcal_text_param,
-                                m::gap(context,
+                                // Total kcal and weight fields, take the remaining width
+                                m::column(
+                                    context,
                                     {
                                         .layout_params{
-                                            .dims = {0_pp, context.get().style().get_len_gap_small()}
+                                            .dims = {ruis::dim::fill, ruis::dim::min},
+                                            .weight = 1
                                         }
+                                    },
+                                    {
+                                        total_kcal_text_param,
+                                        m::gap(context,
+                                            {
+                                                .layout_params{
+                                                    .dims = {0_pp, context.get().style().get_len_gap_small()}
+                                                }
+                                            }
+                                        ),
+                                        weight_text_param
                                     }
                                 ),
-                                weight_text_param
+                                // Edit button on the right side, at the window edge
+                                m::ellipse_push_button(
+                                    context,
+                                    {
+                                        .layout_params{
+                                            .dims = {ruis::dim::min, ruis::dim::fill}
+                                        },
+                                        .params{
+                                            .ellipse_button{
+                                                .specific{
+                                                    .unpressed_color = ruis::color::transparent
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        m::image(
+                                            context,
+                                            {
+                                                .layout_params{
+                                                    .dims = {ruis::dim::min, ruis::dim::fill}
+                                                },
+                                                .params{
+                                                    .specific{
+                                                        .source = context.get().loader().load<ruis::res::image>("img_edit"sv),
+                                                        .keep_aspect_ratio = true
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                )
                             }
                         )
                     }
@@ -338,21 +377,25 @@ public:
 		today_page(
 			context,
 			// Total kcal field, kept as a member so it can be updated when an entry is enabled/disabled
-            m::text(context,
-                {},
-                context.get().localization.get()
-                    .get("total_kcal"sv)
-                    .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
-                    .string()
-            ),
+			m::text(
+				context,
+				{},
+				context.get()
+					.localization.get()
+					.get("total_kcal"sv)
+					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+					.string()
+			),
 			// Weight field, kept as a member so it can be updated when the model changes
-            m::text(context,
-                {},
-                context.get().localization.get()
-                    .get("weight"sv)
-                    .format({utki::to_utf32(application::inst().model.today.get_weight_string())})
-                    .string()
-            ),
+			m::text(
+				context,
+				{},
+				context.get()
+					.localization.get()
+					.get("weight"sv)
+					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
+					.string()
+			),
 			// Create the list widget
 			// clang-format off
             ruis::touch::make::list(
@@ -429,13 +472,15 @@ public:
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
 			this->total_kcal_text.get().set_text(
-				this->context.get().localization.get()
+				this->context.get()
+					.localization.get()
 					.get("total_kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
 					.string()
 			);
 			this->weight_text.get().set_text(
-				this->context.get().localization.get()
+				this->context.get()
+					.localization.get()
 					.get("weight"sv)
 					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
 					.string()

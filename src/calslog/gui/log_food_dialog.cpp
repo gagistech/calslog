@@ -114,11 +114,10 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 		return m::labeled_text_field(
 			c,
 			{
-				.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}, .weight = weight},
+				.layout_params{.dims = {ruis::dim::fill, ruis::dim::min},.weight = weight                                                               },
 				.params{
 							   .label{.string = c.get().localization.get().get(label_loc_id)},
-							   .text_input{.specific{.hint = c.get().localization.get().get(hint_loc_id), .filter = filter}}
-				}
+							   .text_input{.specific{.hint = c.get().localization.get().get(hint_loc_id), .filter = filter}}}
         },
 			initial
 		);
@@ -138,7 +137,12 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 	// of at most `max_digits` digits. The filter is stateless, so the produced
 	// std::function can be copied into each field that needs it.
 	auto make_numeric_filter = [](size_t max_digits) {
-		return [max_digits](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert) -> bool {
+		return [max_digits](
+				   std::u32string_view original,
+				   size_t replace_start,
+				   size_t replace_end,
+				   std::u32string_view to_insert
+			   ) -> bool {
 			for (auto ch : to_insert) {
 				if (ch < U'0' || ch > U'9') {
 					return false;
@@ -155,7 +159,8 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 	// with at most 2 digits before the dot and at most 1 digit after it. The dot is
 	// the only allowed non-digit character and may appear at most once.
 	auto make_decimal_filter = []() {
-		return [](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert) -> bool {
+		return [](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert
+			   ) -> bool {
 			// Only digits and at most one dot may be inserted.
 			size_t dots_in_insert = 0;
 			for (auto ch : to_insert) {
@@ -248,11 +253,13 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 	// color and font size, placed right above the total kcal label.
 	auto detail_label = m::text(
 		c,
-		{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
-		 .params{
-			 .color = c.get().style().get_color_text_secondary(),
-			 .font{.size = c.get().style().get_font_size_secondary()}
-		 }},
+		{
+			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+			.params{
+						   .color = c.get().style().get_color_text_secondary(),
+						   .font{.size = c.get().style().get_font_size_secondary()}
+			}
+    },
 		std::u32string{}
 	);
 
@@ -269,11 +276,11 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 	// (entered number of pieces) / 100. The total is converted to an integer
 	// (uint32_t) so that only its integer part is displayed.
 	auto update_labels = [c, //
-					  & detail_lbl = detail_label.get(),
-					  & total_lbl = total_label.get(),
-					  &cal_input,
-					  &mass_input,
-					  &pcs_input]() //
+							  & detail_lbl = detail_label.get(),
+						  &total_lbl = total_label.get(),
+						  &cal_input,
+						  &mass_input,
+						  &pcs_input]() //
 	{
 		const auto& pcs_str = pcs_input.get_string();
 		const auto& mass_str = mass_input.get_string();
@@ -281,12 +288,11 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 
 		const bool all_filled = !pcs_str.empty() && !mass_str.empty() && !cal_str.empty();
 
-		detail_lbl.set_text(
-			c.get().localization.get()
-				.get("log_food_dialog:entry_detail"sv)
-				.format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
-				.string()
-		);
+		detail_lbl.set_text(c.get()
+								.localization.get()
+								.get("log_food_dialog:entry_detail"sv)
+								.format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
+								.string());
 
 		std::u32string total_str;
 		if (all_filled) {

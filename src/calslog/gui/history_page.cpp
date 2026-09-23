@@ -32,6 +32,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../application.hpp"
 #include "../model/model.hpp"
+
 #include "style.hpp"
 
 using namespace std::string_literals;
@@ -56,7 +57,7 @@ std::u32string make_date_string(std::chrono::year_month_day d)
 	);
 	return utki::to_utf32(buf);
 }
-}
+} // namespace
 
 namespace {
 class history_page_provider : public ruis::list_provider

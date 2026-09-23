@@ -174,15 +174,8 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 					},
 					.params{
 						.ellipse_button{
-							.ellipse{
-								.padding{
-									.container{
-										.layout = ruis::layout::pile
-									}
-								}
-							},
 							.specific{
-								.unpressed_color = c.get().style().get_color_panel()
+								.unpressed_color = ruis::color::transparent
 							}
 						}
 					}

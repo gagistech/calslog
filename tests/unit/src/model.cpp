@@ -296,11 +296,11 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		};
 
 		// === get_weight_string: grams -> kg string, up to 1 decimal digit ===
-		tst::check_eq(weight_str(0), "?"s);       // not logged
-		tst::check_eq(weight_str(1), "0.0"s);     // 0.001 kg
-		tst::check_eq(weight_str(100), "0.1"s);   // 0.1 kg
-		tst::check_eq(weight_str(1234), "1.2"s);  // 1.234 kg
-		tst::check_eq(weight_str(1250), "1.3"s);  // 1.25 kg -> 1.3 (round half up)
+		tst::check_eq(weight_str(0), "?"s); // not logged
+		tst::check_eq(weight_str(1), "0.0"s); // 0.001 kg
+		tst::check_eq(weight_str(100), "0.1"s); // 0.1 kg
+		tst::check_eq(weight_str(1234), "1.2"s); // 1.234 kg
+		tst::check_eq(weight_str(1250), "1.3"s); // 1.25 kg -> 1.3 (round half up)
 		tst::check_eq(weight_str(71500), "71.5"s);
 		tst::check_eq(weight_str(72400), "72.4"s);
 
