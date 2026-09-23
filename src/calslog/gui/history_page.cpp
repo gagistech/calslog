@@ -21,25 +21,46 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "history_page.hpp"
 
+#include <cstdio>
+
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/padding.hpp>
+#include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
+#include "../application.hpp"
+#include "../model/model.hpp"
 #include "style.hpp"
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 using namespace ruis::length_literals;
 
 namespace calslog {
 
 namespace {
+std::u32string make_date_string(std::chrono::year_month_day d)
+{
+	char buf[16];
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+	std::snprintf(
+		buf, //
+		sizeof buf, //
+		"%04d-%02u-%02u", //
+		static_cast<int>(d.year()), //
+		static_cast<unsigned>(d.month()), //
+		static_cast<unsigned>(d.day())
+	);
+	return utki::to_utf32(buf);
+}
+}
+
+namespace {
 class history_page_provider : public ruis::list_provider
 {
-	std::vector<std::u32string> items = {U"2025-01-15", U"2025-01-16", U"2025-01-17", U"2025-01-18"};
-
 public:
 	history_page_provider(const utki::shared_ref<ruis::context>& context) :
 		ruis::list_provider(context)
@@ -47,57 +68,117 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return this->items.size();
+		return application::inst().model.history.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
+		const auto& day = application::inst().model.history.at(index);
+
+		const auto& style = this->context.get().style();
+		const auto len_border = style.get_len_border();
+		const auto len_gap = style.get_len_gap();
+		const auto len_gap_small = style.get_len_gap_small();
+		const auto color_primary = style.get_color_primary();
+		const auto font_size_secondary = style.get_font_size_secondary();
+		const auto color_text_secondary = style.get_color_text_secondary();
+
+		// TODO: show the actual weight once the model supports it
+		const std::u32string weight_str = U"?";
+
 		// clang-format off
-		return m::padding(this->context,
-			{
-				.layout_params{
-					.dims = {ruis::dim::fill, ruis::dim::min}
-				},
-				.params{
-					.container{
-						.layout = ruis::layout::row
-					},
-					.specific{
-						.borders = {ruis::length::make_pp(10)}
-					}
-				}
-			},
-			{
-				m::text(this->context,
-					{
-						.params{
-							.font{
-								.size = ruis::length::make_pp(20)
-							}
-						}
-					},
-					this->items.at(index)
-				),
-				m::gap(this->context,
-					{
-						.layout_params{
-							.dims = {ruis::dim::fill, ruis::dim::min}
-						}
-					}
-				),
-				m::text(this->context,
-					{
-						.params{
-							.color = 0xff808080,
-							.font{
-								.size = ruis::length::make_pp(20)
-							}
-						}
-					},
-					U"0 kcal"
-				)
-			}
-		);
+        return m::column(this->context,
+            // column for item content and separator
+            {
+                .layout_params{
+                    .dims = {ruis::dim::fill, ruis::dim::min}
+                }
+            },
+            {
+                // Item content
+                m::padding(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, ruis::dim::min}
+                        },
+                        .params{
+                            .container{
+                                .layout = ruis::layout::column
+                            },
+                            .specific{
+                                .borders = {len_gap}
+                            }
+                        }
+                    },
+                    {
+                        // Line 1: date (left) and total calories (right), default font
+                        m::row(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {ruis::dim::fill, ruis::dim::min}
+                                }
+                            },
+                            {
+                                m::text(this->context,
+                                    {
+                                        .layout_params{
+                                            .weight = 1,
+                                            .align = {ruis::align::front, ruis::align::center}
+                                        }
+                                    },
+                                    make_date_string(day.date)
+                                ),
+                                m::text(this->context,
+                                    {},
+                                    this->context.get().localization.get()
+                                        .get("kcal"sv)
+                                        .format({utki::to_utf32(std::to_string(day.calc_total_kcal()))})
+                                        .string()
+                                )
+                            }
+                        ),
+                        m::gap(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {0_pp, len_gap_small}
+                                }
+                            }
+                        ),
+                        // Line 2: weight, secondary text style
+                        m::text(this->context,
+                            {
+                                .layout_params{
+                                    .align = {ruis::align::front, ruis::align::front}
+                                },
+                                .params{
+                                    .color = color_text_secondary,
+                                    .font{
+                                        .size = font_size_secondary
+                                    }
+                                }
+                            },
+                            this->context.get().localization.get()
+                                .get("weight"sv)
+                                .format({weight_str})
+                                .string()
+                        )
+                    }
+                ),
+                // separator
+                m::rectangle(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, len_border}
+                        },
+                        .params{
+                            .specific{
+                                .fill_color = color_primary
+                            }
+                        }
+                    }
+                )
+            }
+        );
 		// clang-format on
 	}
 };

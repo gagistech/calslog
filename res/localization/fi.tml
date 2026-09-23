@@ -14,7 +14,8 @@ vocabulary{
     log_food_dialog:calories_per_100g_hint{str{"esim. 52"}}
     log_food_dialog:food_mass_hint{str{"esim. 200"}}
     log_food_dialog:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
-    today_page:total_kcal{str{"{0} kcal"}}
+    kcal{str{"{0} kcal"}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
+    weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
 }

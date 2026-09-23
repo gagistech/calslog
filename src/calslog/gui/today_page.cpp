@@ -124,7 +124,7 @@ public:
                                         m::text(this->context,
                                             {},
                                             this->context.get().localization.get()
-                                                .get("today_page:total_kcal"sv)
+                                                .get("kcal"sv)
                                                 .format({utki::to_utf32(std::to_string(total_kcal))})
                                                 .string()
                                         )
