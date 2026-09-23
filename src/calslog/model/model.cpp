@@ -57,6 +57,7 @@ namespace {
 constexpr auto kcal_word = "kcal"sv;
 constexpr auto mass_word = "mass"sv;
 constexpr auto pcs_word = "pcs"sv;
+constexpr auto enabled_word = "enabled"sv;
 } // namespace
 
 namespace {
@@ -114,6 +115,7 @@ model::entry parse_entry(const tml::tree& tree)
 	uint32_t kcal = 0;
 	uint32_t mass = 0;
 	uint32_t pcs = 0;
+	bool enabled = true;
 
 	for (auto& c : tree.children) {
 		if (c.value == kcal_word) {
@@ -122,6 +124,8 @@ model::entry parse_entry(const tml::tree& tree)
 			mass = c.children.at(0).value.to_uint32();
 		} else if (c.value == pcs_word) {
 			pcs = c.children.at(0).value.to_uint32();
+		} else if (c.value == enabled_word) {
+			enabled = c.children.at(0).value.to_bool();
 		}
 	}
 
@@ -129,7 +133,8 @@ model::entry parse_entry(const tml::tree& tree)
 		.name = utki::to_utf32(tree.value.string), //
 		.pcs = pcs,
 		.mass = mass,
-		.kcal = kcal
+		.kcal = kcal,
+		.enabled = enabled
 	};
 }
 } // namespace
@@ -225,6 +230,7 @@ tml::tree make_entry_node(const model::entry& e)
 	node.children.push_back(make_key_value_node(kcal_word, tml::leaf(e.kcal)));
 	node.children.push_back(make_key_value_node(pcs_word, tml::leaf(e.pcs)));
 	node.children.push_back(make_key_value_node(mass_word, tml::leaf(e.mass)));
+	node.children.push_back(make_key_value_node(enabled_word, tml::leaf(e.enabled)));
 	return node;
 }
 } // namespace

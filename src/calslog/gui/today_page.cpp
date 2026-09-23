@@ -21,6 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "today_page.hpp"
 
+#include <functional>
+
 #include <ruis/widget/button/impl/check_box.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
@@ -49,9 +51,16 @@ namespace {
 class today_page_provider : public ruis::list_provider
 {
 public:
-	today_page_provider(const utki::shared_ref<ruis::context>& context) :
-		ruis::list_provider(context)
+	today_page_provider(
+		const utki::shared_ref<ruis::context>& context, //
+		std::function<void()> on_entry_changed // TODO: use on_model_changed signal from model
+	) :
+		ruis::list_provider(context),
+		on_entry_changed(std::move(on_entry_changed))
 	{}
+
+	// Invoked after an entry's enabled state changed so that dependent UI (the day total kcal) can be refreshed.
+	std::function<void()> on_entry_changed;
 
 	size_t count() const noexcept override
 	{
@@ -62,6 +71,24 @@ public:
 	{
 		const auto& entry = application::inst().model.today.entries.at(index);
 		const uint32_t total_kcal = entry.calc_total_kcal();
+
+		// Checkbox reflecting whether the entry is counted in the day total.
+		// When toggled, the entry's enabled state in the model is updated and
+		// the day total kcal display is refreshed.
+		auto check_box_widget = m::check_box(this->context,
+			{
+				.button{
+					.pressed = entry.enabled
+				}
+			}
+		);
+		check_box_widget.get().pressed_change_handler = [this, index](ruis::button& b) {
+			auto& e = application::inst().model.today.entries.at(index);
+			e.enabled = b.is_pressed();
+			if (this->on_entry_changed) {
+				this->on_entry_changed();
+			}
+		};
 
 		const auto& style = this->context.get().style();
 		const auto len_border = style.get_len_border();
@@ -169,14 +196,8 @@ public:
                                 }
                             }
                         ),
-                        // Checkbox on the right, vertically centered, checked by default
-                        m::check_box(this->context,
-                            {
-                                .button{
-                                    .pressed = true
-                                }
-                            }
-                        )
+                        // Checkbox on the right, vertically centered, reflects the entry's enabled state
+                        std::move(check_box_widget)
                     }
                 ),
                 // separator
@@ -206,9 +227,11 @@ class today_page :
 {
 private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
+	utki::shared_ref<ruis::text> total_kcal_text;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
+		utki::shared_ref<ruis::text> total_kcal_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param
 	) :
@@ -245,13 +268,7 @@ private:
                         }
                     },
                     {
-                        m::text(context,
-                            {},
-                            context.get().localization.get()
-                                .get("total_kcal"sv)
-                                .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
-                                .string()
-                        )
+                        total_kcal_text_param
                     }
                 ),
                 // Separator between the total kcal field and the list
@@ -298,7 +315,8 @@ private:
                 )
             }
         ),
-        fab_button(fab_button_param)
+        fab_button(fab_button_param),
+        total_kcal_text(total_kcal_text_param)
 	// clang-format on
 	{}
 
@@ -306,6 +324,14 @@ public:
 	today_page(const utki::shared_ref<ruis::context>& context) :
 		today_page(
 			context,
+			// Total kcal field, kept as a member so it can be updated when an entry is enabled/disabled
+            m::text(context,
+                {},
+                context.get().localization.get()
+                    .get("total_kcal"sv)
+                    .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+                    .string()
+            ),
 			// Create the list widget
 			// clang-format off
             ruis::touch::make::list(
@@ -318,7 +344,17 @@ public:
                         .vertical = true
                     },
                     .list_params{
-                        .provider = utki::make_shared<today_page_provider>(context)
+                        .provider = utki::make_shared<today_page_provider>(
+                            context,
+                            [this]() {
+                                this->total_kcal_text.get().set_text(
+                                    this->context.get().localization.get()
+                                        .get("total_kcal"sv)
+                                        .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+                                        .string()
+                                );
+                            }
+                        )
                     }
                 }
             ),

@@ -35,6 +35,7 @@ struct entry {
 	uint32_t pcs; // number of pieces
 	uint32_t mass; // mass of 1 piece in grams
 	uint32_t kcal; // per 100 grams
+	bool enabled = true; // if false, the entry is not counted in the day total
 
 	uint32_t calc_total_kcal() const
 	{
@@ -50,7 +51,9 @@ struct day {
 	{
 		uint32_t total = 0;
 		for (const auto& entry : this->entries) {
-			total += entry.calc_total_kcal();
+			if (entry.enabled) {
+				total += entry.calc_total_kcal();
+			}
 		}
 		return total;
 	}
