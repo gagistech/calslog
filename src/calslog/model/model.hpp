@@ -47,6 +47,7 @@ struct entry {
 struct day {
 	std::chrono::year_month_day date;
 	std::vector<entry> entries;
+	uint32_t weight = 0; // weight in grams, 0 means the weight was not logged for that day
 
 	uint32_t calc_total_kcal() const
 	{
@@ -58,6 +59,10 @@ struct day {
 		}
 		return total;
 	}
+
+	// Formats the weight in kilograms with up to one digit after the decimal point
+	// (e.g. "1.2"). Returns "?" if the weight was not logged (0 grams).
+	std::string get_weight_string() const;
 };
 
 struct food {

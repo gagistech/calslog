@@ -58,7 +58,22 @@ constexpr auto kcal_word = "kcal"sv;
 constexpr auto mass_word = "mass"sv;
 constexpr auto pcs_word = "pcs"sv;
 constexpr auto enabled_word = "enabled"sv;
+constexpr auto weight_word = "weight"sv;
 } // namespace
+
+std::string calslog::model::day::get_weight_string() const
+{
+	if (this->weight == 0) {
+		return "?";
+	}
+
+	// Round to the nearest 0.1 kg (100 g) using integer arithmetic.
+	const uint32_t tenths = (this->weight + 50) / 100;
+	const uint32_t kg = tenths / 10;
+	const uint32_t frac = tenths % 10;
+
+	return utki::cat(kg, '.', frac);
+}
 
 namespace {
 model::food parse_food(const tml::tree& tree)
@@ -143,14 +158,20 @@ namespace {
 model::day parse_day(const tml::tree& tree)
 {
 	std::vector<model::entry> entries;
+	uint32_t weight = 0;
 
 	for (auto& e : tree.children) {
-		entries.push_back(parse_entry(e));
+		if (e.value == weight_word) {
+			weight = e.children.at(0).value.to_uint32();
+		} else {
+			entries.push_back(parse_entry(e));
+		}
 	}
 
 	return {
 		.date = parse_yyyy_mm_dd(tree.value.string), //
-		.entries = std::move(entries)
+		.entries = std::move(entries), //
+		.weight = weight
 	};
 }
 } // namespace
@@ -242,6 +263,7 @@ tml::tree make_day_node(const model::day& d)
 	for (const auto& e : d.entries) {
 		node.children.push_back(make_entry_node(e));
 	}
+	node.children.push_back(make_key_value_node(weight_word, tml::leaf(d.weight)));
 	return node;
 }
 } // namespace

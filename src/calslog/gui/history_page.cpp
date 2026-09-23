@@ -83,8 +83,7 @@ public:
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
 
-		// TODO: show the actual weight once the model supports it
-		const std::u32string weight_str = U"?";
+		const std::u32string weight_str = utki::to_utf32(day.get_weight_string());
 
 		// clang-format off
         return m::column(this->context,

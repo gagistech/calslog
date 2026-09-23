@@ -220,10 +220,12 @@ class today_page :
 private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
 	utki::shared_ref<ruis::text> total_kcal_text;
+	utki::shared_ref<ruis::text> weight_text;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
 		utki::shared_ref<ruis::text> total_kcal_text_param, //
+		utki::shared_ref<ruis::text> weight_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param
 	) :
@@ -246,7 +248,7 @@ private:
                 }
             },
             {
-                // Total kcal field at the top of the page
+                // Total kcal and weight fields at the top of the page
                 m::padding(
                     context,
                     {
@@ -260,7 +262,25 @@ private:
                         }
                     },
                     {
-                        total_kcal_text_param
+                        m::column(
+                            context,
+                            {
+                                .layout_params{
+                                    .dims = {ruis::dim::fill, ruis::dim::min}
+                                }
+                            },
+                            {
+                                total_kcal_text_param,
+                                m::gap(context,
+                                    {
+                                        .layout_params{
+                                            .dims = {0_pp, context.get().style().get_len_gap_small()}
+                                        }
+                                    }
+                                ),
+                                weight_text_param
+                            }
+                        )
                     }
                 ),
                 // Separator between the total kcal field and the list
@@ -308,7 +328,8 @@ private:
             }
         ),
         fab_button(fab_button_param),
-        total_kcal_text(total_kcal_text_param)
+        total_kcal_text(total_kcal_text_param),
+        weight_text(weight_text_param)
 	// clang-format on
 	{}
 
@@ -322,6 +343,14 @@ public:
                 context.get().localization.get()
                     .get("total_kcal"sv)
                     .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+                    .string()
+            ),
+			// Weight field, kept as a member so it can be updated when the model changes
+            m::text(context,
+                {},
+                context.get().localization.get()
+                    .get("weight"sv)
+                    .format({utki::to_utf32(application::inst().model.today.get_weight_string())})
                     .string()
             ),
 			// Create the list widget
@@ -403,6 +432,12 @@ public:
 				this->context.get().localization.get()
 					.get("total_kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+					.string()
+			);
+			this->weight_text.get().set_text(
+				this->context.get().localization.get()
+					.get("weight"sv)
+					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
 					.string()
 			);
 		});

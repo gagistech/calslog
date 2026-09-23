@@ -58,6 +58,7 @@ history{
             pcs{1}
             mass{30}
         }
+        weight{72400}
     }
     "2026-01-16"{
         "Banana"{
@@ -70,5 +71,6 @@ history{
             pcs{1}
             mass{150}
         }
+        weight{71500}
     }
 }
