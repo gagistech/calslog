@@ -12,4 +12,6 @@ vocabulary{
     log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}
     log_food_dialog:food_mass_hint{str{"напр. 200"}}
     log_food_dialog:total{str{"Итого: {0} ккал"}}
+    today_page:total_kcal{str{"{0} ккал"}}
+    today_page:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
 }

@@ -21,12 +21,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "today_page.hpp"
 
+#include <ruis/widget/button/impl/check_box.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
+#include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <utki/string.hpp>
 
@@ -59,51 +61,136 @@ public:
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
 		const auto& entry = application::inst().model.today.entries.at(index);
-		const float total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+		const uint32_t total_kcal = entry.kcal * entry.mass * entry.pcs / 100.0f;
+
+		const auto& style = this->context.get().style();
+		const auto len_border = style.get_len_border();
+		const auto len_gap = style.get_len_gap();
+		const auto len_gap_small = style.get_len_gap_small();
+		const auto color_primary = style.get_color_primary();
+		const auto font_size_secondary = style.get_font_size_secondary();
+		const auto color_text_secondary = style.get_color_text_secondary();
 
 		// clang-format off
-        return m::padding(this->context,
+        return m::column(this->context,
             {
                 .layout_params{
                     .dims = {ruis::dim::fill, ruis::dim::min}
-                },
-                .params{
-                    .container{
-                        .layout = ruis::layout::row
-                    },
-                    .specific{
-                        .borders = {ruis::length::make_pp(10)}
-                    }
                 }
             },
             {
-                m::text(this->context,
-                    {
-                        .params{
-                            .font{
-                                .size = ruis::length::make_pp(20)
-                            }
-                        }
-                    },
-                    entry.name
-                ),
-                m::gap(this->context,
+                // Item content
+                m::padding(this->context,
                     {
                         .layout_params{
                             .dims = {ruis::dim::fill, ruis::dim::min}
-                        }
-                    }
-                ),
-                m::text(this->context,
-                    {
+                        },
                         .params{
-                            .color = 0xff808080,
-                            .font{
-                                .size = ruis::length::make_pp(20)
+                            .container{
+                                .layout = ruis::layout::row
+                            },
+                            .specific{
+                                .borders = {len_gap}
                             }
                         }
                     },
-                    utki::to_utf32(utki::cat(entry.pcs)) + U" x " + utki::to_utf32(utki::cat(entry.mass)) + U"g = " + utki::to_utf32(utki::cat(total_kcal)) + U" kcal"
+                    {
+                        // Left column with the text lines, fills the remaining width
+                        m::column(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {ruis::dim::fill, ruis::dim::min},
+                                    .weight = 1
+                                }
+                            },
+                            {
+                                // Line 1: food title (left) and total calories (right), default font
+                                m::row(this->context,
+                                    {
+                                        .layout_params{
+                                            .dims = {ruis::dim::fill, ruis::dim::min}
+                                        }
+                                    },
+                                    {
+                                        m::text(this->context,
+                                            {
+                                                .layout_params{
+                                                    .weight = 1,
+                                                    .align = {ruis::align::front, ruis::align::center}
+                                                }
+                                            },
+                                            entry.name
+                                        ),
+                                        m::text(this->context,
+                                            {},
+                                            this->context.get().localization.get()
+                                                .get("today_page:total_kcal"sv)
+                                                .format({utki::to_utf32(std::to_string(total_kcal))})
+                                                .string()
+                                        )
+                                    }
+                                ),
+                                m::gap(this->context,
+                                    {
+                                        .layout_params{
+                                            .dims = {0_pp, len_gap_small}
+                                        }
+                                    }
+                                ),
+                                // Line 2: secondary text, aligned to the left
+                                m::text(this->context,
+                                    {
+                                        .layout_params{
+                                            .align = {ruis::align::front, ruis::align::front}
+                                        },
+                                        .params{
+                                            .color = color_text_secondary,
+                                            .font{
+                                                .size = font_size_secondary
+                                            }
+                                        }
+                                    },
+                                    this->context.get().localization.get()
+                                        .get("today_page:entry_detail"sv)
+                                        .format({
+                                            utki::to_utf32(std::to_string(entry.pcs)),
+                                            utki::to_utf32(std::to_string(entry.mass)),
+                                            utki::to_utf32(std::to_string(entry.kcal))
+                                        })
+                                        .string()
+                                )
+                            }
+                        ),
+                        // Gap before the checkbox
+                        m::gap(this->context,
+                            {
+                                .layout_params{
+                                    .dims = {ruis::dimension(len_gap), ruis::dim::min}
+                                }
+                            }
+                        ),
+                        // Checkbox on the right, vertically centered, checked by default
+                        m::check_box(this->context,
+                            {
+                                .button{
+                                    .pressed = true
+                                }
+                            }
+                        )
+                    }
+                ),
+                // separator
+                m::rectangle(this->context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, len_border}
+                        },
+                        .params{
+                            .specific{
+                                .fill_color = color_primary
+                            }
+                        }
+                    }
                 )
             }
         );

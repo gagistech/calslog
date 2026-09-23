@@ -47,12 +47,12 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		// === foods ===
 		tst::check_eq(root.foods.size(), size_t(3));
 
-		tst::check_eq(root.foods.at(0).kcal, 145.0f);
-		tst::check_eq(root.foods.at(0).mass, 50.0f);
-		tst::check_eq(root.foods.at(1).kcal, 145.0f);
-		tst::check_eq(root.foods.at(1).mass, 60.0f);
-		tst::check_eq(root.foods.at(2).kcal, 145.0f);
-		tst::check_eq(root.foods.at(2).mass, 70.0f);
+		tst::check_eq(root.foods.at(0).kcal, uint32_t(145));
+		tst::check_eq(root.foods.at(0).mass, uint32_t(50));
+		tst::check_eq(root.foods.at(1).kcal, uint32_t(145));
+		tst::check_eq(root.foods.at(1).mass, uint32_t(60));
+		tst::check_eq(root.foods.at(2).kcal, uint32_t(145));
+		tst::check_eq(root.foods.at(2).mass, uint32_t(70));
 
 		// === history ===
 		tst::check_eq(root.history.size(), size_t(1));
@@ -64,13 +64,13 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root.history.at(0).entries.size(), size_t(2));
 
 		tst::check_eq(root.history.at(0).entries.at(0).name, U"egg"s);
-		tst::check_eq(root.history.at(0).entries.at(0).kcal, 145.0f);
-		tst::check_eq(root.history.at(0).entries.at(0).mass, 55.0f);
+		tst::check_eq(root.history.at(0).entries.at(0).kcal, uint32_t(145));
+		tst::check_eq(root.history.at(0).entries.at(0).mass, uint32_t(55));
 		tst::check_eq(root.history.at(0).entries.at(0).pcs, uint32_t(2));
 
 		tst::check_eq(root.history.at(0).entries.at(1).name, U"small egg"s);
-		tst::check_eq(root.history.at(0).entries.at(1).kcal, 145.0f);
-		tst::check_eq(root.history.at(0).entries.at(1).mass, 50.0f);
+		tst::check_eq(root.history.at(0).entries.at(1).kcal, uint32_t(145));
+		tst::check_eq(root.history.at(0).entries.at(1).mass, uint32_t(50));
 		tst::check_eq(root.history.at(0).entries.at(1).pcs, uint32_t(13));
 	});
 
@@ -78,15 +78,15 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		calslog::model::root root;
 
 		// === foods ===
-		root.foods.push_back({.name = U"small egg", .kcal = 145.0f, .mass = 50.0f});
-		root.foods.push_back({.name = U"medium egg", .kcal = 145.0f, .mass = 60.0f});
-		root.foods.push_back({.name = U"big egg", .kcal = 145.0f, .mass = 70.0f});
+		root.foods.push_back({.name = U"small egg", .kcal = 145, .mass = 50});
+		root.foods.push_back({.name = U"medium egg", .kcal = 145, .mass = 60});
+		root.foods.push_back({.name = U"big egg", .kcal = 145, .mass = 70});
 
 		// === history ===
 		calslog::model::day day;
 		day.date = std::chrono::year_month_day{std::chrono::year{2026}, std::chrono::month{8}, std::chrono::day{24}};
-		day.entries.push_back({.name = U"egg", .pcs = 2, .mass = 55.0f, .kcal = 145.0f});
-		day.entries.push_back({.name = U"small egg", .pcs = 13, .mass = 50.0f, .kcal = 145.0f});
+		day.entries.push_back({.name = U"egg", .pcs = 2, .mass = 55, .kcal = 145});
+		day.entries.push_back({.name = U"small egg", .pcs = 13, .mass = 50, .kcal = 145});
 		root.history.push_back(day);
 
 		fsif::vector_file fi;
@@ -136,14 +136,14 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root2.foods.size(), size_t(3));
 
 		tst::check_eq(root2.foods.at(0).name, U"small egg"s);
-		tst::check_eq(root2.foods.at(0).kcal, 145.0f);
-		tst::check_eq(root2.foods.at(0).mass, 50.0f);
+		tst::check_eq(root2.foods.at(0).kcal, uint32_t(145));
+		tst::check_eq(root2.foods.at(0).mass, uint32_t(50));
 		tst::check_eq(root2.foods.at(1).name, U"medium egg"s);
-		tst::check_eq(root2.foods.at(1).kcal, 145.0f);
-		tst::check_eq(root2.foods.at(1).mass, 60.0f);
+		tst::check_eq(root2.foods.at(1).kcal, uint32_t(145));
+		tst::check_eq(root2.foods.at(1).mass, uint32_t(60));
 		tst::check_eq(root2.foods.at(2).name, U"big egg"s);
-		tst::check_eq(root2.foods.at(2).kcal, 145.0f);
-		tst::check_eq(root2.foods.at(2).mass, 70.0f);
+		tst::check_eq(root2.foods.at(2).kcal, uint32_t(145));
+		tst::check_eq(root2.foods.at(2).mass, uint32_t(70));
 
 		tst::check_eq(root2.history.size(), size_t(1));
 
@@ -154,13 +154,13 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root2.history.at(0).entries.size(), size_t(2));
 
 		tst::check_eq(root2.history.at(0).entries.at(0).name, U"egg"s);
-		tst::check_eq(root2.history.at(0).entries.at(0).kcal, 145.0f);
-		tst::check_eq(root2.history.at(0).entries.at(0).mass, 55.0f);
+		tst::check_eq(root2.history.at(0).entries.at(0).kcal, uint32_t(145));
+		tst::check_eq(root2.history.at(0).entries.at(0).mass, uint32_t(55));
 		tst::check_eq(root2.history.at(0).entries.at(0).pcs, uint32_t(2));
 
 		tst::check_eq(root2.history.at(0).entries.at(1).name, U"small egg"s);
-		tst::check_eq(root2.history.at(0).entries.at(1).kcal, 145.0f);
-		tst::check_eq(root2.history.at(0).entries.at(1).mass, 50.0f);
+		tst::check_eq(root2.history.at(0).entries.at(1).kcal, uint32_t(145));
+		tst::check_eq(root2.history.at(0).entries.at(1).mass, uint32_t(50));
 		tst::check_eq(root2.history.at(0).entries.at(1).pcs, uint32_t(13));
 	});
 

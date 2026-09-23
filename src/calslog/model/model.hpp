@@ -33,8 +33,8 @@ namespace calslog::model {
 struct entry {
 	std::u32string name;
 	uint32_t pcs; // number of pieces
-	float mass; // mass of 1 piece in grams
-	float kcal; // per 100 grams
+	uint32_t mass; // mass of 1 piece in grams
+	uint32_t kcal; // per 100 grams
 };
 
 struct day {
@@ -44,8 +44,8 @@ struct day {
 
 struct food {
 	std::u32string name;
-	float kcal; // per 100 grams
-	float mass; // mass of 1 piece in grams
+	uint32_t kcal; // per 100 grams
+	uint32_t mass; // mass of 1 piece in grams
 };
 
 struct root {

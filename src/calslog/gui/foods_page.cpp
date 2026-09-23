@@ -97,7 +97,7 @@ public:
 							}
 						}
 					},
-					utki::to_utf32(utki::cat(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::cat(food.mass)) + U"g/portion"
+					utki::to_utf32(utki::to_string(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::to_string(food.mass)) + U"g/portion"
 				)
 			}
 		);

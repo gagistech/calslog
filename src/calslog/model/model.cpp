@@ -62,13 +62,13 @@ constexpr auto pcs_word = "pcs"sv;
 namespace {
 model::food parse_food(const tml::tree& tree)
 {
-	float kcal = 0;
-	float mass = 0;
+	uint32_t kcal = 0;
+	uint32_t mass = 0;
 	for (auto& c : tree.children) {
 		if (c.value == kcal_word) {
-			kcal = c.children.at(0).value.to_float();
+			kcal = c.children.at(0).value.to_uint32();
 		} else if (c.value == mass_word) {
-			mass = c.children.at(0).value.to_float();
+			mass = c.children.at(0).value.to_uint32();
 		}
 	}
 	return {.name = utki::to_utf32(tree.value.string), .kcal = kcal, .mass = mass};
@@ -111,15 +111,15 @@ std::chrono::year_month_day parse_yyyy_mm_dd(std::string_view str)
 namespace {
 model::entry parse_entry(const tml::tree& tree)
 {
-	float kcal = 0;
-	float mass = 0;
+	uint32_t kcal = 0;
+	uint32_t mass = 0;
 	uint32_t pcs = 0;
 
 	for (auto& c : tree.children) {
 		if (c.value == kcal_word) {
-			kcal = c.children.at(0).value.to_float();
+			kcal = c.children.at(0).value.to_uint32();
 		} else if (c.value == mass_word) {
-			mass = c.children.at(0).value.to_float();
+			mass = c.children.at(0).value.to_uint32();
 		} else if (c.value == pcs_word) {
 			pcs = c.children.at(0).value.to_uint32();
 		}
