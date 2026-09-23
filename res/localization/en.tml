@@ -7,6 +7,8 @@ vocabulary{
     log_food_dialog:cancel_button{str{Cancel}}
     log_food_dialog:food_name{str{"Name"}}
     log_food_dialog:food_mass{str{"Mass (g)"}}
+    log_food_dialog:num_pieces{str{"Number of pieces"}}
+    log_food_dialog:num_pieces_hint{str{"e.g. 2"}}
     log_food_dialog:food_name_hint{str{"e.g. Apple"}}
     log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
     log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}

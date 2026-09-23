@@ -7,6 +7,8 @@ vocabulary{
     log_food_dialog:cancel_button{str{Отмена}}
     log_food_dialog:food_name{str{"Название"}}
     log_food_dialog:food_mass{str{"Масса (г)"}}
+    log_food_dialog:num_pieces{str{"Количество шт"}}
+    log_food_dialog:num_pieces_hint{str{"напр. 2"}}
     log_food_dialog:food_name_hint{str{"напр. Яблоко"}}
     log_food_dialog:calories_per_100g{str{"ккал / 100 г"}}
     log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}

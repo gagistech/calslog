@@ -7,6 +7,8 @@ vocabulary{
     log_food_dialog:cancel_button{str{Peru}}
     log_food_dialog:food_name{str{"Nimi"}}
     log_food_dialog:food_mass{str{"Massa (g)"}}
+    log_food_dialog:num_pieces{str{"Kappaleiden määrä"}}
+    log_food_dialog:num_pieces_hint{str{"esim. 2"}}
     log_food_dialog:food_name_hint{str{"esim. Omena"}}
     log_food_dialog:calories_per_100g{str{"kcal / 100 g"}}
     log_food_dialog:calories_per_100g_hint{str{"esim. 52"}}
