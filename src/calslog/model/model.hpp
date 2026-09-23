@@ -27,6 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <vector>
 
 #include <fsif/file.hpp>
+#include <utki/signal.hpp>
 
 namespace calslog::model {
 
@@ -71,6 +72,10 @@ struct root {
 	day today;
 
 	std::vector<food> foods;
+
+	// Emitted whenever the model data is modified, so that interested parties
+	// (e.g. the GUI) can react by refreshing their state.
+	utki::signal<> model_changed_signal;
 };
 
 root read(const fsif::file& fi);

@@ -51,16 +51,9 @@ namespace {
 class today_page_provider : public ruis::list_provider
 {
 public:
-	today_page_provider(
-		const utki::shared_ref<ruis::context>& context, //
-		std::function<void()> on_entry_changed // TODO: use on_model_changed signal from model
-	) :
-		ruis::list_provider(context),
-		on_entry_changed(std::move(on_entry_changed))
+	today_page_provider(const utki::shared_ref<ruis::context>& context) :
+		ruis::list_provider(context)
 	{}
-
-	// Invoked after an entry's enabled state changed so that dependent UI (the day total kcal) can be refreshed.
-	std::function<void()> on_entry_changed;
 
 	size_t count() const noexcept override
 	{
@@ -73,8 +66,9 @@ public:
 		const uint32_t total_kcal = entry.calc_total_kcal();
 
 		// Checkbox reflecting whether the entry is counted in the day total.
-		// When toggled, the entry's enabled state in the model is updated and
-		// the day total kcal display is refreshed.
+		// When toggled, the entry's enabled state in the model is updated and the
+		// model's model_changed_signal is emitted so that dependent UI (the day
+		// total kcal display) is refreshed.
 		auto check_box_widget = m::check_box(this->context,
 			{
 				.button{
@@ -82,12 +76,10 @@ public:
 				}
 			}
 		);
-		check_box_widget.get().pressed_change_handler = [this, index](ruis::button& b) {
+		check_box_widget.get().pressed_change_handler = [index](ruis::button& b) {
 			auto& e = application::inst().model.today.entries.at(index);
 			e.enabled = b.is_pressed();
-			if (this->on_entry_changed) {
-				this->on_entry_changed();
-			}
+			application::inst().model.model_changed_signal.emit();
 		};
 
 		const auto& style = this->context.get().style();
@@ -344,17 +336,7 @@ public:
                         .vertical = true
                     },
                     .list_params{
-                        .provider = utki::make_shared<today_page_provider>(
-                            context,
-                            [this]() {
-                                this->total_kcal_text.get().set_text(
-                                    this->context.get().localization.get()
-                                        .get("total_kcal"sv)
-                                        .format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
-                                        .string()
-                                );
-                            }
-                        )
+                        .provider = utki::make_shared<today_page_provider>(context)
                     }
                 }
             ),
@@ -411,6 +393,19 @@ public:
 		this->fab_button.get().click_handler = [](ruis::push_button& b) {
 			show_log_food_dialog(b);
 		};
+
+		// Listen to model changes and refresh the day total kcal display.
+		// No explicit disconnect is required: the model (and its
+		// model_changed_signal) is a member of the application and is destroyed
+		// before the GUI, so the signal can never emit into a dangling page.
+		application::inst().model.model_changed_signal.connect([this]() {
+			this->total_kcal_text.get().set_text(
+				this->context.get().localization.get()
+					.get("total_kcal"sv)
+					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
+					.string()
+			);
+		});
 	}
 };
 } // namespace
