@@ -254,6 +254,19 @@ private:
                         )
                     }
                 ),
+                // Separator between the total kcal field and the list
+                m::rectangle(context,
+                    {
+                        .layout_params{
+                            .dims = {ruis::dim::fill, context.get().style().get_len_gap_small()}
+                        },
+                        .params{
+                            .specific{
+                                .fill_color = context.get().style().get_color_primary()
+                            }
+                        }
+                    }
+                ),
                 // List and the floating action button on top of it
                 m::pile(
                     context,
