@@ -201,12 +201,11 @@ public:
 		// clang-format off
 		ruis::touch::list(context,
 			{
-				.oriented_params{
-					.vertical = true
-				},
-				.list_params{
-					.provider = utki::make_shared<history_page_provider>(context)
-				}
+                .params{
+                    .specific{
+                        .provider = utki::make_shared<history_page_provider>(context)
+                    }
+                }
 			}
 		)
 	// clang-format on

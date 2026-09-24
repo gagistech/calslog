@@ -419,11 +419,10 @@ public:
                     .layout_params{
                         .dims = {ruis::dim::fill, ruis::dim::fill}
                     },
-                    .oriented_params{
-                        .vertical = true
-                    },
-                    .list_params{
-                        .provider = utki::make_shared<today_page_provider>(context)
+                    .params{
+                        .specific{
+                            .provider = utki::make_shared<today_page_provider>(context)
+                        }
                     }
                 }
             ),
