@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <functional>
 
 #include <ruis/widget/button/impl/check_box.hpp>
+#include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/label/gap.hpp>
@@ -83,123 +84,174 @@ public:
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
 
+		// Three dots button to the right of the checkbox.
 		// clang-format off
-        return m::column(this->context,
-            {
-                .layout_params{
-                    .dims = {ruis::dim::fill, ruis::dim::min}
-                }
-            },
-            {
-                // Item content
-                m::padding(this->context,
-                    {
-                        .layout_params{
-                            .dims = {ruis::dim::fill, ruis::dim::min}
-                        },
-                        .params{
-                            .container{
-                                .layout = ruis::layout::row
-                            },
-                            .specific{
-                                .borders = {len_gap}
-                            }
-                        }
-                    },
-                    {
-                        // Left column with the text lines, fills the remaining width
-                        m::column(this->context,
-                            {
-                                .layout_params{
-                                    .dims = {ruis::dim::fill, ruis::dim::min},
-                                    .weight = 1
-                                }
-                            },
-                            {
-                                // Line 1: food title (left) and total calories (right), default font
-                                m::row(this->context,
-                                    {
-                                        .layout_params{
-                                            .dims = {ruis::dim::fill, ruis::dim::min}
-                                        }
-                                    },
-                                    {
-                                        m::text(this->context,
-                                            {
-                                                .layout_params{
-                                                    .weight = 1,
-                                                    .align = {ruis::align::front, ruis::align::center}
-                                                }
-                                            },
-                                            entry.name
-                                        ),
-                                        m::text(this->context,
-                                            {},
-                                            this->context.get().localization.get()
-                                                .get("kcal"sv)
-                                                .format({utki::to_utf32(std::to_string(total_kcal))})
-                                                .string()
-                                        )
-                                    }
-                                ),
-                                m::gap(this->context,
-                                    {
-                                        .layout_params{
-                                            .dims = {0_pp, len_gap_small}
-                                        }
-                                    }
-                                ),
-                                // Line 2: secondary text, aligned to the left
-                                m::text(this->context,
-                                    {
-                                        .layout_params{
-                                            .align = {ruis::align::front, ruis::align::front}
-                                        },
-                                        .params{
-                                            .color = color_text_secondary,
-                                            .font{
-                                                .size = font_size_secondary
-                                            }
-                                        }
-                                    },
-                                    this->context.get().localization.get()
-                                        .get("today_page:entry_detail"sv)
-                                        .format({
-                                            utki::to_utf32(std::to_string(entry.pcs)),
-                                            utki::to_utf32(std::to_string(entry.mass)),
-                                            utki::to_utf32(std::to_string(entry.kcal))
-                                        })
-                                        .string()
-                                )
-                            }
-                        ),
-                        // Gap before the checkbox
-                        m::gap(this->context,
-                            {
-                                .layout_params{
-                                    .dims = {ruis::dimension(len_gap), ruis::dim::min}
-                                }
-                            }
-                        ),
-                        // Checkbox on the right, vertically centered, reflects the entry's enabled state
-                        std::move(check_box_widget)
-                    }
-                ),
-                // separator
-                m::rectangle(this->context,
-                    {
-                        .layout_params{
-                            .dims = {ruis::dim::fill, len_border}
-                        },
-                        .params{
-                            .specific{
-                                .fill_color = color_primary
-                            }
-                        }
-                    }
-                )
-            }
-        );
+		auto menu_button = m::ellipse_push_button(this->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim::min, ruis::dim::fill},
+					.align = {ruis::align::back, ruis::align::center}
+				},
+				.params{
+					.ellipse_button{
+						.ellipse{
+							.padding{
+								.specific{
+									.borders = {len_gap_small}
+								}
+							}
+						},
+						.specific{
+							.unpressed_color = ruis::color::transparent
+						}
+					}
+				}
+			},
+			{
+				m::image(this->context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::min, ruis::dim::fill}
+						},
+						.params{
+							.specific{
+								.source = this->context.get().loader().load<ruis::res::image>("img_three_dots"sv),
+								.keep_aspect_ratio = true
+							}
+						}
+					}
+				)
+			}
+		);
+		menu_button.get().click_handler = [index](ruis::push_button& b) {
+			show_log_food_dialog(b, index);
+		};
+		return m::column(this->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::min}
+				}
+			},
+			{
+				// Item content
+				m::padding(this->context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::min}
+						},
+						.params{
+							.container{
+								.layout = ruis::layout::row
+							},
+							.specific{
+								.borders = {len_gap}
+							}
+						}
+					},
+					{
+						// Left column with the text lines, fills the remaining width
+						m::column(this->context,
+							{
+								.layout_params{
+									.dims = {ruis::dim::fill, ruis::dim::min},
+									.weight = 1
+								}
+							},
+							{
+								// Line 1: food title (left) and total calories (right), default font
+								m::row(this->context,
+									{
+										.layout_params{
+											.dims = {ruis::dim::fill, ruis::dim::min}
+										}
+									},
+									{
+										m::text(this->context,
+											{
+												.layout_params{
+													.weight = 1,
+													.align = {ruis::align::front, ruis::align::center}
+												}
+											},
+											entry.name
+										),
+										m::text(this->context,
+											{},
+											this->context.get().localization.get()
+												.get("kcal"sv)
+												.format({utki::to_utf32(std::to_string(total_kcal))})
+												.string()
+										)
+									}
+								),
+								m::gap(this->context,
+									{
+										.layout_params{
+											.dims = {0_pp, len_gap_small}
+										}
+									}
+								),
+								// Line 2: secondary text, aligned to the left
+								m::text(this->context,
+									{
+										.layout_params{
+											.align = {ruis::align::front, ruis::align::front}
+										},
+										.params{
+											.color = color_text_secondary,
+											.font{
+												.size = font_size_secondary
+											}
+										}
+									},
+									this->context.get().localization.get()
+										.get("today_page:entry_detail"sv)
+										.format({
+											utki::to_utf32(std::to_string(entry.pcs)),
+											utki::to_utf32(std::to_string(entry.mass)),
+											utki::to_utf32(std::to_string(entry.kcal))
+										})
+										.string()
+								)
+							}
+						),
+						// Gap before the checkbox
+						m::gap(this->context,
+							{
+								.layout_params{
+									.dims = {ruis::dimension(len_gap), ruis::dim::min}
+								}
+							}
+						),
+						// Checkbox on the right, vertically centered, reflects the entry's enabled state
+						std::move(check_box_widget),
+						// Gap before the three dots button
+						m::gap(this->context,
+							{
+								.layout_params{
+									.dims = {ruis::dimension(len_gap), ruis::dim::min}
+								}
+							}
+						),
+						// Three dots button, to the right of the checkbox
+						std::move(menu_button)
+					}
+				),
+				// separator
+				m::rectangle(this->context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, len_border}
+						},
+						.params{
+							.specific{
+								.fill_color = color_primary
+							}
+						}
+					}
+				)
+			}
+		);
 		// clang-format on
 	}
 };
@@ -226,164 +278,164 @@ private:
 		ruis::widget(
 			context,
 			{
-    },
+	},
 			{}
 		),
 		ruis::page(context, {}),
 		// clang-format off
-        ruis::container(
-            context,
-            {
-                .params{
-                    .layout = ruis::layout::column
-                }
-            },
-            {
-                // Total kcal and weight fields at the top of the page
-                m::padding(
-                    context,
-                    {
-                        .layout_params{
-                            .dims = {ruis::dim::fill, ruis::dim::min}
-                        },
-                        .params{
-                            .specific{
-                                .borders = {context.get().style().get_len_gap_small()}
-                            }
-                        }
-                    },
-                    {
-                        m::column(
-                            context,
-                            {
-                                .layout_params{
-                                    .dims = {ruis::dim::fill, ruis::dim::min}
-                                }
-                            },
-                            {
-                                // First row: total kcal
-                                total_kcal_text_param,
-                                m::gap(context,
-                                    {
-                                        .layout_params{
-                                            .dims = {0_pp, context.get().style().get_len_gap_small()}
-                                        }
-                                    }
-                                ),
-                                // Second row: weight and the edit button right next to it, centered horizontally
-                                m::row(
-                                    context,
-                                    {
-                                        .layout_params{
-                                            .dims = {ruis::dim::min, ruis::dim::min},
-                                            .align = {ruis::align::center, ruis::align::center}
-                                        }
-                                    },
-                                    {
-                                        weight_text_param,
-                                        m::gap(context,
-                                            {
-                                                .layout_params{
-                                                    .dims = {context.get().style().get_len_gap_small(), 0}
-                                                }
-                                            }
-                                        ),
-                                        // Edit button right next to the weight
-                                        m::rectangle_push_button(
-                                            context,
-                                            {
-                                                .layout_params{
-                                                    .dims = {ruis::dim::min, ruis::dim::fill}
-                                                },
-                                                .params{
-                                                    .rectangle_button{
-                                                        .rectangle{
-                                                            .padding{
-                                                                .specific{
-                                                                    .borders = {0}
-                                                                }
-                                                            },
-                                                            .specific{
-                                                                .corner_radii = {0}
-                                                            }
-                                                        },
-                                                        .specific{
-                                                            .unpressed_color = ruis::color::transparent
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                m::image(
-                                                    context,
-                                                    {
-                                                        .layout_params{
-                                                            .dims = {ruis::dim::min, ruis::dim::fill}
-                                                        },
-                                                        .params{
-                                                            .specific{
-                                                                .source = context.get().loader().load<ruis::res::image>("img_edit"sv),
-                                                                .keep_aspect_ratio = true
-                                                            }
-                                                        }
-                                                    }
-                                                )
-                                            }
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    }
-                ),
-                // Separator between the total kcal field and the list
-                m::rectangle(context,
-                    {
-                        .layout_params{
-                            .dims = {ruis::dim::fill, context.get().style().get_len_gap_small()}
-                        },
-                        .params{
-                            .specific{
-                                .fill_color = context.get().style().get_color_primary()
-                            }
-                        }
-                    }
-                ),
-                // List and the floating action button on top of it
-                m::pile(
-                    context,
-                    {
-                        .layout_params{
-                            .dims = {ruis::dim::fill, ruis::dim::fill},
-                            .weight = 1
-                        }
-                    },
-                    {
-                        list_widget,
-                        m::padding(
-                            context,
-                            {
-                                .layout_params{
-                                    .align = {ruis::align::back, ruis::align::back}
-                                },
-                                .params{
-                                    .specific{
-                                        .borders = {context.get().style().get_len_gap_big()}
-                                    }
-                                }
-                            },
-                            {
-                                fab_button_param
-                            }
-                        )
-                    }
-                )
-            }
-        ),
-        fab_button(fab_button_param),
-        total_kcal_text(total_kcal_text_param),
-        weight_text(weight_text_param),
-        list_widget(list_widget)
+		ruis::container(
+			context,
+			{
+				.params{
+					.layout = ruis::layout::column
+				}
+			},
+			{
+				// Total kcal and weight fields at the top of the page
+				m::padding(
+					context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::min}
+						},
+						.params{
+							.specific{
+								.borders = {context.get().style().get_len_gap_small()}
+							}
+						}
+					},
+					{
+						m::column(
+							context,
+							{
+								.layout_params{
+									.dims = {ruis::dim::fill, ruis::dim::min}
+								}
+							},
+							{
+								// First row: total kcal
+								total_kcal_text_param,
+								m::gap(context,
+									{
+										.layout_params{
+											.dims = {0_pp, context.get().style().get_len_gap_small()}
+										}
+									}
+								),
+								// Second row: weight and the edit button right next to it, centered horizontally
+								m::row(
+									context,
+									{
+										.layout_params{
+											.dims = {ruis::dim::min, ruis::dim::min},
+											.align = {ruis::align::center, ruis::align::center}
+										}
+									},
+									{
+										weight_text_param,
+										m::gap(context,
+											{
+												.layout_params{
+													.dims = {context.get().style().get_len_gap_small(), 0}
+												}
+											}
+										),
+										// Edit button right next to the weight
+										m::rectangle_push_button(
+											context,
+											{
+												.layout_params{
+													.dims = {ruis::dim::min, ruis::dim::fill}
+												},
+												.params{
+													.rectangle_button{
+														.rectangle{
+															.padding{
+																.specific{
+																	.borders = {0}
+																}
+															},
+															.specific{
+																.corner_radii = {0}
+															}
+														},
+														.specific{
+															.unpressed_color = ruis::color::transparent
+														}
+													}
+												}
+											},
+											{
+												m::image(
+													context,
+													{
+														.layout_params{
+															.dims = {ruis::dim::min, ruis::dim::fill}
+														},
+														.params{
+															.specific{
+																.source = context.get().loader().load<ruis::res::image>("img_edit"sv),
+																.keep_aspect_ratio = true
+															}
+														}
+													}
+												)
+											}
+										)
+									}
+								)
+							}
+						)
+					}
+				),
+				// Separator between the total kcal field and the list
+				m::rectangle(context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, context.get().style().get_len_gap_small()}
+						},
+						.params{
+							.specific{
+								.fill_color = context.get().style().get_color_primary()
+							}
+						}
+					}
+				),
+				// List and the floating action button on top of it
+				m::pile(
+					context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::fill},
+							.weight = 1
+						}
+					},
+					{
+						list_widget,
+						m::padding(
+							context,
+							{
+								.layout_params{
+									.align = {ruis::align::back, ruis::align::back}
+								},
+								.params{
+									.specific{
+										.borders = {context.get().style().get_len_gap_big()}
+									}
+								}
+							},
+							{
+								fab_button_param
+							}
+						)
+					}
+				)
+			}
+		),
+		fab_button(fab_button_param),
+		total_kcal_text(total_kcal_text_param),
+		weight_text(weight_text_param),
+		list_widget(list_widget)
 	// clang-format on
 	{}
 
@@ -413,63 +465,63 @@ public:
 			),
 			// Create the list widget
 			// clang-format off
-            m::list(
-                context,
-                {
-                    .layout_params{
-                        .dims = {ruis::dim::fill, ruis::dim::fill}
-                    },
-                    .params{
-                        .specific{
-                            .provider = utki::make_shared<today_page_provider>(context)
-                        }
-                    }
-                }
-            ),
-            // Create the floating action button (FAB)
-            m::rectangle_push_button( // TODO: create floating_action_button
-                context,
-                {
-                    .layout_params{
-                        .dims = {56_pp}
-                    },
-                    .params{
-                        .rectangle_button{
-                            .rectangle{
-                                .padding{
-                                    .container{
-                                        .layout = ruis::layout::pile
-                                    },
-                                    .specific{
-                                        .borders = {14_pp} // TODO: use len_gap
-                                    }
-                                },
-                                .specific{
-                                    .corner_radii = {14_pp} // TODO: use len_gap
-                                }
-                            },
-                            .specific{
-                                .unpressed_color = context.get().style().get_color_special()
-                            }
-                        }
-                    }
-                },
-                {
-                    ruis::make::image(
-                        context,
-                        {
-                            .layout_params{
-                                .dims = {ruis::dim::fill}
-                            },
-                            .params{
-                                .specific{
-                                    .source = context.get().loader().load<ruis::res::image>("img_add"sv)
-                                }
-                            }
-                        }
-                    )
-                }
-            )
+			m::list(
+				context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.params{
+						.specific{
+							.provider = utki::make_shared<today_page_provider>(context)
+						}
+					}
+				}
+			),
+			// Create the floating action button (FAB)
+			m::rectangle_push_button( // TODO: create floating_action_button
+				context,
+				{
+					.layout_params{
+						.dims = {56_pp}
+					},
+					.params{
+						.rectangle_button{
+							.rectangle{
+								.padding{
+									.container{
+										.layout = ruis::layout::pile
+									},
+									.specific{
+										.borders = {14_pp} // TODO: use len_gap
+									}
+								},
+								.specific{
+									.corner_radii = {14_pp} // TODO: use len_gap
+								}
+							},
+							.specific{
+								.unpressed_color = context.get().style().get_color_special()
+							}
+						}
+					}
+				},
+				{
+					ruis::make::image(
+						context,
+						{
+							.layout_params{
+								.dims = {ruis::dim::fill}
+							},
+							.params{
+								.specific{
+									.source = context.get().loader().load<ruis::res::image>("img_add"sv)
+								}
+							}
+						}
+					)
+				}
+			)
 			// clang-format on
 		)
 	{

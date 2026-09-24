@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <functional>
+#include <limits>
 #include <string>
 #include <string_view>
 
@@ -66,11 +67,20 @@ std::u32string or_unknown(std::u32string_view s)
 
 namespace calslog {
 
-void show_log_food_dialog(ruis::widget& owner_widget)
+void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 {
 	auto& c = owner_widget.context;
 
 	auto& olay = owner_widget.get_ancestor<ruis::overlay>();
+
+	// In edit mode the dialog opens prefilled with the given entry and its primary
+	// button reads "Save" and updates that entry in place; otherwise (add mode) it
+	// opens empty and appends a new entry to today.
+	const bool is_editing = edit_entry_index != std::numeric_limits<size_t>::max();
+	model::entry editing_entry{};
+	if (is_editing) {
+		editing_entry = application::inst().model.today.entries.at(edit_entry_index);
+	}
 
 	// Helper to create a push button with a localized caption and the given color.
 	auto make_button = [&c](std::string_view text_loc_id, ruis::styled<ruis::color> color) {
@@ -96,8 +106,9 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 		// clang-format on
 	};
 
-	// Create the Add button separately so we can reference it in the validator below.
-	auto add_button = make_button("log_food_dialog:add_button"sv, c.get().style().get_color_special());
+	// Create the primary button separately so we can reference it in the validator
+	// below. Its caption is "Save" when editing an existing entry, otherwise "Add".
+	auto add_button = make_button(is_editing ? "log_food_dialog:save_button"sv : "log_food_dialog:add_button"sv, c.get().style().get_color_special());
 	auto cancel_button = make_button("log_food_dialog:cancel_button"sv, c.get().style().get_color_primary());
 
 	// The Cancel button closes the dialog.
@@ -209,23 +220,27 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 	// can observe their text and control the enabled state of the Add button.
 	auto food_name_field = make_field(
 		"log_food_dialog:food_name"sv, //
-		"log_food_dialog:food_name_hint"sv
+		"log_food_dialog:food_name_hint"sv,
+		{}, //
+		is_editing ? ruis::string(editing_entry.name) : ruis::string{}
 	);
 	auto calories_field = make_field(
 		"log_food_dialog:calories_per_100g"sv, //
 		"log_food_dialog:calories_per_100g_hint"sv,
-		make_numeric_filter(4)
+		make_numeric_filter(4), //
+		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.kcal))) : ruis::string{}
 	);
 	auto mass_field = make_field(
 		"log_food_dialog:food_mass"sv, //
 		"log_food_dialog:food_mass_hint"sv,
-		make_numeric_filter(4)
+		make_numeric_filter(4), //
+		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.mass))) : ruis::string{}
 	);
 	auto num_servings_field = make_field(
 		"log_food_dialog:num_servings"sv, //
 		"log_food_dialog:num_servings_hint"sv,
 		make_decimal_filter(), //
-		ruis::string(U"1"), //
+		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.pcs))) : ruis::string(U"1"), //
 		1 // layout_params.weight
 	);
 
@@ -331,17 +346,26 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 	// Set the initial state (all fields are empty -> the button is disabled and the total is 0).
 	update_all();
 
-	// The Add button adds a new entry to the model's today entries, emits the model
-	// change signal, and closes the dialog. The fields are owned by the dialog and
-	// outlive this function, so it is safe to capture them by reference.
-	add_button.get().click_handler = [&fn_input, &cal_input, &mass_input, &pcs_input](ruis::push_button& b) {
+	// The primary button commits the form: in add mode it appends a new entry to the
+	// model's today entries, in edit mode it updates the entry being edited. It then
+	// emits the model change signal and closes the dialog. The fields are owned by the
+	// dialog and outlive this function, so it is safe to capture them by reference.
+	add_button.get().click_handler = [&fn_input, &cal_input, &mass_input, &pcs_input, is_editing, edit_entry_index](ruis::push_button& b) {
 		auto& app = application::inst();
-		app.model.today.entries.push_back(model::entry{
-			.name = fn_input.get_string(),
-			.pcs = uint32_t(to_float(pcs_input.get_string())),
-			.mass = uint32_t(to_float(mass_input.get_string())),
-			.kcal = uint32_t(to_float(cal_input.get_string()))
-		});
+		if (is_editing) {
+			auto& e = app.model.today.entries.at(edit_entry_index);
+			e.name = fn_input.get_string();
+			e.pcs = uint32_t(to_float(pcs_input.get_string()));
+			e.mass = uint32_t(to_float(mass_input.get_string()));
+			e.kcal = uint32_t(to_float(cal_input.get_string()));
+		} else {
+			app.model.today.entries.push_back(model::entry{
+				.name = fn_input.get_string(),
+				.pcs = uint32_t(to_float(pcs_input.get_string())),
+				.mass = uint32_t(to_float(mass_input.get_string())),
+				.kcal = uint32_t(to_float(cal_input.get_string()))
+			});
+		}
 		app.model.model_changed_signal.emit();
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};
