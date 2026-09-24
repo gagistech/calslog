@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "log_food_dialog.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <functional>
 #include <limits>
@@ -30,6 +31,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/dialog.hpp>
+#include <ruis/widget/input/impl/rectangle_text_field.hpp>
 #include <ruis/widget/input/labeled_text_field.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/text.hpp>
@@ -170,7 +172,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		};
 	};
 	// Factory that creates an input filter restricting a field to a decimal number
-	// with at most 2 digits before the dot and at most 1 digit after it. The dot is
+	// with at most 2 digits before the dot and at most 2 digits after it. The dot is
 	// the only allowed non-digit character and may appear at most once.
 	auto make_decimal_filter = []() {
 		return [](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert
@@ -213,7 +215,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			if (dots == 0) {
 				return digits_before <= 2;
 			}
-			return digits_before <= 2 && digits_after <= 1;
+			return digits_before <= 2 && digits_after <= 2;
 		};
 	};
 	// Create the input fields as separate variables so that the validator below
@@ -236,12 +238,99 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		make_numeric_filter(4), //
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.mass))) : ruis::string{}
 	);
-	auto num_servings_field = make_field(
-		"log_food_dialog:num_servings"sv, //
-		"log_food_dialog:num_servings_hint"sv,
-		make_decimal_filter(), //
-		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.pcs))) : ruis::string(U"1"), //
-		1 // layout_params.weight
+	// The number of servings field is built manually (instead of make_field) so
+	// that the row of preset buttons can be placed on a separate row between the
+	// field name and the field itself.
+	auto num_servings_label = m::text(
+		c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::min},
+				.align = {ruis::align::front, ruis::align::center}
+			},
+			.params{
+				.color = c.get().style().get_color_text()
+			}
+		},
+		c.get().localization.get().get("log_food_dialog:num_servings"sv)
+	);
+	auto num_servings_input = m::rectangle_text_field(
+		c,
+		{
+			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+			.params{
+				.text_input{
+					.specific{
+						.hint = c.get().localization.get().get("log_food_dialog:num_servings_hint"sv),
+						.filter = make_decimal_filter()
+					}
+				}
+			}
+		},
+		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.pcs))) : ruis::string(U"1")
+	);
+	auto& pcs_input = num_servings_input.get().get_text_input();
+
+	// Helper to create a small push button showing a number; pressing it sets the
+	// number of pieces field to that number.
+	auto make_num_button = [&c, &pcs_input](std::u32string number) {
+		// clang-format off
+		// All preset buttons have weight 1, so they are of equal width and
+		// together occupy the whole horizontal space of the dialog.
+		auto button = m::rectangle_push_button(c,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::min},
+					.weight = 1
+				}
+			},
+			{
+				m::text(c, {}, number)
+			}
+		);
+		// clang-format on
+		button.get().click_handler = [number, &pcs_input](ruis::push_button&) {
+			pcs_input.set_text(number);
+		};
+		return button;
+	};
+
+	// Assemble the number of servings field: the field name, then the row of preset
+	// buttons, then a small gap, then the field itself.
+	auto num_servings_field = m::column(
+		c,
+		{
+			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}}
+		},
+		{
+			std::move(num_servings_label),
+			m::row(
+				c,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::min}
+					}
+				},
+				{
+					make_num_button(std::u32string(U"0.25")), //
+					make_hori_gap(),
+					make_num_button(std::u32string(U"0.5")), //
+					make_hori_gap(),
+					make_num_button(std::u32string(U"2")), //
+					make_hori_gap(),
+					make_num_button(std::u32string(U"3")), //
+					make_hori_gap(),
+					make_num_button(std::u32string(U"4"))
+				}
+			),
+			m::gap(
+				c,
+				{
+					.layout_params{.dims = {0, c.get().style().get_len_gap_small()}}
+				}
+			),
+			std::move(num_servings_input)
+		}
 	);
 
 	// Validator: the Add button is enabled only when all four fields are non-empty.
@@ -250,7 +339,6 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	auto& fn_input = food_name_field.get().get_text_input();
 	auto& cal_input = calories_field.get().get_text_input();
 	auto& mass_input = mass_field.get().get_text_input();
-	auto& pcs_input = num_servings_field.get().get_text_input();
 
 	// Recompute and apply the enabled state of the Add button.
 	auto update_add_button_enabled = [&add_btn = add_button.get(), //
@@ -269,10 +357,15 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 
 	// The label showing the "XX pcs x YY g x ZZ kcal/100g" detail, in secondary
 	// color and font size, placed right above the total kcal label.
+	// The detail and total labels are right-aligned, so that they sit at the
+	// right bottom of the dialog.
 	auto detail_label = m::text(
 		c,
 		{
-			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+			.layout_params{
+				.dims = {ruis::dim::min, ruis::dim::min},
+				.align = {ruis::align::back, ruis::align::center}
+			},
 			.params{
 						   .color = c.get().style().get_color_text_secondary(),
 						   .font{.size = c.get().style().get_font_size_secondary()}
@@ -284,15 +377,15 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// The label showing the total kcal for the entered kcal/100g and mass.
 	auto total_label = m::text(
 		c,
-		{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+		{.layout_params{.dims = {ruis::dim::min, ruis::dim::min}, .align = {ruis::align::back, ruis::align::center}},
 		 .params{.font{.size = c.get().style().get_font_size_primary()}}},
 		std::u32string{}
 	);
 
 	// Recompute and apply the detail and total labels from the current field values.
 	// Total kcal = (entered kcal/100g) * (entered mass in grams per piece) *
-	// (entered number of pieces) / 100. The total is converted to an integer
-	// (uint32_t) so that only its integer part is displayed.
+	// (entered number of pieces) / 100. The total is rounded to the nearest
+	// integer since fractions of kcal are not representative.
 	auto update_labels = [c, //
 							  & detail_lbl = detail_label.get(),
 						  &total_lbl = total_label.get(),
@@ -317,7 +410,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			const float kcal_per_100g = to_float(cal_str);
 			const float mass_g = to_float(mass_str);
 			const float pcs = to_float(pcs_str);
-			const uint32_t total_kcal = kcal_per_100g * mass_g * pcs / 100.f;
+			const uint32_t total_kcal = std::round(kcal_per_100g * mass_g * pcs / 100.f);
 			total_str = utki::to_utf32(std::to_string(total_kcal));
 		} else {
 			total_str = std::u32string(U"?");
@@ -355,41 +448,19 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		if (is_editing) {
 			auto& e = app.model.today.entries.at(edit_entry_index);
 			e.name = fn_input.get_string();
-			e.pcs = uint32_t(to_float(pcs_input.get_string()));
+			e.pcs = to_float(pcs_input.get_string());
 			e.mass = uint32_t(to_float(mass_input.get_string()));
 			e.kcal = uint32_t(to_float(cal_input.get_string()));
 		} else {
 			app.model.today.entries.push_back(model::entry{
 				.name = fn_input.get_string(),
-				.pcs = uint32_t(to_float(pcs_input.get_string())),
+				.pcs = to_float(pcs_input.get_string()),
 				.mass = uint32_t(to_float(mass_input.get_string())),
 				.kcal = uint32_t(to_float(cal_input.get_string()))
 			});
 		}
 		app.model.model_changed_signal.emit();
 		b.get_ancestor<ruis::touch::dialog>().close();
-	};
-
-	// Helper to create a small push button showing a number; pressing it sets the
-	// number of pieces field to that number.
-	auto make_num_button = [&c, &pcs_input](std::u32string number) {
-		// clang-format off
-		auto button = m::rectangle_push_button(c,
-			{
-				.layout_params{
-					.dims = {ruis::dim::min, ruis::dim::min},
-					.align = {ruis::align::front, ruis::align::back}
-				}
-			},
-			{
-				m::text(c, {}, number)
-			}
-		);
-		// clang-format on
-		button.get().click_handler = [number, &pcs_input](ruis::push_button&) {
-			pcs_input.set_text(number);
-		};
-		return button;
 	};
 
 	// Create the dialog with its content
@@ -418,22 +489,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			make_vert_gap(),
 			std::move(mass_field),
 			make_vert_gap(),
-			m::row(c,
-				{
-					.layout_params{
-						.dims = {ruis::dim::fill, ruis::dim::min}
-					}
-				},
-				{
-					std::move(num_servings_field),
-					make_hori_gap(),
-					make_num_button(std::u32string(U"0.5")), //
-					make_hori_gap(),
-					make_num_button(std::u32string(U"2")), //
-					make_hori_gap(),
-					make_num_button(std::u32string(U"3"))
-				}
-			),
+			std::move(num_servings_field),
 			make_vert_gap(),
 			std::move(detail_label),
 			make_vert_gap(),

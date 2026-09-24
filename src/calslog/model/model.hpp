@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include <chrono>
+#include <cmath>
 #include <limits>
 #include <map>
 #include <vector>
@@ -33,14 +34,17 @@ namespace calslog::model {
 
 struct entry {
 	std::u32string name;
-	uint32_t pcs; // number of pieces
+	float pcs; // number of pieces (may be fractional, e.g. 0.5 or 0.25)
 	uint32_t mass; // mass of 1 piece in grams
 	uint32_t kcal; // per 100 grams
 	bool enabled = true; // if false, the entry is not counted in the day total
 
 	uint32_t calc_total_kcal() const
 	{
-		return this->kcal * this->mass * this->pcs / 100;
+		// The number of pieces may be fractional, so the calculation is done with
+		// floating point arithmetic and the result is rounded to the nearest
+		// integer, since fractions of kcal are not representative.
+		return uint32_t(std::round(this->kcal * this->mass * this->pcs / 100.f));
 	}
 };
 

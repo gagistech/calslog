@@ -129,7 +129,7 @@ model::entry parse_entry(const tml::tree& tree)
 {
 	uint32_t kcal = 0;
 	uint32_t mass = 0;
-	uint32_t pcs = 0;
+	float pcs = 0.f;
 	bool enabled = true;
 
 	for (auto& c : tree.children) {
@@ -138,7 +138,7 @@ model::entry parse_entry(const tml::tree& tree)
 		} else if (c.value == mass_word) {
 			mass = c.children.at(0).value.to_uint32();
 		} else if (c.value == pcs_word) {
-			pcs = c.children.at(0).value.to_uint32();
+			pcs = c.children.at(0).value.to_float();
 		} else if (c.value == enabled_word) {
 			enabled = c.children.at(0).value.to_bool();
 		}

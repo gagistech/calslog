@@ -207,7 +207,7 @@ public:
 									this->context.get().localization.get()
 										.get("today_page:entry_detail"sv)
 										.format({
-											utki::to_utf32(std::to_string(entry.pcs)),
+											utki::to_utf32(utki::to_string(entry.pcs)),
 											utki::to_utf32(std::to_string(entry.mass)),
 											utki::to_utf32(std::to_string(entry.kcal))
 										})

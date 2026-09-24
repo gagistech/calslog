@@ -66,12 +66,12 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root.history.at(0).entries.at(0).name, U"egg"s);
 		tst::check_eq(root.history.at(0).entries.at(0).kcal, uint32_t(145));
 		tst::check_eq(root.history.at(0).entries.at(0).mass, uint32_t(55));
-		tst::check_eq(root.history.at(0).entries.at(0).pcs, uint32_t(2));
+		tst::check_eq(root.history.at(0).entries.at(0).pcs, 2.f);
 
 		tst::check_eq(root.history.at(0).entries.at(1).name, U"small egg"s);
 		tst::check_eq(root.history.at(0).entries.at(1).kcal, uint32_t(145));
 		tst::check_eq(root.history.at(0).entries.at(1).mass, uint32_t(50));
-		tst::check_eq(root.history.at(0).entries.at(1).pcs, uint32_t(13));
+		tst::check_eq(root.history.at(0).entries.at(1).pcs, 13.f);
 
 		// 'enabled' field is absent from the tml, so it defaults to true
 		tst::check_eq(root.history.at(0).entries.at(0).enabled, true);
@@ -163,12 +163,12 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root2.history.at(0).entries.at(0).name, U"egg"s);
 		tst::check_eq(root2.history.at(0).entries.at(0).kcal, uint32_t(145));
 		tst::check_eq(root2.history.at(0).entries.at(0).mass, uint32_t(55));
-		tst::check_eq(root2.history.at(0).entries.at(0).pcs, uint32_t(2));
+		tst::check_eq(root2.history.at(0).entries.at(0).pcs, 2.f);
 
 		tst::check_eq(root2.history.at(0).entries.at(1).name, U"small egg"s);
 		tst::check_eq(root2.history.at(0).entries.at(1).kcal, uint32_t(145));
 		tst::check_eq(root2.history.at(0).entries.at(1).mass, uint32_t(50));
-		tst::check_eq(root2.history.at(0).entries.at(1).pcs, uint32_t(13));
+		tst::check_eq(root2.history.at(0).entries.at(1).pcs, 13.f);
 	});
 
 	suite.add("write_empty", []() {
@@ -223,7 +223,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root.history.at(0).entries.at(2).enabled, true);
 
 		// only enabled entries are counted in the day total:
-		//   disabled egg:  145*55*2/100 = 159  (disabled, not counted)
+		//   disabled egg:  145*55*2/100 = 159.5  (disabled, not counted)
 		//   default egg:   100*10*1/100 = 10
 		//   explicit egg:  100*10*3/100 = 30
 		//   total = 10 + 30 = 40
@@ -284,8 +284,8 @@ const tst::set set("calslog", [](tst::suite& suite) {
 		tst::check_eq(root3.history.at(0).entries.at(0).enabled, false);
 		tst::check_eq(root3.history.at(0).entries.at(1).enabled, true);
 
-		// only the enabled "small egg" is counted: 145*50*13/100 = 942
-		tst::check_eq(root3.history.at(0).calc_total_kcal(), uint32_t(942));
+		// only the enabled "small egg" is counted: 145*50*13/100 = 942.5, rounded to 943
+		tst::check_eq(root3.history.at(0).calc_total_kcal(), uint32_t(943));
 	});
 
 	suite.add("weight_field", []() {
