@@ -215,6 +215,7 @@ private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
 	utki::shared_ref<ruis::text> total_kcal_text;
 	utki::shared_ref<ruis::text> weight_text;
+	utki::shared_ref<ruis::touch::list> list_widget;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
@@ -362,7 +363,7 @@ private:
                         }
                     },
                     {
-                        std::move(list_widget),
+                        list_widget,
                         m::padding(
                             context,
                             {
@@ -385,7 +386,8 @@ private:
         ),
         fab_button(fab_button_param),
         total_kcal_text(total_kcal_text_param),
-        weight_text(weight_text_param)
+        weight_text(weight_text_param),
+        list_widget(list_widget)
 	// clang-format on
 	{}
 
@@ -420,6 +422,9 @@ public:
                 {
                     .layout_params{
                         .dims = {ruis::dim::fill, ruis::dim::fill}
+                    },
+                    .widget{
+                        .clip = true
                     },
                     .oriented_params{
                         .vertical = true
@@ -483,7 +488,8 @@ public:
 			show_log_food_dialog(b);
 		};
 
-		// Listen to model changes and refresh the day total kcal display.
+		// Listen to model changes and refresh the day total kcal display and the
+		// entries list.
 		// No explicit disconnect is required: the model (and its
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
@@ -502,6 +508,7 @@ public:
 					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
 					.string()
 			);
+			this->list_widget.get().get_provider().notify_model_change();
 		});
 	}
 };

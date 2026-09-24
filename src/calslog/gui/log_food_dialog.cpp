@@ -36,6 +36,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <utki/string.hpp>
 #include <utki/unicode.hpp>
 
+#include "../application.hpp"
+#include "../model/model.hpp"
+
 #include "style.hpp"
 
 using namespace std::string_literals;
@@ -327,6 +330,21 @@ void show_log_food_dialog(ruis::widget& parent_widget)
 
 	// Set the initial state (all fields are empty -> the button is disabled and the total is 0).
 	update_all();
+
+	// The Add button adds a new entry to the model's today entries, emits the model
+	// change signal, and closes the dialog. The fields are owned by the dialog and
+	// outlive this function, so it is safe to capture them by reference.
+	add_button.get().click_handler = [&fn_input, &cal_input, &mass_input, &pcs_input](ruis::push_button& b) {
+		auto& app = application::inst();
+		app.model.today.entries.push_back(model::entry{
+			.name = fn_input.get_string(),
+			.pcs = uint32_t(to_float(pcs_input.get_string())),
+			.mass = uint32_t(to_float(mass_input.get_string())),
+			.kcal = uint32_t(to_float(cal_input.get_string()))
+		});
+		app.model.model_changed_signal.emit();
+		b.get_ancestor<ruis::touch::dialog>().close();
+	};
 
 	// Helper to create a small push button showing a number; pressing it sets the
 	// number of pieces field to that number.
