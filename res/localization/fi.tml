@@ -18,4 +18,9 @@ vocabulary{
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
+    settings_dialog:title{str{Asetukset}}
+    settings_dialog:save_button{str{Tallenna}}
+    settings_dialog:cancel_button{str{Peru}}
+    settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
+    settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}
 }

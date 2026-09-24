@@ -33,6 +33,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "foods_page.hpp"
 #include "history_page.hpp"
+#include "settings_dialog.hpp"
 #include "style.hpp"
 #include "today_page.hpp"
 
@@ -134,6 +135,51 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 
 utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context>& c)
 {
+	// Settings button
+	// clang-format off
+	auto settings_button = m::ellipse_push_button(c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::min, ruis::dim::fill},
+				.align = {ruis::align::back, ruis::align::center}
+			},
+			.params{
+				.ellipse_button{
+					.ellipse{
+						.padding{
+							.specific{
+								.borders = {c.get().style().get_len_gap_small()}
+							}
+						}
+					},
+					.specific{
+						.unpressed_color = ruis::color::transparent
+					}
+				}
+			}
+		},
+		{
+			ruis::make::image(c,
+				{
+					.layout_params{
+						.dims = {ruis::dim::min, ruis::dim::fill}
+					},
+					.params{
+						.specific{
+							.source = c.get().loader().load<ruis::res::image>("img_cog"sv),
+							.keep_aspect_ratio = true
+						}
+					}
+				}
+			)
+		}
+	);
+	// clang-format on
+
+	settings_button.get().click_handler = [](ruis::push_button& b) {
+		show_settings_dialog(b);
+	};
+
 	// clang-format off
 	return m::rectangle(c,
 		{
@@ -165,44 +211,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 				},
 				U"calslog"
 			),
-			// Settings button
-			m::ellipse_push_button(c,
-				{
-					.layout_params{
-						.dims = {ruis::dim::min, ruis::dim::fill},
-						.align = {ruis::align::back, ruis::align::center}
-					},
-					.params{
-						.ellipse_button{
-							.ellipse{
-								.padding{
-									.specific{
-										.borders = {c.get().style().get_len_gap_small()}
-									}
-								}
-							},
-							.specific{
-								.unpressed_color = ruis::color::transparent
-							}
-						}
-					}
-				},
-				{
-					ruis::make::image(c,
-						{
-							.layout_params{
-								.dims = {ruis::dim::min, ruis::dim::fill}
-							},
-							.params{
-								.specific{
-									.source = c.get().loader().load<ruis::res::image>("img_cog"sv),
-									.keep_aspect_ratio = true
-								}
-							}
-						}
-					)
-				}
-			)
+			std::move(settings_button)
 		}
 	);
 	// clang-format on

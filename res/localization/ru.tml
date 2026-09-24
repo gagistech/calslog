@@ -18,4 +18,9 @@ vocabulary{
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}
     today_page:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
+    settings_dialog:title{str{Настройки}}
+    settings_dialog:save_button{str{Сохранить}}
+    settings_dialog:cancel_button{str{Отмена}}
+    settings_dialog:day_flip_time{str{"Время смены дня"}}
+    settings_dialog:day_flip_time_hint{str{"напр. 3:00"}}
 }

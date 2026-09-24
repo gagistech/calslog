@@ -66,11 +66,11 @@ std::u32string or_unknown(std::u32string_view s)
 
 namespace calslog {
 
-void show_log_food_dialog(ruis::widget& parent_widget)
+void show_log_food_dialog(ruis::widget& owner_widget)
 {
-	auto& c = parent_widget.context;
+	auto& c = owner_widget.context;
 
-	auto& olay = parent_widget.get_ancestor<ruis::overlay>();
+	auto& olay = owner_widget.get_ancestor<ruis::overlay>();
 
 	// Helper to create a push button with a localized caption and the given color.
 	auto make_button = [&c](std::string_view text_loc_id, ruis::styled<ruis::color> color) {

@@ -18,4 +18,9 @@ vocabulary{
     total_kcal{str{"Total: {0} kcal"}}
     weight{str{"weight: {0} kg"}}
     today_page:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
+    settings_dialog:title{str{Settings}}
+    settings_dialog:save_button{str{Save}}
+    settings_dialog:cancel_button{str{Cancel}}
+    settings_dialog:day_flip_time{str{"Day flip time"}}
+    settings_dialog:day_flip_time_hint{str{"e.g. 3:00"}}
 }

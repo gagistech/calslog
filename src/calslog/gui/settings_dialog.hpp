@@ -25,6 +25,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog {
 
-void show_log_food_dialog(ruis::widget& owner_widget);
+void show_settings_dialog(ruis::widget& owner_widget);
 
 } // namespace calslog
