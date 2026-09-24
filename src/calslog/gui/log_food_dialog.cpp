@@ -221,9 +221,9 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 		"log_food_dialog:food_mass_hint"sv,
 		make_numeric_filter(4)
 	);
-	auto num_pieces_field = make_field(
-		"log_food_dialog:num_pieces"sv, //
-		"log_food_dialog:num_pieces_hint"sv,
+	auto num_servings_field = make_field(
+		"log_food_dialog:num_servings"sv, //
+		"log_food_dialog:num_servings_hint"sv,
 		make_decimal_filter(), //
 		ruis::string(U"1"), //
 		1 // layout_params.weight
@@ -235,7 +235,7 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 	auto& fn_input = food_name_field.get().get_text_input();
 	auto& cal_input = calories_field.get().get_text_input();
 	auto& mass_input = mass_field.get().get_text_input();
-	auto& pcs_input = num_pieces_field.get().get_text_input();
+	auto& pcs_input = num_servings_field.get().get_text_input();
 
 	// Recompute and apply the enabled state of the Add button.
 	auto update_add_button_enabled = [&add_btn = add_button.get(), //
@@ -401,7 +401,7 @@ void show_log_food_dialog(ruis::widget& owner_widget)
 					}
 				},
 				{
-					std::move(num_pieces_field),
+					std::move(num_servings_field),
 					make_hori_gap(),
 					make_num_button(std::u32string(U"0.5")), //
 					make_hori_gap(),

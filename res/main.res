@@ -31,3 +31,7 @@ img_add{
 img_edit{
     file{edit.svg}
 }
+
+img_three_dots{
+    file{three_dots.svg}
+}

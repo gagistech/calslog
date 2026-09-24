@@ -7,13 +7,22 @@ vocabulary{
     log_food_dialog:cancel_button{str{Cancel}}
     log_food_dialog:food_name{str{"Name"}}
     log_food_dialog:food_mass{str{"Mass (g)"}}
-    log_food_dialog:num_pieces{str{"Number of pieces"}}
-    log_food_dialog:num_pieces_hint{str{"e.g. 2"}}
+    log_food_dialog:num_servings{str{"Number of servings"}}
+    log_food_dialog:num_servings_hint{str{"e.g. 2"}}
     log_food_dialog:food_name_hint{str{"e.g. Apple"}}
     log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
     log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
     log_food_dialog:food_mass_hint{str{"e.g. 200"}}
     log_food_dialog:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
+    food_edit_dialog:title{str{"Edit Food"}}
+    food_edit_dialog:save_button{str{Save}}
+    food_edit_dialog:cancel_button{str{Cancel}}
+    food_edit_dialog:food_name{str{"Name"}}
+    food_edit_dialog:food_name_hint{str{"e.g. Apple"}}
+    food_edit_dialog:calories_per_100g{str{"kcal / 100g"}}
+    food_edit_dialog:calories_per_100g_hint{str{"e.g. 52"}}
+    food_edit_dialog:mass_per_serving{str{"Mass per serving (g)"}}
+    food_edit_dialog:mass_per_serving_hint{str{"e.g. 200"}}
     kcal{str{"{0} kcal"}}
     total_kcal{str{"Total: {0} kcal"}}
     weight{str{"weight: {0} kg"}}

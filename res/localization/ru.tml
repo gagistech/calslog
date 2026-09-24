@@ -7,13 +7,22 @@ vocabulary{
     log_food_dialog:cancel_button{str{Отмена}}
     log_food_dialog:food_name{str{"Название"}}
     log_food_dialog:food_mass{str{"Масса (г)"}}
-    log_food_dialog:num_pieces{str{"Количество шт"}}
-    log_food_dialog:num_pieces_hint{str{"напр. 2"}}
+    log_food_dialog:num_servings{str{"Количество порций"}}
+    log_food_dialog:num_servings_hint{str{"напр. 2"}}
     log_food_dialog:food_name_hint{str{"напр. Яблоко"}}
     log_food_dialog:calories_per_100g{str{"ккал / 100 г"}}
     log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}
     log_food_dialog:food_mass_hint{str{"напр. 200"}}
     log_food_dialog:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
+    food_edit_dialog:title{str{"Изменить еду"}}
+    food_edit_dialog:save_button{str{Сохранить}}
+    food_edit_dialog:cancel_button{str{Отмена}}
+    food_edit_dialog:food_name{str{"Название"}}
+    food_edit_dialog:food_name_hint{str{"напр. Яблоко"}}
+    food_edit_dialog:calories_per_100g{str{"ккал / 100 г"}}
+    food_edit_dialog:calories_per_100g_hint{str{"напр. 52"}}
+    food_edit_dialog:mass_per_serving{str{"Масса порции (г)"}}
+    food_edit_dialog:mass_per_serving_hint{str{"напр. 200"}}
     kcal{str{"{0} ккал"}}
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}
