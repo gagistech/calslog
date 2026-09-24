@@ -24,7 +24,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <functional>
 
 #include <ruis/widget/button/impl/check_box.hpp>
-#include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
@@ -288,24 +287,27 @@ private:
                                         m::gap(context,
                                             {
                                                 .layout_params{
-                                                    .dims = {context.get().style().get_len_gap_small(), 0_pp}
+                                                    .dims = {context.get().style().get_len_gap_small(), 0}
                                                 }
                                             }
                                         ),
                                         // Edit button right next to the weight
-                                        m::ellipse_push_button(
+                                        m::rectangle_push_button(
                                             context,
                                             {
                                                 .layout_params{
                                                     .dims = {ruis::dim::min, ruis::dim::fill}
                                                 },
                                                 .params{
-                                                    .ellipse_button{
-                                                        .ellipse{
+                                                    .rectangle_button{
+                                                        .rectangle{
                                                             .padding{
                                                                 .specific{
-                                                                    .borders = {context.get().style().get_len_gap_small()}
+                                                                    .borders = {0}
                                                                 }
+                                                            },
+                                                            .specific{
+                                                                .corner_radii = {0}
                                                             }
                                                         },
                                                         .specific{
@@ -428,7 +430,7 @@ public:
                 }
             ),
             // Create the floating action button (FAB)
-            m::rectangle_push_button(
+            m::rectangle_push_button( // TODO: create floating_action_button
                 context,
                 {
                     .layout_params{
@@ -442,11 +444,11 @@ public:
                                         .layout = ruis::layout::pile
                                     },
                                     .specific{
-                                        .borders = {14_pp}
+                                        .borders = {14_pp} // TODO: use len_gap
                                     }
                                 },
                                 .specific{
-                                    .corner_radii = {14_pp}
+                                    .corner_radii = {14_pp} // TODO: use len_gap
                                 }
                             },
                             .specific{
