@@ -26,7 +26,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/button/impl/check_box.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
-#include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
 #include <ruis/widget/label/padding.hpp>
@@ -224,15 +223,12 @@ private:
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param
 	) :
-		// clang-format off
-        ruis::widget(
-            context,
-            {},
-            {
-                .clip = true
-            }
-        ),
-		// clang-format on
+		ruis::widget(
+			context,
+			{
+    },
+			{}
+		),
 		ruis::page(context, {}),
 		// clang-format off
         ruis::container(
@@ -417,14 +413,11 @@ public:
 			),
 			// Create the list widget
 			// clang-format off
-            ruis::touch::make::list(
+            m::list(
                 context,
                 {
                     .layout_params{
                         .dims = {ruis::dim::fill, ruis::dim::fill}
-                    },
-                    .widget{
-                        .clip = true
                     },
                     .oriented_params{
                         .vertical = true

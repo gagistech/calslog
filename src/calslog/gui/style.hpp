@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ruis/util/length.hpp>
 #include <ruis/widget/button/touch/tab_button.hpp>
+#include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/group/touch/tabbed_book.hpp>
 
 namespace calslog::m {
@@ -30,4 +31,5 @@ using namespace ruis::make;
 
 using ruis::touch::make::tabbed_book;
 using ruis::touch::make::tab_button;
+using ruis::touch::make::list;
 } // namespace calslog::m
