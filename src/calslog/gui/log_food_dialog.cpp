@@ -110,7 +110,10 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 
 	// Create the primary button separately so we can reference it in the validator
 	// below. Its caption is "Save" when editing an existing entry, otherwise "Add".
-	auto add_button = make_button(is_editing ? "log_food_dialog:save_button"sv : "log_food_dialog:add_button"sv, c.get().style().get_color_special());
+	auto add_button = make_button(
+		is_editing ? "log_food_dialog:save_button"sv : "log_food_dialog:add_button"sv,
+		c.get().style().get_color_special()
+	);
 	auto cancel_button = make_button("log_food_dialog:cancel_button"sv, c.get().style().get_color_primary());
 
 	// The Cancel button closes the dialog.
@@ -243,6 +246,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// field name and the field itself.
 	auto num_servings_label = m::text(
 		c,
+		// clang-format off
 		{
 			.layout_params{
 				.dims = {ruis::dim::fill, ruis::dim::min},
@@ -252,10 +256,12 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				.color = c.get().style().get_color_text()
 			}
 		},
+		// clang-format on
 		c.get().localization.get().get("log_food_dialog:num_servings"sv)
 	);
 	auto num_servings_input = m::rectangle_text_field(
 		c,
+		// clang-format off
 		{
 			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
 			.params{
@@ -267,6 +273,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				}
 			}
 		},
+		// clang-format on
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.pcs))) : ruis::string(U"1")
 	);
 	auto& pcs_input = num_servings_input.get().get_text_input();
@@ -299,13 +306,15 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// buttons, then a small gap, then the field itself.
 	auto num_servings_field = m::column(
 		c,
+		// clang-format off
 		{
-			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}}
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::min}
+			}
 		},
 		{
 			std::move(num_servings_label),
-			m::row(
-				c,
+			m::row(c,
 				{
 					.layout_params{
 						.dims = {ruis::dim::fill, ruis::dim::min}
@@ -323,14 +332,9 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 					make_num_button(std::u32string(U"4"))
 				}
 			),
-			m::gap(
-				c,
-				{
-					.layout_params{.dims = {0, c.get().style().get_len_gap_small()}}
-				}
-			),
+			m::gap(c, {.layout_params{.dims = {0, c.get().style().get_len_gap_small()}}}),
 			std::move(num_servings_input)
-		}
+		} // clang-format on
 	);
 
 	// Validator: the Add button is enabled only when all four fields are non-empty.
@@ -361,24 +365,37 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// right bottom of the dialog.
 	auto detail_label = m::text(
 		c,
+		// clang-format off
 		{
 			.layout_params{
 				.dims = {ruis::dim::min, ruis::dim::min},
 				.align = {ruis::align::back, ruis::align::center}
 			},
 			.params{
-						   .color = c.get().style().get_color_text_secondary(),
-						   .font{.size = c.get().style().get_font_size_secondary()}
+				.color = c.get().style().get_color_text_secondary(),
+				.font{
+					.size = c.get().style().get_font_size_secondary()
+				}
 			}
-    },
+    	},
+		// clang-format on
 		std::u32string{}
 	);
 
 	// The label showing the total kcal for the entered kcal/100g and mass.
 	auto total_label = m::text(
 		c,
-		{.layout_params{.dims = {ruis::dim::min, ruis::dim::min}, .align = {ruis::align::back, ruis::align::center}},
-		 .params{.font{.size = c.get().style().get_font_size_primary()}}},
+		// clang-format off
+		{
+			.layout_params{
+				.dims = {ruis::dim::min, ruis::dim::min},
+				.align = {ruis::align::back, ruis::align::center}
+			},
+			.params{
+				.color = c.get().style().get_color_text_special()
+			}
+		},
+		// clang-format on
 		std::u32string{}
 	);
 
@@ -443,25 +460,26 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// model's today entries, in edit mode it updates the entry being edited. It then
 	// emits the model change signal and closes the dialog. The fields are owned by the
 	// dialog and outlive this function, so it is safe to capture them by reference.
-	add_button.get().click_handler = [&fn_input, &cal_input, &mass_input, &pcs_input, is_editing, edit_entry_index](ruis::push_button& b) {
-		auto& app = application::inst();
-		if (is_editing) {
-			auto& e = app.model.today.entries.at(edit_entry_index);
-			e.name = fn_input.get_string();
-			e.pcs = to_float(pcs_input.get_string());
-			e.mass = uint32_t(to_float(mass_input.get_string()));
-			e.kcal = uint32_t(to_float(cal_input.get_string()));
-		} else {
-			app.model.today.entries.push_back(model::entry{
-				.name = fn_input.get_string(),
-				.pcs = to_float(pcs_input.get_string()),
-				.mass = uint32_t(to_float(mass_input.get_string())),
-				.kcal = uint32_t(to_float(cal_input.get_string()))
-			});
-		}
-		app.model.model_changed_signal.emit();
-		b.get_ancestor<ruis::touch::dialog>().close();
-	};
+	add_button.get().click_handler =
+		[&fn_input, &cal_input, &mass_input, &pcs_input, is_editing, edit_entry_index](ruis::push_button& b) {
+			auto& app = application::inst();
+			if (is_editing) {
+				auto& e = app.model.today.entries.at(edit_entry_index);
+				e.name = fn_input.get_string();
+				e.pcs = to_float(pcs_input.get_string());
+				e.mass = uint32_t(to_float(mass_input.get_string()));
+				e.kcal = uint32_t(to_float(cal_input.get_string()));
+			} else {
+				app.model.today.entries.push_back(model::entry{
+					.name = fn_input.get_string(),
+					.pcs = to_float(pcs_input.get_string()),
+					.mass = uint32_t(to_float(mass_input.get_string())),
+					.kcal = uint32_t(to_float(cal_input.get_string()))
+				});
+			}
+			app.model.model_changed_signal.emit();
+			b.get_ancestor<ruis::touch::dialog>().close();
+		};
 
 	// Create the dialog with its content
 	// clang-format off

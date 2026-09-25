@@ -110,12 +110,24 @@ void show_food_edit_dialog(ruis::widget& owner_widget, size_t food_index)
 					  ) {
 		return m::labeled_text_field(
 			c,
+			// clang-format off
 			{
-				.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::min}
+				},
 				.params{
-							   .label{.string = c.get().localization.get().get(label_loc_id)},
-							   .text_input{.specific{.hint = c.get().localization.get().get(hint_loc_id), .filter = filter}}}
+					.label{
+						.string = c.get().localization.get().get(label_loc_id)
+					},
+					.text_input{
+						.specific{
+							.hint = c.get().localization.get().get(hint_loc_id),
+							.filter = filter
+						}
+					}
+				}
 			},
+			// clang-format on
 			initial
 		);
 	};

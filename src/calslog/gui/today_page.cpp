@@ -278,7 +278,7 @@ private:
 		ruis::widget(
 			context,
 			{
-	},
+    },
 			{}
 		),
 		ruis::page(context, {}),
@@ -446,7 +446,13 @@ public:
 			// Total kcal field, kept as a member so it can be updated when an entry is enabled/disabled
 			m::text(
 				context,
-				{},
+				// clang-format off
+				{
+					.params{
+						.color = context.get().style().get_color_text_special()
+					}
+				},
+				// clang-format on
 				context.get()
 					.localization.get()
 					.get("total_kcal"sv)
