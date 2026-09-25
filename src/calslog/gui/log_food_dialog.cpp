@@ -297,7 +297,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		);
 		// clang-format on
 		button.get().click_handler = [number, &pcs_input](ruis::push_button&) {
-			pcs_input.set_text(number);
+			pcs_input.set_string(number);
 		};
 		return button;
 	};
@@ -352,10 +352,10 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 									  &pcs_input]() //
 	{
 		const bool all_filled = //
-			!fn_input.get_string().empty() && //
-			!cal_input.get_string().empty() && //
-			!mass_input.get_string().empty() && //
-			!pcs_input.get_string().empty();
+			!fn_input.get_string().get().empty() && //
+			!cal_input.get_string().get().empty() && //
+			!mass_input.get_string().get().empty() && //
+			!pcs_input.get_string().get().empty();
 		add_btn.set_enabled(all_filled);
 	};
 
@@ -410,13 +410,13 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 						  &mass_input,
 						  &pcs_input]() //
 	{
-		const auto& pcs_str = pcs_input.get_string();
-		const auto& mass_str = mass_input.get_string();
-		const auto& cal_str = cal_input.get_string();
+		const auto& pcs_str = pcs_input.get_string().get();
+		const auto& mass_str = mass_input.get_string().get();
+		const auto& cal_str = cal_input.get_string().get();
 
 		const bool all_filled = !pcs_str.empty() && !mass_str.empty() && !cal_str.empty();
 
-		detail_lbl.set_text(c.get()
+		detail_lbl.set_string(c.get()
 								.localization.get()
 								.get("log_food_dialog:entry_detail"sv)
 								.format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
@@ -432,7 +432,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		} else {
 			total_str = std::u32string(U"?");
 		}
-		total_lbl.set_text(c.get().localization.get().get("total_kcal"sv).format({total_str}).string());
+		total_lbl.set_string(c.get().localization.get().get("total_kcal"sv).format({total_str}).string());
 	};
 
 	// Recompute both the Add button enabled state and the labels on any field change.
@@ -444,7 +444,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 
 	// Watch the text of each field and recompute the button enabled state and total on change.
 	auto watch_field = [update_all](auto& input) {
-		input.text_change_handler = [update_all](ruis::text_widget&) {
+		input.text_change_handler = [update_all](auto&) {
 			update_all();
 		};
 	};
@@ -465,16 +465,16 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			auto& app = application::inst();
 			if (is_editing) {
 				auto& e = app.model.today.entries.at(edit_entry_index);
-				e.name = fn_input.get_string();
-				e.pcs = to_float(pcs_input.get_string());
-				e.mass = uint32_t(to_float(mass_input.get_string()));
-				e.kcal = uint32_t(to_float(cal_input.get_string()));
+				e.name = fn_input.get_string().get();
+				e.pcs = to_float(pcs_input.get_string().get());
+				e.mass = uint32_t(to_float(mass_input.get_string().get()));
+				e.kcal = uint32_t(to_float(cal_input.get_string().get()));
 			} else {
 				app.model.today.entries.push_back(model::entry{
-					.name = fn_input.get_string(),
-					.pcs = to_float(pcs_input.get_string()),
-					.mass = uint32_t(to_float(mass_input.get_string())),
-					.kcal = uint32_t(to_float(cal_input.get_string()))
+					.name = fn_input.get_string().get(),
+					.pcs = to_float(pcs_input.get_string().get()),
+					.mass = uint32_t(to_float(mass_input.get_string().get())),
+					.kcal = uint32_t(to_float(cal_input.get_string().get()))
 				});
 			}
 			app.model.model_changed_signal.emit();

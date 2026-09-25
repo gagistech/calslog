@@ -199,15 +199,15 @@ void show_food_edit_dialog(ruis::widget& owner_widget, size_t food_index)
 									   &mass_input]() //
 	{
 		const bool all_filled = //
-			!name_input.get_string().empty() && //
-			!cal_input.get_string().empty() && //
-			!mass_input.get_string().empty();
+			!name_input.get_string().get().empty() && //
+			!cal_input.get_string().get().empty() && //
+			!mass_input.get_string().get().empty();
 		save_btn.set_enabled(all_filled);
 	};
 
 	// Watch the text of each field and recompute the Save button enabled state on change.
 	auto watch_field = [update_save_button_enabled](auto& input) {
-		input.text_change_handler = [update_save_button_enabled](ruis::text_widget&) {
+		input.text_change_handler = [update_save_button_enabled](auto&) {
 			update_save_button_enabled();
 		};
 	};
@@ -223,9 +223,9 @@ void show_food_edit_dialog(ruis::widget& owner_widget, size_t food_index)
 	// function, so it is safe to capture them by reference.
 	save_button.get().click_handler = [&name_input, &cal_input, &mass_input, food_index](ruis::push_button& b) {
 		auto& food = application::inst().model.foods.at(food_index);
-		food.name = name_input.get_string();
-		food.kcal = uint32_t(to_float(cal_input.get_string()));
-		food.mass = uint32_t(to_float(mass_input.get_string()));
+		food.name = name_input.get_string().get();
+		food.kcal = uint32_t(to_float(cal_input.get_string().get()));
+		food.mass = uint32_t(to_float(mass_input.get_string().get()));
 		application::inst().model.model_changed_signal.emit();
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};

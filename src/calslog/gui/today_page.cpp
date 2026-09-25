@@ -544,14 +544,14 @@ public:
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->total_kcal_text.get().set_text(
+			this->total_kcal_text.get().set_string(
 				this->context.get()
 					.localization.get()
 					.get("total_kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
 					.string()
 			);
-			this->weight_text.get().set_text(
+			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()
 					.get("weight"sv)
