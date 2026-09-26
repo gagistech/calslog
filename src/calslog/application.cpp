@@ -53,7 +53,8 @@ application::application(
 	ruisapp::application({
 		.name = "calslog"s //
 	}),
-	res_path(fsif::as_dir(res_path))
+	res_path(fsif::as_dir(res_path)),
+	settings(this->directory.config)
 {
 	// Make sure the application data directory exists
 	{

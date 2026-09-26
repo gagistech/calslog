@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "settings_dialog.hpp"
 
+#include <cstdio>
 #include <string_view>
 
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
@@ -30,10 +31,46 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <ruis/widget/widget.hpp>
+#include <utki/string.hpp>
+#include <utki/unicode.hpp>
 
+#include "../application.hpp"
+#include "../settings.hpp"
 #include "style.hpp"
 
 using namespace std::string_view_literals;
+
+namespace {
+// Formats the time of day, given as minutes after midnight, as "H:MM".
+std::u32string format_day_flip_time(uint32_t minutes)
+{
+	char buf[32];
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+	std::snprintf(buf, sizeof buf, "%u:%02u", minutes / 60, minutes % 60);
+	return utki::to_utf32(buf);
+}
+
+// Parses the time of day, given as an "H:MM" or "HH:MM" string,
+// and returns it as minutes after midnight.
+// Throws std::invalid_argument if the input is not a valid time of day.
+uint32_t parse_day_flip_time(std::string_view str)
+{
+	try {
+		utki::string_parser p(str);
+		auto hours = p.read_number<uint32_t>();
+		p.skip_char(':');
+		auto minutes = p.read_number<uint32_t>();
+		p.skip_whitespaces();
+		if (!p.get_view().empty() || hours > 23 || minutes > 59) {
+			throw std::invalid_argument("invalid time of day");
+		}
+		return hours * 60 + minutes;
+	} catch (...) {
+		// std::string_parser also throws std::invalid_argument on malformed input
+		throw std::invalid_argument("invalid time of day");
+	}
+}
+} // namespace
 
 namespace calslog {
 
@@ -71,17 +108,6 @@ void show_settings_dialog(ruis::widget& owner_widget)
 	auto save_button = make_button("settings_dialog:save_button"sv, c.get().style().get_color_special());
 	auto cancel_button = make_button("settings_dialog:cancel_button"sv, c.get().style().get_color_primary());
 
-	// The Cancel button closes the dialog.
-	cancel_button.get().click_handler = [](ruis::push_button& b) {
-		b.get_ancestor<ruis::touch::dialog>().close();
-	};
-
-	// The Save button closes the dialog.
-	// (Actually saving the entered settings is not implemented yet.)
-	save_button.get().click_handler = [](ruis::push_button& b) {
-		b.get_ancestor<ruis::touch::dialog>().close();
-	};
-
 	// Helper to create a gap with the standard vertical spacing
 	auto make_vert_gap = [&c]() {
 		return m::gap(c, {.layout_params{.dims = {ruis::dim::fill, c.get().style().get_len_gap()}}});
@@ -93,7 +119,8 @@ void show_settings_dialog(ruis::widget& owner_widget)
 	};
 
 	// The text field for entering the day flip time.
-	// 3:00 in the morning is a good default time to start a new day food log.
+	// Initialized with the current value from the settings storage.
+	// (3:00 in the morning is the default time to start a new day food log.)
 	auto day_flip_time_field = m::labeled_text_field(
 		c,
 		{
@@ -103,8 +130,34 @@ void show_settings_dialog(ruis::widget& owner_widget)
 						   .text_input{.specific{.hint = c.get().localization.get().get("settings_dialog:day_flip_time_hint"sv)}}
 			}
     },
-		ruis::string(U"3:00")
+		ruis::string(format_day_flip_time(application::inst().settings.get().day_flip_minutes))
 	);
+
+	// The Cancel button closes the dialog.
+	cancel_button.get().click_handler = [](ruis::push_button& b) {
+		b.get_ancestor<ruis::touch::dialog>().close();
+	};
+
+	// The Save button saves the entered day flip time to the settings storage
+	// and closes the dialog. If the entered value is invalid, the dialog stays open.
+	save_button.get().click_handler = [day_flip_time_field](ruis::push_button& b) {
+		const auto& text_input = day_flip_time_field.get().get_text_input();
+		auto text = utki::to_utf8(text_input.get_string().get());
+
+		uint32_t day_flip_minutes;
+		try {
+			day_flip_minutes = parse_day_flip_time(text);
+		} catch (const std::invalid_argument&) {
+			// The input is not a valid time of day. Leave the dialog open.
+			return;
+		}
+
+		auto s = application::inst().settings.get();
+		s.day_flip_minutes = day_flip_minutes;
+		application::inst().settings.set(s);
+
+		b.get_ancestor<ruis::touch::dialog>().close();
+	};
 
 	// Create the dialog with its content
 	// clang-format off

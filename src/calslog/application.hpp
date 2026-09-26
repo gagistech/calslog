@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruisapp/application.hpp>
 
 #include "model/model.hpp"
+#include "settings.hpp"
 
 namespace calslog {
 
@@ -33,6 +34,8 @@ public:
 	const std::string res_path;
 
 	calslog::model::root model;
+
+	calslog::settings settings;
 
 	application(
 		bool window, //
