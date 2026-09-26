@@ -37,6 +37,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../application.hpp"
 #include "../settings.hpp"
+
 #include "style.hpp"
 
 using namespace std::string_view_literals;
@@ -207,13 +208,9 @@ class language_selection_box_provider : public ruis::list_provider
 
 		return m::text(
 			c, //
-			{
-				.params{
-					.color = is_highlighted ?
-						c.get().style().get_color_text_special() :
-						c.get().style().get_color_text()
-				}
-			}, //
+			{.params{
+				.color = is_highlighted ? c.get().style().get_color_text_special() : c.get().style().get_color_text()
+			}}, //
 			std::u32string(lang_name)
 		);
 	}
@@ -295,12 +292,10 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
 			.params{
 						   .label{.string = c.get().localization.get().get("settings_dialog:day_flip_time"sv)},
-						   .text_input{
-						   .specific{
-							   .hint = c.get().localization.get().get("settings_dialog:day_flip_time_hint"sv), //
-							   .filter = day_flip_time_input_filter
-						   }
-					   }
+						   .text_input{.specific{
+					.hint = c.get().localization.get().get("settings_dialog:day_flip_time_hint"sv), //
+					.filter = day_flip_time_input_filter
+				}}
 			}
     },
 		ruis::string(format_day_flip_time(application::inst().settings.get().day_flip_minutes))
@@ -325,23 +320,8 @@ void show_settings_dialog(ruis::widget& owner_widget)
 	// Set the initial state of the Save button based on the loaded value.
 	update_save_button_state(text_input);
 
-	// The Save button saves the entered day flip time to the settings storage
-	// and closes the dialog. It is disabled (and thus cannot be clicked)
-	// if the entered value is not a valid time string.
-	save_button.get().click_handler = [day_flip_time_field](ruis::push_button& b) {
-		const auto& ti = day_flip_time_field.get().get_text_input();
-		auto text = utki::to_utf8(ti.get_string().get());
-		auto day_flip_minutes = parse_day_flip_time(text);
-
-		auto s = application::inst().settings.get();
-		s.day_flip_minutes = day_flip_minutes;
-		application::inst().settings.set(s);
-
-		b.get_ancestor<ruis::touch::dialog>().close();
-	};
-
-	// The language selection box. Selecting a language saves it to the settings
-	// and immediately reloads the whole UI with the new localization.
+	// The language selection box. The selected language is saved and applied
+	// only when the Save button is pressed.
 	// clang-format off
 	auto language_selection_box = m::selection_box(c,
 		{
@@ -362,31 +342,39 @@ void show_settings_dialog(ruis::widget& owner_widget)
 	);
 	// clang-format on
 
-	language_selection_box.get().selection_handler = [](ruis::selection_box& sb) {
-		auto sel = sb.get_selection();
-
-		// save the language to the settings storage
-		{
-			auto& ss = application::inst().settings;
-			auto s = ss.get();
-
-			utki::assert(sel < settings_model::language_id_to_name_mapping.size(), SL);
-			s.cur_language_index = sel;
-
-			ss.set(s);
-		}
-
-		// reload the ui with the new localization
-		sb.context.get().post_to_ui_thread([sel]() {
-			application::inst().load_language(sel);
-		});
-	};
-
 	{
 		const auto& s = application::inst().settings.get();
 		utki::assert(s.cur_language_index < settings_model::language_id_to_name_mapping.size(), SL);
 		language_selection_box.get().set_selection(s.cur_language_index);
 	}
+
+	// The Save button saves the entered day flip time and the selected language
+	// to the settings storage and closes the dialog. If the language changed,
+	// it also reloads the whole UI with the new localization.
+	// It is disabled (and thus cannot be clicked)
+	// if the entered time value is not a valid time string.
+	// NOTE: capture the shared references by value, the handlers outlive this function.
+	save_button.get().click_handler = [day_flip_time_field, language_selection_box](ruis::push_button& b) {
+		const auto& ti = day_flip_time_field.get().get_text_input();
+		auto text = utki::to_utf8(ti.get_string().get());
+		auto day_flip_minutes = parse_day_flip_time(text);
+
+		const auto prev_language_index = application::inst().settings.get().cur_language_index;
+		const auto language_index = language_selection_box.get().get_selection();
+
+		auto s = application::inst().settings.get();
+		s.day_flip_minutes = day_flip_minutes;
+		s.cur_language_index = language_index;
+		application::inst().settings.set(s);
+
+		b.get_ancestor<ruis::touch::dialog>().close();
+
+		if (language_index != prev_language_index) {
+			b.context.get().post_to_ui_thread([language_index]() {
+				application::inst().load_language(language_index);
+			});
+		}
+	};
 
 	// Create the dialog with its content
 	// clang-format off

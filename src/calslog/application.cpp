@@ -55,10 +55,10 @@ application::application(
 	}),
 	res_path(fsif::as_dir(res_path)),
 	settings(this->directory.config),
-	window(this->make_window({
-		.dims = screen_dims, //
-		.fullscreen = !windowed
-	}))
+	window(this->make_window(
+		{.dims = screen_dims, //
+		 .fullscreen = !windowed}
+	))
 {
 	// Make sure the application data directory exists
 	{

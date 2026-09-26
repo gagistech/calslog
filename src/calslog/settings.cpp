@@ -142,5 +142,5 @@ constexpr decltype(settings_model::language_id_to_name_mapping) settings_model::
      {"en"sv, U"English"sv},
      {"fi"sv, U"Suomi"sv},
      {"ru"sv, U"Русский"sv},
-	}
+	 }
 };
