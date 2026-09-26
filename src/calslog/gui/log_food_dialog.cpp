@@ -417,10 +417,10 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		const bool all_filled = !pcs_str.empty() && !mass_str.empty() && !cal_str.empty();
 
 		detail_lbl.set_string(c.get()
-								.localization.get()
-								.get("log_food_dialog:entry_detail"sv)
-								.format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
-								.string());
+								  .localization.get()
+								  .get("log_food_dialog:entry_detail"sv)
+								  .format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
+								  .string());
 
 		std::u32string total_str;
 		if (all_filled) {
