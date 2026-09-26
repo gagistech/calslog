@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <cstdio>
 #include <string_view>
 
+#include <ruis/standard_widgets.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/button/touch/selection_box.hpp>
 #include <ruis/widget/group/overlay.hpp>
@@ -235,6 +236,51 @@ public:
 		return this->make_widget(index, true);
 	}
 };
+
+// List provider for the theme selection box.
+// Shows the localized names of the available themes.
+// The item indices match the ruis::theme enum values (0 = dark, 1 = light).
+class theme_selection_box_provider : public ruis::list_provider
+{
+	std::string_view theme_loc_id(size_t index) const
+	{
+		return index == 1 ? "settings_dialog:theme_light"sv : "settings_dialog:theme_dark"sv;
+	}
+
+	utki::shared_ref<ruis::widget> make_widget(size_t index, bool is_highlighted) const
+	{
+		auto& c = this->context;
+
+		return m::text(
+			c, //
+			{.params{
+				.color = is_highlighted ? c.get().style().get_color_text_special() : c.get().style().get_color_text()
+			}}, //
+			c.get().localization.get().get(this->theme_loc_id(index))
+		);
+	}
+
+public:
+	theme_selection_box_provider(utki::shared_ref<ruis::context> context) :
+		list_provider(std::move(context))
+	{}
+
+	size_t count() const noexcept override
+	{
+		// One item per ruis::theme value (dark, light)
+		return 2;
+	}
+
+	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	{
+		return this->make_widget(index, false);
+	}
+
+	utki::shared_ref<ruis::widget> get_highlighted_widget(size_t index) override
+	{
+		return this->make_widget(index, true);
+	}
+};
 } // namespace
 
 namespace calslog {
@@ -348,33 +394,75 @@ void show_settings_dialog(ruis::widget& owner_widget)
 		language_selection_box.get().set_selection(s.cur_language_index);
 	}
 
+	// The theme selection box. The selected theme is saved and applied
+	// only when the Save button is pressed.
+	// clang-format off
+	auto theme_selection_box = m::selection_box(c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::min}
+			},
+			.params{
+				.selection_box{
+					.list{
+						.provider = utki::make_shared<theme_selection_box_provider>(c)
+					}
+				},
+				.specific{
+					.title = c.get().localization.get().get("settings_dialog:theme"sv)
+				}
+			}
+		}
+	);
+	// clang-format on
+
+	{
+		const auto& s = application::inst().settings.get();
+		// Convert the theme to a selection box index (0 = dark, 1 = light).
+		theme_selection_box.get().set_selection(size_t(s.cur_theme));
+	}
+
 	// The Save button saves the entered day flip time and the selected language
-	// to the settings storage and closes the dialog. If the language changed,
-	// it also reloads the whole UI with the new localization.
+	// and theme to the settings storage and closes the dialog. If the language
+	// or theme changed, it also reloads the whole UI with the new settings.
 	// It is disabled (and thus cannot be clicked)
 	// if the entered time value is not a valid time string.
 	// NOTE: capture the shared references by value, the handlers outlive this function.
-	save_button.get().click_handler = [day_flip_time_field, language_selection_box](ruis::push_button& b) {
-		const auto& ti = day_flip_time_field.get().get_text_input();
-		auto text = utki::to_utf8(ti.get_string().get());
-		auto day_flip_minutes = parse_day_flip_time(text);
+	save_button.get().click_handler =
+		[day_flip_time_field, language_selection_box, theme_selection_box](ruis::push_button& b) {
+			const auto& ti = day_flip_time_field.get().get_text_input();
+			auto text = utki::to_utf8(ti.get_string().get());
+			auto day_flip_minutes = parse_day_flip_time(text);
 
-		const auto prev_language_index = application::inst().settings.get().cur_language_index;
-		const auto language_index = language_selection_box.get().get_selection();
+			// NOTE: take a copy of the previous settings, since set() below mutates the stored model.
+			auto prev_settings = application::inst().settings.get();
+			const auto language_index = language_selection_box.get().get_selection();
+			// Convert the selection box index to a theme (0 = dark, 1 = light).
+			const auto theme = ruis::theme(theme_selection_box.get().get_selection());
 
-		auto s = application::inst().settings.get();
-		s.day_flip_minutes = day_flip_minutes;
-		s.cur_language_index = language_index;
-		application::inst().settings.set(s);
+			auto s = prev_settings;
+			s.day_flip_minutes = day_flip_minutes;
+			s.cur_language_index = language_index;
+			s.cur_theme = theme;
+			application::inst().settings.set(s);
 
-		b.get_ancestor<ruis::touch::dialog>().close();
+			b.get_ancestor<ruis::touch::dialog>().close();
 
-		if (language_index != prev_language_index) {
-			b.context.get().post_to_ui_thread([language_index]() {
-				application::inst().load_language(language_index);
-			});
-		}
-	};
+			if (language_index != prev_settings.cur_language_index || theme != prev_settings.cur_theme) {
+				const auto language_changed = language_index != prev_settings.cur_language_index;
+				const auto theme_changed = theme != prev_settings.cur_theme;
+				b.context.get().post_to_ui_thread([theme, language_index, language_changed, theme_changed]() {
+					auto& app = application::inst();
+
+					if (theme_changed) {
+						app.load_theme(theme);
+					}
+					if (language_changed) {
+						app.load_language(language_index);
+					}
+				});
+			}
+		};
 
 	// Create the dialog with its content
 	// clang-format off
@@ -399,6 +487,8 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			std::move(day_flip_time_field),
 			make_vert_gap(),
 			std::move(language_selection_box),
+			make_vert_gap(),
+			std::move(theme_selection_box),
 			make_vert_gap(),
 			m::row(c,
 				{

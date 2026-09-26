@@ -26,6 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <fsif/native_file.hpp>
 #include <ruis/res/tml.hpp>
 #include <ruis/standard_widgets.hpp>
+#include <ruis/style/style_sheet.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <tml/tree.hpp>
 #include <utki/debug.hpp>
@@ -79,9 +80,11 @@ application::application(
 		this->quit();
 	};
 
+	// Initialize the standard widgets with the style of the currently selected theme
 	ruis::init_standard_widgets(
 		this->window.gui.context, //
-		this->get_res_file()
+		this->get_res_file(), //
+		this->settings.get().cur_theme
 	);
 
 	this->window.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
@@ -98,10 +101,20 @@ void application::load_language(size_t index)
 {
 	auto lng = settings_model::language_id_to_name_mapping.at(index).first;
 
-	this->window.gui.context.get().localization = utki::make_shared<ruis::localization>(
+	this->window.gui.context.get().localization.get() = ruis::localization(
 		this->window.gui.context.get().loader().load<ruis::res::tml>(utki::cat("tml_localization_", lng)).get().forest
 	);
 	this->window.gui.get_root().reload();
+}
+
+void application::load_theme(ruis::theme theme)
+{
+	// Load the theme style sheet resource and set it as the context style,
+	// like ruis touch test app's apply_theme() does.
+	// The style values are shared with the widgets and reloaded in place,
+	// so there is no need to rebuild the UI.
+	auto style_res = this->window.gui.context.get().loader().load<ruis::res::tml>(ruis::to_resource_id(theme));
+	this->window.gui.context.get().style().set(utki::make_shared<ruis::style_sheet>(style_res.get().forest));
 }
 
 application::~application()

@@ -35,6 +35,9 @@ vocabulary{
     settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
     settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}
     settings_dialog:language{str{Kieli}}
+    settings_dialog:theme{str{Teema}}
+    settings_dialog:theme_dark{str{Tumma}}
+    settings_dialog:theme_light{str{Vaalea}}
     log_weight_dialog:title{str{Kirjaa paino}}
     log_weight_dialog:save_button{str{Tallenna}}
     log_weight_dialog:cancel_button{str{Peru}}

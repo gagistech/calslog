@@ -35,6 +35,9 @@ vocabulary{
     settings_dialog:day_flip_time{str{"Время смены дня"}}
     settings_dialog:day_flip_time_hint{str{"напр. 3:00"}}
     settings_dialog:language{str{Язык}}
+    settings_dialog:theme{str{Тема}}
+    settings_dialog:theme_dark{str{Тёмная}}
+    settings_dialog:theme_light{str{Светлая}}
     log_weight_dialog:title{str{Записать вес}}
     log_weight_dialog:save_button{str{Сохранить}}
     log_weight_dialog:cancel_button{str{Отмена}}

@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <ruis/standard_widgets.hpp>
 #include <tml/tree.hpp>
 #include <utki/signal.hpp>
 
@@ -39,6 +40,9 @@ struct settings_model {
 
 	// Index of the currently selected UI language in language_id_to_name_mapping.
 	size_t cur_language_index = 0;
+
+	// The currently selected UI theme.
+	ruis::theme cur_theme = ruis::theme::dark;
 };
 
 // Storage for the application settings.

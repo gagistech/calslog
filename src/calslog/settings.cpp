@@ -25,6 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ranges>
 
 #include <fsif/native_file.hpp>
+#include <ruis/standard_widgets.hpp>
 #include <utki/config.hpp>
 
 using namespace std::string_view_literals;
@@ -36,6 +37,10 @@ constexpr const auto settings_filename = "settings.tml"sv;
 
 constexpr const auto day_flip_minutes_key = "day_flip_minutes"sv;
 constexpr const auto language_key = "language"sv;
+constexpr const auto theme_key = "theme"sv;
+
+constexpr const auto theme_dark_id = "dark"sv;
+constexpr const auto theme_light_id = "light"sv;
 } // namespace
 
 namespace {
@@ -64,6 +69,16 @@ std::string_view language_index_to_id(size_t index)
 	utki::assert(index < lang_mapping.size(), SL);
 
 	return lang_mapping[index].first;
+}
+
+ruis::theme theme_id_to_theme(std::string_view id)
+{
+	return id == theme_light_id ? ruis::theme::light : ruis::theme::dark;
+}
+
+std::string_view theme_to_id(ruis::theme theme)
+{
+	return theme == ruis::theme::light ? theme_light_id : theme_dark_id;
 }
 } // namespace
 
@@ -95,6 +110,10 @@ settings_model settings::read(std::string_view filename)
 		} else if (t.value.string == language_key) {
 			if (!t.children.empty()) {
 				ret.cur_language_index = language_id_to_index(t.children.front().value.string);
+			}
+		} else if (t.value.string == theme_key) {
+			if (!t.children.empty()) {
+				ret.cur_theme = theme_id_to_theme(t.children.front().value.string);
 			}
 		}
 	}
@@ -129,6 +148,10 @@ void settings::write()
 
 	if (this->settings_v.cur_language_index != 0) {
 		add_setting(language_key, tml::leaf(language_index_to_id(this->settings_v.cur_language_index)));
+	}
+
+	if (this->settings_v.cur_theme != ruis::theme::dark) {
+		add_setting(theme_key, tml::leaf(theme_to_id(this->settings_v.cur_theme)));
 	}
 
 	std::filesystem::create_directories(std::filesystem::path(this->filename).parent_path());

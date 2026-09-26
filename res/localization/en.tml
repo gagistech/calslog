@@ -35,6 +35,9 @@ vocabulary{
     settings_dialog:day_flip_time{str{"Day flip time"}}
     settings_dialog:day_flip_time_hint{str{"e.g. 3:00"}}
     settings_dialog:language{str{Language}}
+    settings_dialog:theme{str{Theme}}
+    settings_dialog:theme_dark{str{Dark}}
+    settings_dialog:theme_light{str{Light}}
     log_weight_dialog:title{str{"Log Weight"}}
     log_weight_dialog:save_button{str{Save}}
     log_weight_dialog:cancel_button{str{Cancel}}

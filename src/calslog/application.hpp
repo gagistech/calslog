@@ -55,6 +55,13 @@ public:
 	 */
 	void load_language(size_t index);
 
+	/**
+	 * @brief Load and activate the given UI theme.
+	 * The style values are shared with the widgets and reloaded in place,
+	 * so the UI updates without a rebuild.
+	 */
+	void load_theme(ruis::theme theme);
+
 	static application& inst()
 	{
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast, "here we are 100% sure the cast is safe")
