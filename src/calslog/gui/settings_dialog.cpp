@@ -50,18 +50,37 @@ std::u32string format_day_flip_time(uint32_t minutes)
 	return utki::to_utf32(buf);
 }
 
-// Parses the time of day, given as an "H:MM" or "HH:MM" string,
+// Parses the time of day, given as an "H:MM"/"HH:MM" or "H.MM"/"HH.MM" string,
 // and returns it as minutes after midnight.
+// The hours part must consist of 1 or 2 digits (0-23), the separator can be
+// either ':' or '.', and the minutes part must consist of exactly 2 digits
+// (00-59), e.g. "3:00", "3.00" or "23:59".
 // Throws std::invalid_argument if the input is not a valid time of day.
 uint32_t parse_day_flip_time(std::string_view str)
 {
 	try {
 		utki::string_parser p(str);
-		auto hours = p.read_number<uint32_t>();
-		p.skip_char(':');
-		auto minutes = p.read_number<uint32_t>();
 		p.skip_whitespaces();
-		if (!p.get_view().empty() || hours > 23 || minutes > 59) {
+
+		auto hours_view_size = p.get_view().size();
+		auto hours = p.read_number<uint32_t>();
+		auto hours_digits = hours_view_size - p.get_view().size();
+
+		// The separator is either ':' or '.'
+		// (peek_char() throws if the string has ended)
+		auto sep = p.peek_char();
+		if (sep != ':' && sep != '.') {
+			throw std::invalid_argument("invalid time of day");
+		}
+		p.read_char();
+
+		auto minutes_view_size = p.get_view().size();
+		auto minutes = p.read_number<uint32_t>();
+		auto minutes_digits = minutes_view_size - p.get_view().size();
+
+		p.skip_whitespaces();
+
+		if (hours_digits > 2 || minutes_digits != 2 || hours > 23 || minutes > 59 || !p.get_view().empty()) {
 			throw std::invalid_argument("invalid time of day");
 		}
 		return hours * 60 + minutes;
@@ -69,6 +88,102 @@ uint32_t parse_day_flip_time(std::string_view str)
 		// std::string_parser also throws std::invalid_argument on malformed input
 		throw std::invalid_argument("invalid time of day");
 	}
+}
+
+// Returns true if the given string is a valid time of day string.
+bool is_valid_day_flip_time(std::string_view str)
+{
+	try {
+		parse_day_flip_time(str);
+	} catch (const std::invalid_argument&) {
+		return false;
+	}
+	return true;
+}
+
+// Returns true if the given string is a prefix of a valid day flip time string,
+// i.e. if it can be extended to a string in the "H:MM"/"HH:MM" format
+// (or the same with '.' instead of ':') with hours 0-23 and minutes 00-59.
+bool is_day_flip_time_prefix(std::u32string_view str)
+{
+	size_t i = 0;
+
+	// The hours part: up to 2 digits.
+	uint32_t hours = 0;
+	size_t hours_digits = 0;
+	while (i < str.size()) {
+		const auto c = str[i];
+		if (c < '0' || c > '9') {
+			break;
+		}
+		hours = hours * 10 + (c - '0');
+		++hours_digits;
+		if (hours_digits > 2) {
+			return false;
+		}
+		++i;
+	}
+
+	if (hours_digits == 2 && hours > 23) {
+		// Cannot be extended to a valid hours value.
+		return false;
+	}
+
+	if (i >= str.size()) {
+		// No separator yet.
+		return true;
+	}
+
+	if (str[i] != ':' && str[i] != '.') {
+		return false;
+	}
+	if (hours_digits == 0) {
+		// The separator cannot be the first character.
+		return false;
+	}
+	++i;
+
+	// The minutes part: up to 2 digits.
+	uint32_t minutes = 0;
+	size_t minutes_digits = 0;
+	while (i < str.size()) {
+		const auto c = str[i];
+		if (c < '0' || c > '9') {
+			return false;
+		}
+		minutes = minutes * 10 + (c - '0');
+		++minutes_digits;
+		if (minutes_digits > 2) {
+			return false;
+		}
+		++i;
+	}
+
+	if (minutes_digits == 2) {
+		return minutes <= 59;
+	}
+	if (minutes_digits == 1) {
+		// A one-digit prefix can only be extended to 00-59 if it is 0-5.
+		return minutes <= 5;
+	}
+	return true; // "H:" or "HH:" can still be completed.
+}
+
+// Input filter for the day flip time text field.
+// Rejects an input edit if the resulting text is not a prefix of a valid time string,
+// so the user cannot enter more than 2 digits in the hours or minutes part,
+// more than one separator, or characters that cannot be part of a valid time.
+bool day_flip_time_input_filter(
+	std::u32string_view original, //
+	size_t replace_start, //
+	size_t replace_end, //
+	std::u32string_view to_insert
+)
+{
+	auto result = std::u32string(original.substr(0, replace_start));
+	result.append(to_insert);
+	result.append(original.substr(replace_end));
+	return is_day_flip_time_prefix(result);
 }
 } // namespace
 
@@ -127,7 +242,12 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
 			.params{
 						   .label{.string = c.get().localization.get().get("settings_dialog:day_flip_time"sv)},
-						   .text_input{.specific{.hint = c.get().localization.get().get("settings_dialog:day_flip_time_hint"sv)}}
+						   .text_input{
+						   .specific{
+							   .hint = c.get().localization.get().get("settings_dialog:day_flip_time_hint"sv), //
+							   .filter = day_flip_time_input_filter
+						   }
+					   }
 			}
     },
 		ruis::string(format_day_flip_time(application::inst().settings.get().day_flip_minutes))
@@ -138,19 +258,27 @@ void show_settings_dialog(ruis::widget& owner_widget)
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};
 
-	// The Save button saves the entered day flip time to the settings storage
-	// and closes the dialog. If the entered value is invalid, the dialog stays open.
-	save_button.get().click_handler = [day_flip_time_field](ruis::push_button& b) {
-		const auto& text_input = day_flip_time_field.get().get_text_input();
-		auto text = utki::to_utf8(text_input.get_string().get());
+	// The Save button is enabled only if the entered time is a valid time string.
+	// NOTE: capture the shared references by value, the handlers outlive this function.
+	auto update_save_button_state = [save_button](const ruis::text_string_widget& tw) {
+		save_button.get().set_enabled(is_valid_day_flip_time(utki::to_utf8(tw.get_string().get())));
+	};
 
-		uint32_t day_flip_minutes;
-		try {
-			day_flip_minutes = parse_day_flip_time(text);
-		} catch (const std::invalid_argument&) {
-			// The input is not a valid time of day. Leave the dialog open.
-			return;
-		}
+	auto& text_input = day_flip_time_field.get().get_text_input();
+	text_input.text_change_handler = [update_save_button_state](ruis::text_string_widget& tw) {
+		update_save_button_state(tw);
+	};
+
+	// Set the initial state of the Save button based on the loaded value.
+	update_save_button_state(text_input);
+
+	// The Save button saves the entered day flip time to the settings storage
+	// and closes the dialog. It is disabled (and thus cannot be clicked)
+	// if the entered value is not a valid time string.
+	save_button.get().click_handler = [day_flip_time_field](ruis::push_button& b) {
+		const auto& ti = day_flip_time_field.get().get_text_input();
+		auto text = utki::to_utf8(ti.get_string().get());
+		auto day_flip_minutes = parse_day_flip_time(text);
 
 		auto s = application::inst().settings.get();
 		s.day_flip_minutes = day_flip_minutes;
