@@ -28,11 +28,13 @@ vocabulary{
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
+    foods_page:entry_detail{str{"{0} kcal/100 g, {1} g/annos"}}
     settings_dialog:title{str{Asetukset}}
     settings_dialog:save_button{str{Tallenna}}
     settings_dialog:cancel_button{str{Peru}}
     settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
     settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}
+    settings_dialog:language{str{Kieli}}
     log_weight_dialog:title{str{Kirjaa paino}}
     log_weight_dialog:save_button{str{Tallenna}}
     log_weight_dialog:cancel_button{str{Peru}}

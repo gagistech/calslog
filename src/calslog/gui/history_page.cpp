@@ -133,7 +133,6 @@ public:
                                     this->context.get().localization.get()
                                         .get("kcal"sv)
                                         .format({utki::to_utf32(std::to_string(day.calc_total_kcal()))})
-                                        .string()
                                 )
                             }
                         ),
@@ -160,7 +159,6 @@ public:
                             this->context.get().localization.get()
                                 .get("weight"sv)
                                 .format({weight_str})
-                                .string()
                         )
                     }
                 ),

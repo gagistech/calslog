@@ -173,7 +173,15 @@ public:
 											}
 										}
 									},
-									utki::to_utf32(utki::to_string(food.kcal)) + U" kcal/100g, " + utki::to_utf32(utki::to_string(food.mass)) + U" g/serving"
+									// Pass the wording (not a string snapshot) so that the text
+									// is re-resolved against the current localization on reload
+									// (e.g. after a language change).
+									this->context.get().localization.get()
+										.get("foods_page:entry_detail"sv)
+										.format({
+												utki::to_utf32(utki::to_string(food.kcal)),
+												utki::to_utf32(utki::to_string(food.mass))
+										})
 								)
 							}
 						),

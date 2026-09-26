@@ -25,6 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <string_view>
 
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
+#include <ruis/widget/button/touch/selection_box.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/input/labeled_text_field.hpp>
@@ -39,6 +40,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "style.hpp"
 
 using namespace std::string_view_literals;
+
+using namespace calslog;
 
 namespace {
 // Formats the time of day, given as minutes after midnight, as "H:MM".
@@ -187,6 +190,56 @@ bool day_flip_time_input_filter(
 }
 } // namespace
 
+namespace {
+// List provider for the language selection box.
+// Shows the native names of the available UI languages.
+class language_selection_box_provider : public ruis::list_provider
+{
+	utki::shared_ref<ruis::widget> make_widget(size_t index, bool is_highlighted) const
+	{
+		const auto& lang_mapping = settings_model::language_id_to_name_mapping;
+
+		utki::assert(index < lang_mapping.size(), SL);
+
+		auto lang_name = lang_mapping.at(index).second;
+
+		auto& c = this->context;
+
+		return m::text(
+			c, //
+			{
+				.params{
+					.color = is_highlighted ?
+						c.get().style().get_color_text_special() :
+						c.get().style().get_color_text()
+				}
+			}, //
+			std::u32string(lang_name)
+		);
+	}
+
+public:
+	language_selection_box_provider(utki::shared_ref<ruis::context> context) :
+		list_provider(std::move(context))
+	{}
+
+	size_t count() const noexcept override
+	{
+		return settings_model::language_id_to_name_mapping.size();
+	}
+
+	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	{
+		return this->make_widget(index, false);
+	}
+
+	utki::shared_ref<ruis::widget> get_highlighted_widget(size_t index) override
+	{
+		return this->make_widget(index, true);
+	}
+};
+} // namespace
+
 namespace calslog {
 
 void show_settings_dialog(ruis::widget& owner_widget)
@@ -287,6 +340,54 @@ void show_settings_dialog(ruis::widget& owner_widget)
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};
 
+	// The language selection box. Selecting a language saves it to the settings
+	// and immediately reloads the whole UI with the new localization.
+	// clang-format off
+	auto language_selection_box = m::selection_box(c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::min}
+			},
+			.params{
+				.selection_box{
+					.list{
+						.provider = utki::make_shared<language_selection_box_provider>(c)
+					}
+				},
+				.specific{
+					.title = c.get().localization.get().get("settings_dialog:language"sv)
+				}
+			}
+		}
+	);
+	// clang-format on
+
+	language_selection_box.get().selection_handler = [](ruis::selection_box& sb) {
+		auto sel = sb.get_selection();
+
+		// save the language to the settings storage
+		{
+			auto& ss = application::inst().settings;
+			auto s = ss.get();
+
+			utki::assert(sel < settings_model::language_id_to_name_mapping.size(), SL);
+			s.cur_language_index = sel;
+
+			ss.set(s);
+		}
+
+		// reload the ui with the new localization
+		sb.context.get().post_to_ui_thread([sel]() {
+			application::inst().load_language(sel);
+		});
+	};
+
+	{
+		const auto& s = application::inst().settings.get();
+		utki::assert(s.cur_language_index < settings_model::language_id_to_name_mapping.size(), SL);
+		language_selection_box.get().set_selection(s.cur_language_index);
+	}
+
 	// Create the dialog with its content
 	// clang-format off
 	auto dialog = ruis::touch::make::dialog(c,
@@ -308,6 +409,8 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			),
 			make_vert_gap(),
 			std::move(day_flip_time_field),
+			make_vert_gap(),
+			std::move(language_selection_box),
 			make_vert_gap(),
 			m::row(c,
 				{

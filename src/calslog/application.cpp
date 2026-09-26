@@ -47,14 +47,18 @@ constexpr auto data_filename = "data.tml"sv;
 } // namespace
 
 application::application(
-	bool window, //
+	bool windowed, //
 	std::string_view res_path
 ) :
 	ruisapp::application({
 		.name = "calslog"s //
 	}),
 	res_path(fsif::as_dir(res_path)),
-	settings(this->directory.config)
+	settings(this->directory.config),
+	window(this->make_window({
+		.dims = screen_dims, //
+		.fullscreen = !windowed
+	}))
 {
 	// Make sure the application data directory exists
 	{
@@ -71,29 +75,33 @@ application::application(
 		this->model.today = this->model.history.back();
 	}
 
-	auto& win = this->make_window({//
-								   .dims = screen_dims,
-								   .fullscreen = !window
-	});
-
-	win.gui.context.get().window().close_handler = [this]() {
+	this->window.gui.context.get().window().close_handler = [this]() {
 		this->quit();
 	};
 
 	ruis::init_standard_widgets(
-		win.gui.context, //
+		this->window.gui.context, //
 		this->get_res_file()
 	);
 
-	win.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
+	this->window.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
 
-	// Load localization
-	win.gui.context.get().localization.get() =
-		ruis::localization(win.gui.context.get().loader().load<ruis::res::tml>("tml_localization_en"sv).get().forest);
+	// Load localization according to the current settings
+	this->load_language(this->settings.get().cur_language_index);
 
-	auto c = make_root_widget(win.gui.context);
+	auto c = make_root_widget(this->window.gui.context);
 
-	win.gui.set_root(c);
+	this->window.gui.set_root(c);
+}
+
+void application::load_language(size_t index)
+{
+	auto lng = settings_model::language_id_to_name_mapping.at(index).first;
+
+	this->window.gui.context.get().localization = utki::make_shared<ruis::localization>(
+		this->window.gui.context.get().loader().load<ruis::res::tml>(utki::cat("tml_localization_", lng)).get().forest
+	);
+	this->window.gui.get_root().reload();
 }
 
 application::~application()

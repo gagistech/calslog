@@ -37,14 +37,22 @@ public:
 
 	calslog::settings settings;
 
+	ruisapp::window& window;
+
 	application(
-		bool window, //
+		bool windowed, //
 		std::string_view res_path
 	);
 
 	~application() override;
 
 	void save() noexcept;
+
+	/**
+	 * @brief Load and activate the UI localization with the given index
+	 * in settings_model::language_id_to_name_mapping and reload the UI.
+	 */
+	void load_language(size_t index);
 
 	static application& inst()
 	{

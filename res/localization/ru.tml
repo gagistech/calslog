@@ -28,11 +28,13 @@ vocabulary{
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}
     today_page:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
+    foods_page:entry_detail{str{"{0} ккал/100г, {1} г/порция"}}
     settings_dialog:title{str{Настройки}}
     settings_dialog:save_button{str{Сохранить}}
     settings_dialog:cancel_button{str{Отмена}}
     settings_dialog:day_flip_time{str{"Время смены дня"}}
     settings_dialog:day_flip_time_hint{str{"напр. 3:00"}}
+    settings_dialog:language{str{Язык}}
     log_weight_dialog:title{str{Записать вес}}
     log_weight_dialog:save_button{str{Сохранить}}
     log_weight_dialog:cancel_button{str{Отмена}}

@@ -181,7 +181,6 @@ public:
 											this->context.get().localization.get()
 												.get("kcal"sv)
 												.format({utki::to_utf32(std::to_string(total_kcal))})
-												.string()
 										)
 									}
 								),
@@ -212,7 +211,6 @@ public:
 											utki::to_utf32(std::to_string(entry.mass)),
 											utki::to_utf32(std::to_string(entry.kcal))
 										})
-										.string()
 								)
 							}
 						),
@@ -421,7 +419,6 @@ public:
 					.localization.get()
 					.get("total_kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
-					.string()
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
@@ -431,7 +428,6 @@ public:
 					.localization.get()
 					.get("weight"sv)
 					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
-					.string()
 			),
 			// Create the list widget
 			// clang-format off
@@ -560,14 +556,12 @@ public:
 					.localization.get()
 					.get("total_kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today.calc_total_kcal()))})
-					.string()
 			);
 			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()
 					.get("weight"sv)
 					.format({utki::to_utf32(application::inst().model.today.get_weight_string())})
-					.string()
 			);
 			this->list_widget.get().get_provider().notify_model_change();
 		});

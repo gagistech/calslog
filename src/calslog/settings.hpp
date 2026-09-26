@@ -32,6 +32,13 @@ struct settings_model {
 	// flips over to the next day. 3:00 in the morning is a good default.
 	constexpr static const auto default_day_flip_minutes = 3 * 60;
 	uint32_t day_flip_minutes = default_day_flip_minutes;
+
+	// Mapping of language ids to the native language names
+	// used by the UI language selection box.
+	static const std::array<std::pair<std::string_view, std::u32string_view>, 3> language_id_to_name_mapping;
+
+	// Index of the currently selected UI language in language_id_to_name_mapping.
+	size_t cur_language_index = 0;
 };
 
 // Storage for the application settings.
