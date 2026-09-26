@@ -38,6 +38,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../model/model.hpp"
 
 #include "log_food_dialog.hpp"
+#include "log_weight_dialog.hpp"
 #include "style.hpp"
 
 using namespace std::string_literals;
@@ -264,6 +265,7 @@ class today_page :
 {
 private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
+	utki::shared_ref<ruis::rectangle_push_button> weight_edit_button;
 	utki::shared_ref<ruis::text> total_kcal_text;
 	utki::shared_ref<ruis::text> weight_text;
 	utki::shared_ref<ruis::touch::list> list_widget;
@@ -273,7 +275,8 @@ private:
 		utki::shared_ref<ruis::text> total_kcal_text_param, //
 		utki::shared_ref<ruis::text> weight_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
-		utki::shared_ref<ruis::rectangle_push_button> fab_button_param
+		utki::shared_ref<ruis::rectangle_push_button> fab_button_param, //
+		utki::shared_ref<ruis::rectangle_push_button> weight_edit_button_param
 	) :
 		ruis::widget(
 			context,
@@ -341,47 +344,7 @@ private:
 											}
 										),
 										// Edit button right next to the weight
-										m::rectangle_push_button(
-											context,
-											{
-												.layout_params{
-													.dims = {ruis::dim::min, ruis::dim::fill}
-												},
-												.params{
-													.rectangle_button{
-														.rectangle{
-															.padding{
-																.specific{
-																	.borders = {0}
-																}
-															},
-															.specific{
-																.corner_radii = {0}
-															}
-														},
-														.specific{
-															.unpressed_color = ruis::color::transparent
-														}
-													}
-												}
-											},
-											{
-												m::image(
-													context,
-													{
-														.layout_params{
-															.dims = {ruis::dim::min, ruis::dim::fill}
-														},
-														.params{
-															.specific{
-																.source = context.get().loader().load<ruis::res::image>("img_edit"sv),
-																.keep_aspect_ratio = true
-															}
-														}
-													}
-												)
-											}
-										)
+										weight_edit_button_param
 									}
 								)
 							}
@@ -433,6 +396,7 @@ private:
 			}
 		),
 		fab_button(fab_button_param),
+		weight_edit_button(weight_edit_button_param),
 		total_kcal_text(total_kcal_text_param),
 		weight_text(weight_text_param),
 		list_widget(list_widget)
@@ -527,6 +491,48 @@ public:
 						}
 					)
 				}
+			),
+			// Create the weight edit button (the small pencil icon next to the weight)
+			m::rectangle_push_button(
+				context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::min, ruis::dim::fill}
+					},
+					.params{
+						.rectangle_button{
+							.rectangle{
+								.padding{
+									.specific{
+										.borders = {0}
+									}
+								},
+								.specific{
+									.corner_radii = {0}
+								}
+							},
+							.specific{
+								.unpressed_color = ruis::color::transparent
+							}
+						}
+					}
+				},
+				{
+					m::image(
+						context,
+						{
+							.layout_params{
+								.dims = {ruis::dim::min, ruis::dim::fill}
+							},
+							.params{
+								.specific{
+									.source = context.get().loader().load<ruis::res::image>("img_edit"sv),
+									.keep_aspect_ratio = true
+								}
+							}
+						}
+					)
+				}
 			)
 			// clang-format on
 		)
@@ -536,6 +542,11 @@ public:
 		// because shared_from_this() doesn't work during construction.
 		this->fab_button.get().click_handler = [](ruis::push_button& b) {
 			show_log_food_dialog(b);
+		};
+
+		// Set click handler on the weight edit button: it opens the "log weight" dialog.
+		this->weight_edit_button.get().click_handler = [](ruis::push_button& b) {
+			show_log_weight_dialog(b);
 		};
 
 		// Listen to model changes and refresh the day total kcal display and the

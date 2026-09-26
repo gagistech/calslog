@@ -33,4 +33,9 @@ vocabulary{
     settings_dialog:cancel_button{str{Peru}}
     settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
     settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}
+    log_weight_dialog:title{str{Kirjaa paino}}
+    log_weight_dialog:save_button{str{Tallenna}}
+    log_weight_dialog:cancel_button{str{Peru}}
+    log_weight_dialog:weight{str{"Paino (kg)"}}
+    log_weight_dialog:weight_hint{str{"esim. 72.5"}}
 }
