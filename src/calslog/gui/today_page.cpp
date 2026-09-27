@@ -84,6 +84,7 @@ public:
 		const auto color_primary = style.get_color_primary();
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
+		const auto color_text = style.get_color_text();
 
 		// Three dots button to the right of the checkbox.
 		// clang-format off
@@ -115,6 +116,7 @@ public:
 							.dims = {ruis::dim::min, ruis::dim::fill}
 						},
 						.params{
+							.color = color_text,
 							.specific{
 								.source = this->context.get().loader().load<ruis::res::image>("img_three_dots"sv),
 								.keep_aspect_ratio = true
@@ -411,7 +413,10 @@ public:
 				// clang-format off
 				{
 					.params{
-						.color = context.get().style().get_color_text_special()
+						.color = context.get().style().get_color_text_special(),
+						.specific{
+							.style = ruis::res::font::style::bold
+						}
 					}
 				},
 				// clang-format on
@@ -521,6 +526,7 @@ public:
 								.dims = {ruis::dim::min, ruis::dim::fill}
 							},
 							.params{
+								.color = context.get().style().get_color_text(),
 								.specific{
 									.source = context.get().loader().load<ruis::res::image>("img_edit"sv),
 									.keep_aspect_ratio = true

@@ -392,7 +392,10 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				.align = {ruis::align::back, ruis::align::center}
 			},
 			.params{
-				.color = c.get().style().get_color_text_special()
+				.color = c.get().style().get_color_text_special(),
+				.specific{
+					.style = ruis::res::font::style::bold
+				}
 			}
 		},
 		// clang-format on

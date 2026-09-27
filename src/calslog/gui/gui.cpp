@@ -165,6 +165,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 						.dims = {ruis::dim::min, ruis::dim::fill}
 					},
 					.params{
+						.color = c.get().style().get_color_text(),
 						.specific{
 							.source = c.get().loader().load<ruis::res::image>("img_cog"sv),
 							.keep_aspect_ratio = true

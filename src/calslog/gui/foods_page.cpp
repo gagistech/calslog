@@ -67,6 +67,7 @@ public:
 		const auto color_primary = style.get_color_primary();
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
+		const auto color_text = style.get_color_text();
 
 		// Three dots button on the right side of the item; pressing it opens the
 		// food edit dialog for this food.
@@ -99,6 +100,7 @@ public:
 							.dims = {ruis::dim::min, ruis::dim::fill}
 						},
 						.params{
+							.color = color_text,
 							.specific{
 								.source = this->context.get().loader().load<ruis::res::image>("img_three_dots"sv),
 								.keep_aspect_ratio = true
