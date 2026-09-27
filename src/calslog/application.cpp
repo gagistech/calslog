@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <fsif/native_file.hpp>
 #include <ruis/res/tml.hpp>
-#include <ruis/standard_widgets.hpp>
+#include <ruis/standard_resources.hpp>
 #include <ruis/style/style_sheet.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <tml/tree.hpp>
@@ -81,7 +81,7 @@ application::application(
 	};
 
 	// Initialize the standard widgets with the style of the currently selected theme
-	ruis::init_standard_widgets(
+	ruis::mount_ruis_res_pack(
 		this->window.gui.context, //
 		this->get_res_file(), //
 		this->settings.get().cur_theme
