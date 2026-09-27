@@ -224,6 +224,19 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<
 	return m::overlay(c,
 		{},
 		{
+			// Background rectangle covering the whole screen
+			m::rectangle(c,
+				{
+					.layout_params = {
+						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.params = {
+						.specific = {
+							.fill_color = c.get().style().get_color_background()
+						}
+					}
+				}
+			),
 			m::column(c,
 				{
 					.layout_params = {
