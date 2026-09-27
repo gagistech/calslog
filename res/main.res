@@ -8,10 +8,6 @@ img_questionmark{
     file{questionmark.svg}
 }
 
-img_close{
-    file{close.svg}
-}
-
 img_burger{
     file{burger.svg}
 }
@@ -30,8 +26,4 @@ img_add{
 
 img_edit{
     file{edit.svg}
-}
-
-img_three_dots{
-    file{three_dots.svg}
 }

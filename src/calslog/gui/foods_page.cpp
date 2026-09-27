@@ -102,7 +102,7 @@ public:
 						.params{
 							.color = color_text,
 							.specific{
-								.source = this->context.get().loader().load<ruis::res::image>("img_three_dots"sv),
+								.source = this->context.get().loader().load<ruis::res::image>("ruis_img_more"sv),
 								.keep_aspect_ratio = true
 							}
 						}
