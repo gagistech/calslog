@@ -197,8 +197,8 @@ void show_food_edit_dialog(
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(food.kcal))) : ruis::string{}
 	);
 	auto mass_field = make_field(
-		"food_edit_dialog:mass_per_serving"sv, //
-		"food_edit_dialog:mass_per_serving_hint"sv,
+		"mass_per_serving"sv, //
+		"mass_per_serving_hint"sv,
 		make_numeric_filter(4),
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(food.mass))) : ruis::string{}
 	);
