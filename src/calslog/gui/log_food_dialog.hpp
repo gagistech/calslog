@@ -31,7 +31,7 @@ namespace calslog {
 // Shows the "log food" dialog.
 // When `edit_entry_index` is the default (the maximum value of size_t), the dialog
 // opens empty and its primary button reads "Add"; submitting appends a new entry to
-// today. When `edit_entry_index` is a valid index into `model.today.entries`, the
+// today. When `edit_entry_index` is a valid index into `model.last_day().entries`, the
 // dialog opens prefilled with that entry's values, its primary button reads "Save",
 // and submitting updates that entry in place.
 void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index = std::numeric_limits<size_t>::max());

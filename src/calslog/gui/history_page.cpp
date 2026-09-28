@@ -74,7 +74,18 @@ public:
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
-		const auto& day = application::inst().model.history.at(index);
+		// Show the most recent days at the top: reverse the display index into the
+		// history, which is ordered oldest -> newest.
+		const auto& history = application::inst().model.history;
+		const auto& day = history.at(history.size() - 1 - index);
+
+		// The top item (index 0) is the most recent day, which is today (guaranteed at
+		// start-up). Show it with a localized "(today)" suffix for clarity.
+		std::u32string date_label = make_date_string(day.date);
+		if (index == 0) {
+			date_label =
+				this->context.get().localization.get().get("history_page:today"sv).format({date_label}).string();
+		}
 
 		const auto& style = this->context.get().style();
 		const auto len_border = style.get_len_border();
@@ -126,7 +137,7 @@ public:
                                             .align = {ruis::align::front, ruis::align::center}
                                         }
                                     },
-                                    make_date_string(day.date)
+                                    date_label
                                 ),
                                 m::text(this->context,
                                     {},
@@ -183,10 +194,17 @@ public:
 } // namespace
 
 namespace {
-class history_page : public ruis::page, private ruis::touch::list
+class history_page :
+	public ruis::page, //
+	private ruis::container
 {
-public:
-	history_page(const utki::shared_ref<ruis::context>& context) :
+private:
+	utki::shared_ref<ruis::touch::list> list_widget;
+
+	history_page(
+		const utki::shared_ref<ruis::context>& context, //
+		utki::shared_ref<ruis::touch::list> list_widget_param //
+	) :
 		// clang-format off
 		ruis::widget(context,
 			{},
@@ -197,17 +215,66 @@ public:
 		// clang-format on
 		ruis::page(context, {}),
 		// clang-format off
-		ruis::touch::list(context,
+		ruis::container(
+			context,
 			{
-                .params{
-                    .specific{
-                        .provider = utki::make_shared<history_page_provider>(context)
-                    }
-                }
+				.params{
+					.layout = ruis::layout::column
+				}
+			},
+			{
+				// The list fills the whole page
+				m::pile(
+					context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::fill},
+							.weight = 1
+						}
+					},
+					{
+						list_widget_param
+					}
+				)
 			}
+		),
+		// clang-format on
+		list_widget(std::move(list_widget_param))
+	{}
+
+public:
+	history_page(const utki::shared_ref<ruis::context>& context) :
+		// clang-format off
+		history_page(
+			context,
+			// Create the list widget
+			m::list(
+				context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.params{
+						.specific{
+							.provider = utki::make_shared<history_page_provider>(context)
+						}
+					}
+				}
+			)
 		)
 	// clang-format on
-	{}
+	{
+		// Refresh the list whenever the model changes (e.g. a day's totals or weight
+		// is updated). Capture a weak reference to the list (not a raw pointer and
+		// not 'this') so the handler stays safe even if it were to outlive the list;
+		// lock it and notify the provider on each model change.
+		auto list_weak = utki::make_weak(this->list_widget);
+		application::inst().model.model_changed_signal.connect([list_weak]() {
+			if (auto list = list_weak.lock()) {
+				list->get_provider().notify_model_change();
+			}
+		});
+	}
 };
 } // namespace
 

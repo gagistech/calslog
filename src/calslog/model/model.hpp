@@ -78,13 +78,24 @@ struct food {
 struct root {
 	std::vector<day> history;
 
-	day today;
-
 	std::vector<food> foods;
 
 	// Emitted whenever the model data is modified, so that interested parties
 	// (e.g. the GUI) can react by refreshing their state.
 	utki::signal<> model_changed_signal;
+
+	// Returns a reference to the most recent (last) day in the history. New entries
+	// are always logged to this day. The application guarantees at start-up that this
+	// day corresponds to today's date, pushing a fresh (empty) day when it does not.
+	day& last_day()
+	{
+		return this->history.back();
+	}
+
+	const day& last_day() const
+	{
+		return this->history.back();
+	}
 };
 
 root read(const fsif::file& fi);

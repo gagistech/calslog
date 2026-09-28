@@ -32,6 +32,7 @@ vocabulary{
     weight{str{"Вес: {0} кг"}}
     today_page:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
     foods_page:entry_detail{str{"{0} ккал/100г, {1} г/порция"}}
+    history_page:today{str{"{0} (сегодня)"}}
     settings_dialog:title{str{Настройки}}
     settings_dialog:save_button{str{Сохранить}}
     settings_dialog:cancel_button{str{Отмена}}

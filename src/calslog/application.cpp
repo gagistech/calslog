@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "application.hpp"
 
+#include <ctime>
 #include <iomanip>
 
 #include <fsif/native_file.hpp>
@@ -44,6 +45,19 @@ using namespace calslog;
 namespace {
 constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 3;
 constexpr auto data_filename = "data.tml"sv;
+
+// Returns the current local calendar date, used at start-up to decide whether a
+// fresh day must be added to the history.
+std::chrono::year_month_day current_date()
+{
+	const std::time_t tt = std::time(nullptr);
+	const std::tm* const t = std::localtime(&tt);
+	return std::chrono::year_month_day{
+		std::chrono::year{t->tm_year + 1900}, //
+		std::chrono::month{static_cast<unsigned>(t->tm_mon) + 1u}, //
+		std::chrono::day{static_cast<unsigned>(t->tm_mday)} //
+	};
+}
 } // namespace
 
 application::application(
@@ -70,9 +84,17 @@ application::application(
 		this->model = calslog::model::read(data_file);
 	}
 
-	// Populate today from the most recent history entry if today is empty
-	if (this->model.today.entries.empty() && !this->model.history.empty()) {
-		this->model.today = this->model.history.back();
+	// Make sure the history ends with today: new entries are always logged to the
+	// last day in the history. If the history is empty, or today's date is later
+	// than the last day (e.g. the app was left open across a day boundary), push a
+	// fresh (empty) day for today. If today is not later than the last day (for
+	// example because a timezone change made the clock run backwards) do not add a
+	// new day.
+	{
+		const auto today = current_date();
+		if (this->model.history.empty() || this->model.history.back().date < today) {
+			this->model.history.push_back(model::day{.date = today});
+		}
 	}
 
 	this->window.gui.context.get().window().close_handler = [this]() {

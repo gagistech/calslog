@@ -32,6 +32,7 @@ vocabulary{
     weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     foods_page:entry_detail{str{"{0} kcal/100 g, {1} g/annos"}}
+    history_page:today{str{"{0} (tänään)"}}
     settings_dialog:title{str{Asetukset}}
     settings_dialog:save_button{str{Tallenna}}
     settings_dialog:cancel_button{str{Peru}}

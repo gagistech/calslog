@@ -81,7 +81,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	const bool is_editing = edit_entry_index != std::numeric_limits<size_t>::max();
 	model::entry editing_entry{};
 	if (is_editing) {
-		editing_entry = application::inst().model.today.entries.at(edit_entry_index);
+		editing_entry = application::inst().model.last_day().entries.at(edit_entry_index);
 	}
 
 	// Helper to create a push button with a localized caption and the given color.
@@ -467,13 +467,13 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		[&fn_input, &cal_input, &mass_input, &pcs_input, is_editing, edit_entry_index](ruis::push_button& b) {
 			auto& app = application::inst();
 			if (is_editing) {
-				auto& e = app.model.today.entries.at(edit_entry_index);
+				auto& e = app.model.last_day().entries.at(edit_entry_index);
 				e.name = fn_input.get_string().get();
 				e.pcs = to_float(pcs_input.get_string().get());
 				e.mass = uint32_t(to_float(mass_input.get_string().get()));
 				e.kcal = uint32_t(to_float(cal_input.get_string().get()));
 			} else {
-				app.model.today.entries.push_back(model::entry{
+				app.model.last_day().entries.push_back(model::entry{
 					.name = fn_input.get_string().get(),
 					.pcs = to_float(pcs_input.get_string().get()),
 					.mass = uint32_t(to_float(mass_input.get_string().get())),
