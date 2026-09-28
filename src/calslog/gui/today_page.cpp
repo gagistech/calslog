@@ -81,7 +81,7 @@ public:
 		const auto len_border = style.get_len_border();
 		const auto len_gap = style.get_len_gap();
 		const auto len_gap_small = style.get_len_gap_small();
-		const auto color_primary = style.get_color_primary();
+		const auto color_secondary = style.get_color_secondary();
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
 		const auto color_text = style.get_color_text();
@@ -246,7 +246,7 @@ public:
 						},
 						.params{
 							.specific{
-								.fill_color = color_primary
+								.fill_color = color_secondary
 							}
 						}
 					}
@@ -359,7 +359,7 @@ private:
 						},
 						.params{
 							.specific{
-								.fill_color = context.get().style().get_color_primary()
+								.fill_color = context.get().style().get_color_secondary()
 							}
 						}
 					}
