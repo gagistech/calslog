@@ -58,12 +58,12 @@ public:
 
 	size_t count() const noexcept override
 	{
-		return application::inst().model.last_day().entries.size();
+		return application::inst().model.today().entries.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) override
 	{
-		const auto& entry = application::inst().model.last_day().entries.at(index);
+		const auto& entry = application::inst().model.today().entries.at(index);
 		const uint32_t total_kcal = entry.calc_total_kcal();
 
 		// Checkbox reflecting whether the entry is counted in the day total.
@@ -72,7 +72,7 @@ public:
 		// total kcal display) is refreshed.
 		auto check_box_widget = m::check_box(this->context, {.button{.pressed = entry.enabled}});
 		check_box_widget.get().pressed_change_handler = [index](ruis::button& b) {
-			auto& e = application::inst().model.last_day().entries.at(index);
+			auto& e = application::inst().model.today().entries.at(index);
 			e.enabled = b.is_pressed();
 			application::inst().model.model_changed_signal.emit();
 		};
@@ -423,7 +423,7 @@ public:
 				context.get()
 					.localization.get()
 					.get("total_kcal"sv)
-					.format({utki::to_utf32(std::to_string(application::inst().model.last_day().calc_total_kcal()))})
+					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
@@ -432,7 +432,7 @@ public:
 				context.get()
 					.localization.get()
 					.get("weight"sv)
-					.format({utki::to_utf32(application::inst().model.last_day().get_weight_string())})
+					.format({utki::to_utf32(application::inst().model.today().get_weight_string())})
 			),
 			// Create the list widget
 			// clang-format off
@@ -561,13 +561,13 @@ public:
 				this->context.get()
 					.localization.get()
 					.get("total_kcal"sv)
-					.format({utki::to_utf32(std::to_string(application::inst().model.last_day().calc_total_kcal()))})
+					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
 			);
 			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()
 					.get("weight"sv)
-					.format({utki::to_utf32(application::inst().model.last_day().get_weight_string())})
+					.format({utki::to_utf32(application::inst().model.today().get_weight_string())})
 			);
 			this->list_widget.get().get_provider().notify_model_change();
 		});

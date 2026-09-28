@@ -87,12 +87,12 @@ struct root {
 	// Returns a reference to the most recent (last) day in the history. New entries
 	// are always logged to this day. The application guarantees at start-up that this
 	// day corresponds to today's date, pushing a fresh (empty) day when it does not.
-	day& last_day()
+	day& today()
 	{
 		return this->history.back();
 	}
 
-	const day& last_day() const
+	const day& today() const
 	{
 		return this->history.back();
 	}

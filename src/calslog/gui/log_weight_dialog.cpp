@@ -88,7 +88,7 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 
 	// The weight is stored in the model in grams; 0 means it was not logged yet,
 	// in which case the dialog opens with an empty field.
-	const uint32_t current_weight = application::inst().model.last_day().weight;
+	const uint32_t current_weight = application::inst().model.today().weight;
 
 	// Helper to create a push button with a localized caption and the given color.
 	auto make_button = [&c](std::string_view text_loc_id, ruis::styled<ruis::color> color) {
@@ -231,7 +231,7 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 	save_button.get().click_handler = [&weight_input](ruis::push_button& b) {
 		auto& app = application::inst();
 		const float kg = to_float(weight_input.get_string().get());
-		app.model.last_day().weight = static_cast<uint32_t>(std::lround(kg * 1000.f));
+		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * 1000.f));
 		app.model.model_changed_signal.emit();
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};
