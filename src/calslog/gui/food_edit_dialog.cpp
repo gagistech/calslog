@@ -260,7 +260,7 @@ void show_food_edit_dialog(
 		} else {
 			value_str = std::u32string(U"?");
 		}
-		lbl.set_string(c.get().localization.get().get("food_edit_dialog:portion_kcal"sv).format({value_str}).string());
+		lbl.set_string(c.get().localization.get().get("foods_page:portion_kcal"sv).format({value_str}).string());
 	};
 
 	// Recompute both the Save button enabled state and the portion-kcal label.

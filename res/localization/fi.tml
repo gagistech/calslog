@@ -24,12 +24,12 @@ vocabulary{
     food_edit_dialog:calories_per_100g_hint{str{"esim. 52"}}
     mass_per_serving{str{"Massa annosta kohti (g)"}}
     mass_per_serving_hint{str{"esim. 200"}}
-    food_edit_dialog:portion_kcal{str{"Annos: {0} kcal"}}
     kcal{str{"{0} kcal"}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     foods_page:entry_detail{str{"{0} kcal/100 g, {1} g/annos"}}
+    foods_page:portion_kcal{str{"{0} kcal/annos"}}
     history_page:today{str{"{0} (tänään)"}}
     settings_dialog:title{str{Asetukset}}
     settings_dialog:save_button{str{Tallenna}}

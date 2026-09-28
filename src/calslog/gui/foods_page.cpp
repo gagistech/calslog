@@ -21,6 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "foods_page.hpp"
 
+#include <cmath>
+
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
@@ -147,14 +149,45 @@ public:
 								}
 							},
 							{
-								// Line 1: food name, default font
-								m::text(this->context,
+								// Line 1: food name on the left, kcal/serving on the right
+								m::padding(this->context,
 									{
 										.layout_params{
 											.dims = {ruis::dim::fill, ruis::dim::min}
+										},
+										.params{
+											.container{
+												.layout = ruis::layout::row
+											}
 										}
 									},
-									food.name
+									{
+										// Food name, default font, fills the remaining width
+										m::text(this->context,
+											{
+												.layout_params{
+													.dims = {ruis::dim::fill, ruis::dim::min},
+													.weight = 1
+												}
+											},
+											food.name
+										),
+										// kcal per serving on the right
+										m::text(this->context,
+											{
+												.layout_params{
+													.dims = {ruis::dim::min, ruis::dim::min},
+													.align = {ruis::align::back, ruis::align::center}
+												}
+											},
+											// kcal per serving = round(kcal/100g * mass of serving)
+											this->context.get().localization.get()
+												.get("kcal"sv)
+												.format({
+													utki::to_utf32(utki::to_string(uint32_t(std::round(food.kcal * food.mass / 100.f))))
+												})
+										)
+									}
 								),
 								m::gap(this->context,
 									{
