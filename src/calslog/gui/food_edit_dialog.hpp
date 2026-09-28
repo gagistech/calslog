@@ -22,13 +22,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include <cstddef>
+#include <limits>
 
 #include <ruis/widget/widget.hpp>
 
 namespace calslog {
 
-// Opens the food edit dialog for the food at the given index in the model's foods list.
-// The dialog is pre-filled with the food's current name, kcal/100g and mass per serving.
-void show_food_edit_dialog(ruis::widget& owner_widget, size_t food_index);
+// Opens the food edit dialog.
+// When `food_index` is the default (the maximum value of size_t), the dialog opens
+// empty, its title reads "Add Food" and its primary button reads "Add"; submitting
+// appends a new food to the model's foods list. When `food_index` is a valid index
+// into `model.foods`, the dialog opens prefilled with that food's current name,
+// kcal/100g and mass per serving, its title reads "Edit Food" and its primary button
+// reads "Save"; submitting updates that food in place.
+void show_food_edit_dialog(
+	ruis::widget& owner_widget, //
+	size_t food_index = std::numeric_limits<size_t>::max()
+);
 
 } // namespace calslog

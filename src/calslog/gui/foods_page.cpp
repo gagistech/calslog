@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "foods_page.hpp"
 
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
+#include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/image.hpp>
@@ -222,10 +223,17 @@ public:
 namespace {
 class foods_page :
 	public ruis::page, //
-	private ruis::touch::list
+	private ruis::container
 {
-public:
-	foods_page(const utki::shared_ref<ruis::context>& context) :
+private:
+	utki::shared_ref<ruis::rectangle_push_button> fab_button;
+	utki::shared_ref<ruis::touch::list> list_widget;
+
+	foods_page(
+		const utki::shared_ref<ruis::context>& context, //
+		utki::shared_ref<ruis::touch::list> list_widget, //
+		utki::shared_ref<ruis::rectangle_push_button> fab_button_param //
+	) :
 		// clang-format off
 		ruis::widget(context,
 			{},
@@ -236,24 +244,129 @@ public:
 		// clang-format on
 		ruis::page(context, {}),
 		// clang-format off
-		ruis::touch::list(context,
+		ruis::container(
+			context,
 			{
 				.params{
-					.specific{
-						.provider = utki::make_shared<foods_page_provider>(context)
+					.layout = ruis::layout::column
+				}
+			},
+			{
+				// List and the floating action button on top of it
+				m::pile(
+					context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::fill, ruis::dim::fill},
+							.weight = 1
+						}
+					},
+					{
+						list_widget,
+						m::padding(
+							context,
+							{
+								.layout_params{
+									.align = {ruis::align::back, ruis::align::back}
+								},
+								.params{
+									.specific{
+										.borders = {context.get().style().get_len_gap_big()}
+									}
+								}
+							},
+							{
+								fab_button_param
+							}
+						)
+					}
+				)
+			}
+		),
+		fab_button(fab_button_param),
+		list_widget(list_widget)
+	// clang-format on
+	{}
+
+public:
+	foods_page(const utki::shared_ref<ruis::context>& context) :
+		// clang-format off
+		foods_page(
+			context,
+			// Create the list widget
+			m::list(
+				context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.params{
+						.specific{
+							.provider = utki::make_shared<foods_page_provider>(context)
+						}
 					}
 				}
-			}
+			),
+			// Create the floating action button (FAB)
+			m::rectangle_push_button(
+				context,
+				{
+					.layout_params{
+						.dims = {56_pp}
+					},
+					.params{
+						.rectangle_button{
+							.rectangle{
+								.padding{
+									.container{
+										.layout = ruis::layout::pile
+									},
+									.specific{
+										.borders = {14_pp}
+									}
+								},
+								.specific{
+									.corner_radii = {14_pp}
+								}
+							},
+							.specific{
+								.unpressed_color = context.get().style().get_color_special()
+							}
+						}
+					}
+				},
+				{
+					m::image(
+						context,
+						{
+							.layout_params{
+								.dims = {ruis::dim::fill}
+							},
+							.params{
+								.specific{
+									.source = context.get().loader().load<ruis::res::image>("img_add"sv)
+								}
+							}
+						}
+					)
+				}
+			)
 		)
 	// clang-format on
 	{
+		// Set click handler on the FAB button: it opens the "add food" dialog.
+		this->fab_button.get().click_handler = [](ruis::push_button& b) {
+			show_food_edit_dialog(b);
+		};
+
 		// Listen to model changes and refresh the foods list, so that edits made
-		// through the food edit dialog are reflected.
+		// through the food edit dialog (and new foods added through the add food
+		// dialog) are reflected.
 		// No explicit disconnect is required: the model (and its
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->get_provider().notify_model_change();
+			this->list_widget.get().get_provider().notify_model_change();
 		});
 	}
 };

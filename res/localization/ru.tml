@@ -16,7 +16,9 @@ vocabulary{
     log_food_dialog:food_mass_hint{str{"напр. 200"}}
     log_food_dialog:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
     food_edit_dialog:title{str{"Изменить еду"}}
+    food_edit_dialog:add_title{str{"Добавить еду"}}
     food_edit_dialog:save_button{str{Сохранить}}
+    food_edit_dialog:add_button{str{Добавить}}
     food_edit_dialog:cancel_button{str{Отмена}}
     food_edit_dialog:food_name{str{"Название"}}
     food_edit_dialog:food_name_hint{str{"напр. Яблоко"}}
@@ -24,6 +26,7 @@ vocabulary{
     food_edit_dialog:calories_per_100g_hint{str{"напр. 52"}}
     food_edit_dialog:mass_per_serving{str{"Масса порции (г)"}}
     food_edit_dialog:mass_per_serving_hint{str{"напр. 200"}}
+    food_edit_dialog:portion_kcal{str{"На порцию: {0} ккал"}}
     kcal{str{"{0} ккал"}}
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}

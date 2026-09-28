@@ -16,7 +16,9 @@ vocabulary{
     log_food_dialog:food_mass_hint{str{"esim. 200"}}
     log_food_dialog:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     food_edit_dialog:title{str{"Muokkaa ruokaa"}}
+    food_edit_dialog:add_title{str{"Lisää ruoka"}}
     food_edit_dialog:save_button{str{Tallenna}}
+    food_edit_dialog:add_button{str{Lisää}}
     food_edit_dialog:cancel_button{str{Peru}}
     food_edit_dialog:food_name{str{"Nimi"}}
     food_edit_dialog:food_name_hint{str{"esim. Omena"}}
@@ -24,6 +26,7 @@ vocabulary{
     food_edit_dialog:calories_per_100g_hint{str{"esim. 52"}}
     food_edit_dialog:mass_per_serving{str{"Massa annosta kohti (g)"}}
     food_edit_dialog:mass_per_serving_hint{str{"esim. 200"}}
+    food_edit_dialog:portion_kcal{str{"Annos: {0} kcal"}}
     kcal{str{"{0} kcal"}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
