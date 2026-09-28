@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include <ruis/standard_resources.hpp>
+#include <ruis/style/theme.hpp>
 #include <tml/tree.hpp>
 #include <utki/signal.hpp>
 

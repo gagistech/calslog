@@ -80,12 +80,7 @@ application::application(
 		this->quit();
 	};
 
-	// Initialize the standard widgets with the style of the currently selected theme
-	ruis::mount_ruis_res_pack(
-		this->window.gui.context, //
-		this->get_res_file(), //
-		this->settings.get().cur_theme
-	);
+	this->set_theme(this->settings.get().cur_theme);
 
 	this->window.gui.context.get().loader().mount_res_pack(this->get_res_file(this->res_path));
 
