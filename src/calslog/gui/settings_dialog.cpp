@@ -24,7 +24,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <cstdio>
 #include <string_view>
 
-#include <ruis/standard_resources.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/button/touch/selection_box.hpp>
 #include <ruis/widget/group/overlay.hpp>

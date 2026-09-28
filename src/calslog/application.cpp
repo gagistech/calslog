@@ -25,7 +25,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <fsif/native_file.hpp>
 #include <ruis/res/tml.hpp>
-#include <ruis/standard_resources.hpp>
 #include <ruis/style/style_sheet.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <tml/tree.hpp>
