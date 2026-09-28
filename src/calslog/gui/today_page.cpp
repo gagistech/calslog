@@ -265,18 +265,18 @@ class today_page :
 {
 private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
-	utki::shared_ref<ruis::rectangle_push_button> weight_edit_button;
-	utki::shared_ref<ruis::text> total_kcal_text;
+	utki::shared_ref<ruis::ellipse_push_button> weight_edit_button;
+	utki::shared_ref<ruis::text> total_kcal_value;
 	utki::shared_ref<ruis::text> weight_text;
 	utki::shared_ref<ruis::touch::list> list_widget;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
-		utki::shared_ref<ruis::text> total_kcal_text_param, //
+		utki::shared_ref<ruis::text> total_kcal_value_param, //
 		utki::shared_ref<ruis::text> weight_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param, //
-		utki::shared_ref<ruis::rectangle_push_button> weight_edit_button_param
+		utki::shared_ref<ruis::ellipse_push_button> weight_edit_button_param
 	) :
 		ruis::widget(
 			context,
@@ -308,7 +308,9 @@ private:
 						}
 					},
 					{
-						m::column(
+						// Total kcal (left aligned) and weight (right aligned) on the left side,
+						// pencil edit button on the right spanning the whole row height
+						m::row(
 							context,
 							{
 								.layout_params{
@@ -316,37 +318,47 @@ private:
 								}
 							},
 							{
-								// First row: total kcal
-								total_kcal_text_param,
-								m::gap(context,
-									{
-										.layout_params{
-											.dims = {0_pp, context.get().style().get_len_gap_small()}
-										}
-									}
-								),
-								// Second row: weight and the edit button right next to it, centered horizontally
-								m::row(
+								m::column(
 									context,
 									{
 										.layout_params{
-											.dims = {ruis::dim::min, ruis::dim::min},
-											.align = {ruis::align::center, ruis::align::center}
+											.dims = {ruis::dim::fill, ruis::dim::min},
+											.weight = 1
 										}
 									},
 									{
-										weight_text_param,
-										m::gap(context,
+										// Total kcal label, centered, default text color
+										m::text(
+											context,
 											{
 												.layout_params{
-													.dims = {context.get().style().get_len_gap_small(), 0}
+													.align = {ruis::align::center, ruis::align::center}
 												}
-											}
+											},
+											context.get().localization.get().get("total_label"sv)
 										),
-										// Edit button right next to the weight
-										weight_edit_button_param
+										// Total kcal value, centered, special text color
+										total_kcal_value_param
 									}
-								)
+								),
+								m::gap(context,
+									{
+										.layout_params{
+											.dims = {context.get().style().get_len_gap_small(), 0}
+										}
+									}
+								),
+								// Weight, bottom aligned
+								weight_text_param,
+								m::gap(context,
+									{
+										.layout_params{
+											.dims = {context.get().style().get_len_gap_small(), 0}
+										}
+									}
+								),
+								// Pencil edit button, right aligned, fills the row height
+								weight_edit_button_param
 							}
 						)
 					}
@@ -397,7 +409,7 @@ private:
 		),
 		fab_button(fab_button_param),
 		weight_edit_button(weight_edit_button_param),
-		total_kcal_text(total_kcal_text_param),
+		total_kcal_value(total_kcal_value_param),
 		weight_text(weight_text_param),
 		list_widget(list_widget)
 	// clang-format on
@@ -412,6 +424,9 @@ public:
 				context,
 				// clang-format off
 				{
+					.layout_params{
+						.align = {ruis::align::center, ruis::align::center}
+					},
 					.params{
 						.color = context.get().style().get_color_text_special(),
 						.specific{
@@ -422,13 +437,17 @@ public:
 				// clang-format on
 				context.get()
 					.localization.get()
-					.get("total_kcal"sv)
+					.get("kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
 				context,
-				{},
+				{
+					.layout_params{
+						.align = {ruis::align::back, ruis::align::center}
+					}
+				},
 				context.get()
 					.localization.get()
 					.get("weight"sv)
@@ -494,22 +513,20 @@ public:
 				}
 			),
 			// Create the weight edit button (the small pencil icon next to the weight)
-			m::rectangle_push_button(
+			m::ellipse_push_button(
 				context,
 				{
 					.layout_params{
-						.dims = {ruis::dim::min, ruis::dim::fill}
+						.dims = {ruis::dim::min, ruis::dim::fill},
+						.align = {ruis::align::back, ruis::align::center}
 					},
 					.params{
-						.rectangle_button{
-							.rectangle{
+						.ellipse_button{
+							.ellipse{
 								.padding{
 									.specific{
-										.borders = {0}
+										.borders = {context.get().style().get_len_gap()}
 									}
-								},
-								.specific{
-									.corner_radii = {0}
 								}
 							},
 							.specific{
@@ -557,10 +574,10 @@ public:
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->total_kcal_text.get().set_string(
+			this->total_kcal_value.get().set_string(
 				this->context.get()
 					.localization.get()
-					.get("total_kcal"sv)
+					.get("kcal"sv)
 					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
 			);
 			this->weight_text.get().set_string(

@@ -25,6 +25,7 @@ vocabulary{
     mass_per_serving{str{"Massa annosta kohti (g)"}}
     mass_per_serving_hint{str{"esim. 200"}}
     kcal{str{"{0} kcal"}}
+    total_label{str{Yhteensä:}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
     today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
