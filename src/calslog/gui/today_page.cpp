@@ -435,19 +435,14 @@ public:
 					}
 				},
 				// clang-format on
-				context.get()
-					.localization.get()
-					.get("kcal"sv)
-					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
+				context.get().localization.get().get("kcal"sv).format(
+					{utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))}
+				)
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
 				context,
-				{
-					.layout_params{
-						.align = {ruis::align::back, ruis::align::center}
-					}
-				},
+				{.layout_params{.align = {ruis::align::back, ruis::align::center}}},
 				context.get()
 					.localization.get()
 					.get("weight"sv)
@@ -463,7 +458,7 @@ public:
 					},
 					.params{
 						.specific{
-							.provider = utki::make_shared<today_page_provider>(context)
+							.provider = utki::make_unique<today_page_provider>(context)
 						}
 					}
 				}
@@ -574,12 +569,9 @@ public:
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->total_kcal_value.get().set_string(
-				this->context.get()
-					.localization.get()
-					.get("kcal"sv)
-					.format({utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))})
-			);
+			this->total_kcal_value.get().set_string(this->context.get().localization.get().get("kcal"sv).format(
+				{utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))}
+			));
 			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()

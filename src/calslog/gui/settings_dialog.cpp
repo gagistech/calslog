@@ -376,7 +376,7 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			.params{
 				.selection_box{
 					.list{
-						.provider = utki::make_shared<language_selection_box_provider>(c)
+						.provider = utki::make_unique<language_selection_box_provider>(c)
 					}
 				},
 				.specific{
@@ -404,7 +404,7 @@ void show_settings_dialog(ruis::widget& owner_widget)
 			.params{
 				.selection_box{
 					.list{
-						.provider = utki::make_shared<theme_selection_box_provider>(c)
+						.provider = utki::make_unique<theme_selection_box_provider>(c)
 					}
 				},
 				.specific{

@@ -256,7 +256,7 @@ public:
 					},
 					.params{
 						.specific{
-							.provider = utki::make_shared<history_page_provider>(context)
+							.provider = utki::make_unique<history_page_provider>(context)
 						}
 					}
 				}

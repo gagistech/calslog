@@ -335,7 +335,7 @@ public:
 					},
 					.params{
 						.specific{
-							.provider = utki::make_shared<foods_page_provider>(context)
+							.provider = utki::make_unique<foods_page_provider>(context)
 						}
 					}
 				}
