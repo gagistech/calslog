@@ -72,7 +72,7 @@ public:
 		return application::inst().model.history.size();
 	}
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
 		// Show the most recent days at the top: reverse the display index into the
 		// history, which is ordered oldest -> newest.
@@ -271,7 +271,7 @@ public:
 		auto list_weak = utki::make_weak(this->list_widget);
 		application::inst().model.model_changed_signal.connect([list_weak]() {
 			if (auto list = list_weak.lock()) {
-				list->get_provider().notify_model_change();
+				list->notify_model_change();
 			}
 		});
 	}

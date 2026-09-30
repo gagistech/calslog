@@ -225,7 +225,7 @@ public:
 		return settings_model::language_id_to_name_mapping.size();
 	}
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
 		return this->make_widget(index, false);
 	}
@@ -270,7 +270,7 @@ public:
 		return 2;
 	}
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
 		return this->make_widget(index, false);
 	}

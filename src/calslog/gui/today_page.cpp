@@ -61,7 +61,7 @@ public:
 		return application::inst().model.today().entries.size();
 	}
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
 		const auto& entry = application::inst().model.today().entries.at(index);
 		const uint32_t total_kcal = entry.calc_total_kcal();
@@ -578,7 +578,7 @@ public:
 					.get("weight"sv)
 					.format({utki::to_utf32(application::inst().model.today().get_weight_string())})
 			);
-			this->list_widget.get().get_provider().notify_model_change();
+			this->list_widget.get().notify_model_change();
 		});
 	}
 };

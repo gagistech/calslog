@@ -59,7 +59,7 @@ public:
 		return application::inst().model.foods.size();
 	}
 
-	utki::shared_ref<ruis::widget> get_widget(size_t index) override
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
 		const auto& food = application::inst().model.foods.at(index);
 
@@ -399,7 +399,7 @@ public:
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->list_widget.get().get_provider().notify_model_change();
+			this->list_widget.get().notify_model_change();
 		});
 	}
 };
