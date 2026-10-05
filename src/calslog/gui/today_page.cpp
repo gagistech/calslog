@@ -23,8 +23,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <functional>
 
-#include <ruis/widget/button/impl/check_box.hpp>
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
+#include <ruis/widget/button/impl/flip_switch.hpp>
 #include <ruis/widget/button/impl/image_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/label/gap.hpp>
@@ -66,12 +66,12 @@ public:
 		const auto& entry = application::inst().model.today().entries.at(index);
 		const uint32_t total_kcal = entry.calc_total_kcal();
 
-		// Checkbox reflecting whether the entry is counted in the day total.
+		// Flip switch reflecting whether the entry is counted in the day total.
 		// When toggled, the entry's enabled state in the model is updated and the
 		// model's model_changed_signal is emitted so that dependent UI (the day
 		// total kcal display) is refreshed.
-		auto check_box_widget = m::check_box(this->context, {.button{.pressed = entry.enabled}});
-		check_box_widget.get().pressed_change_handler = [index](ruis::button& b) {
+		auto flip_switch_widget = m::flip_switch(this->context, {.button{.pressed = entry.enabled}});
+		flip_switch_widget.get().pressed_change_handler = [index](ruis::button& b) {
 			auto& e = application::inst().model.today().entries.at(index);
 			e.enabled = b.is_pressed();
 			application::inst().model.model_changed_signal.emit();
@@ -86,7 +86,7 @@ public:
 		const auto color_text_secondary = style.get_color_text_secondary();
 		const auto color_text = style.get_color_text();
 
-		// Three dots button to the right of the checkbox.
+		// Three dots button to the right of the flip switch.
 		// clang-format off
 		auto menu_button = m::ellipse_push_button(this->context,
 			{
@@ -216,7 +216,7 @@ public:
 								)
 							}
 						),
-						// Gap before the checkbox
+						// Gap before the flip switch
 						m::gap(this->context,
 							{
 								.layout_params{
@@ -224,17 +224,17 @@ public:
 								}
 							}
 						),
-						// Checkbox on the right, vertically centered, reflects the entry's enabled state
-						std::move(check_box_widget),
+						// Flip switch on the right, vertically centered, reflects the entry's enabled state
+						std::move(flip_switch_widget),
 						// Gap before the three dots button
 						m::gap(this->context,
 							{
 								.layout_params{
-									.dims = {ruis::dimension(len_gap), ruis::dim::min}
+									.dims = {ruis::dimension(len_gap_small), ruis::dim::min}
 								}
 							}
 						),
-						// Three dots button, to the right of the checkbox
+						// Three dots button, to the right of the flip switch
 						std::move(menu_button)
 					}
 				),
