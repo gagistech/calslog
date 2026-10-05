@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <ruis/util/timer.hpp>
 #include <ruisapp/application.hpp>
 
 #include "model/model.hpp"
@@ -39,6 +40,11 @@ public:
 	calslog::settings settings;
 
 	ruisapp::window& window;
+
+	// Timer which, once a minute, checks whether the food-log "day" has flipped
+	// over (i.e. the current time crossed the configured day-flip time) and, if so,
+	// pushes a fresh (empty) day onto the model's history.
+	std::shared_ptr<ruis::timer> day_flip_timer;
 
 	application(
 		bool windowed, //

@@ -21,7 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "application.hpp"
 
-#include <ctime>
 #include <iomanip>
 
 #include <fsif/native_file.hpp>
@@ -37,6 +36,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "gui/gui.hpp"
 
+#include "util.hpp"
+
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
@@ -46,18 +47,8 @@ namespace {
 constexpr auto screen_dims = r4::vector2<unsigned>(1116, 2484) / 3;
 constexpr auto data_filename = "data.tml"sv;
 
-// Returns the current local calendar date, used at start-up to decide whether a
-// fresh day must be added to the history.
-std::chrono::year_month_day current_date()
-{
-	const std::time_t tt = std::time(nullptr);
-	const std::tm* const t = std::localtime(&tt);
-	return std::chrono::year_month_day{
-		std::chrono::year{t->tm_year + 1900}, //
-		std::chrono::month{static_cast<unsigned>(t->tm_mon) + 1u}, //
-		std::chrono::day{static_cast<unsigned>(t->tm_mday)} //
-	};
-}
+// The interval at which the day-flip is checked, in milliseconds (once a minute).
+constexpr auto day_flip_check_interval_ms = 60 * 1000;
 } // namespace
 
 application::application(
@@ -84,17 +75,40 @@ application::application(
 		this->model = calslog::model::read(data_file);
 	}
 
-	// Make sure the history ends with today: new entries are always logged to the
-	// last day in the history. If the history is empty, or today's date is later
-	// than the last day (e.g. the app was left open across a day boundary), push a
-	// fresh (empty) day for today. If today is not later than the last day (for
-	// example because a timezone change made the clock run backwards) do not add a
-	// new day.
+	// Make sure the history ends with the current log day: new entries are always
+	// logged to the last day in the history. If the history is empty, or the
+	// current log day is later than the last day (e.g. the app was left open across
+	// a day boundary), push a fresh (empty) day for the current log day. If the
+	// current log day is not later than the last day (for example because a
+	// timezone change made the clock run backwards) do not add a new day.
 	{
-		const auto today = current_date();
+		const auto today = current_log_date(this->settings.get().day_flip_minutes);
 		if (this->model.history.empty() || this->model.history.back().date < today) {
 			this->model.history.push_back(model::day{.date = today});
 		}
+	}
+
+	// Set up a timer which, once a minute, checks whether the food-log "day" has
+	// flipped over (i.e. the current time has crossed the configured day-flip
+	// time). When it has, a fresh (empty) day is pushed onto the model's history
+	// and the model change is announced, so the GUI refreshes to show the new day.
+	{
+		this->day_flip_timer = utki::make_shared<ruis::timer>( //
+			this->window.gui.context.get().updater,
+			[this](uint32_t) {
+				const auto today = current_log_date(this->settings.get().day_flip_minutes);
+				if (this->model.history.empty() || this->model.history.back().date < today) {
+					this->model.history.push_back(model::day{.date = today});
+					this->model.model_changed_signal.emit();
+				}
+
+				// Re-arm the timer for the next check.
+				this->day_flip_timer->stop();
+				this->day_flip_timer->start(day_flip_check_interval_ms);
+				utki::assert(this->day_flip_timer->is_running(), SL);
+			}
+		);
+		this->day_flip_timer->start(0);
 	}
 
 	this->window.gui.context.get().window().close_handler = [this]() {
