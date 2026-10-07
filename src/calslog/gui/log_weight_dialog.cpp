@@ -115,8 +115,8 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 	};
 
 	// Create the Save and Cancel buttons.
-	auto save_button = make_button("log_weight_dialog:save_button"sv, c.get().style().get_color_special());
-	auto cancel_button = make_button("log_weight_dialog:cancel_button"sv, c.get().style().get_color_primary());
+	auto save_button = make_button("save_button"sv, c.get().style().get_color_special());
+	auto cancel_button = make_button("cancel_button"sv, c.get().style().get_color_primary());
 
 	// The Cancel button closes the dialog.
 	cancel_button.get().click_handler = [](ruis::push_button& b) {

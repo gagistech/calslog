@@ -4,39 +4,29 @@ vocabulary{
     tabs:history{str{History}}
     context_menu:edit{str{Edit}}
     context_menu:delete{str{Delete}}
+    save_button{str{Save}}
+    cancel_button{str{Cancel}}
+    add_button{str{Add}}
+    food_name{str{"Name"}}
+    food_name_hint{str{"e.g. Apple"}}
+    calories_per_100g{str{"kcal / 100g"}}
+    calories_per_100g_hint{str{"e.g. 52"}}
+    entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
     log_food_dialog:title{str{"Log Food"}}
-    log_food_dialog:add_button{str{Add}}
-    log_food_dialog:save_button{str{Save}}
-    log_food_dialog:cancel_button{str{Cancel}}
-    log_food_dialog:food_name{str{"Name"}}
     log_food_dialog:num_servings{str{"Number of servings"}}
     log_food_dialog:num_servings_hint{str{"e.g. 2"}}
-    log_food_dialog:food_name_hint{str{"e.g. Apple"}}
-    log_food_dialog:calories_per_100g{str{"kcal / 100g"}}
-    log_food_dialog:calories_per_100g_hint{str{"e.g. 52"}}
-    log_food_dialog:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
     food_edit_dialog:title{str{"Edit Food"}}
     food_edit_dialog:add_title{str{"Add Food"}}
-    food_edit_dialog:save_button{str{Save}}
-    food_edit_dialog:add_button{str{Add}}
-    food_edit_dialog:cancel_button{str{Cancel}}
-    food_edit_dialog:food_name{str{"Name"}}
-    food_edit_dialog:food_name_hint{str{"e.g. Apple"}}
-    food_edit_dialog:calories_per_100g{str{"kcal / 100g"}}
-    food_edit_dialog:calories_per_100g_hint{str{"e.g. 52"}}
     mass_per_serving{str{"Mass per serving (g)"}}
     mass_per_serving_hint{str{"e.g. 200"}}
     kcal{str{"{0} kcal"}}
     total_label{str{Total:}}
     total_kcal{str{"Total: {0} kcal"}}
     weight{str{"weight: {0} kg"}}
-    today_page:entry_detail{str{"{0} pcs x {1} g x {2} kcal/100g"}}
     foods_page:entry_detail{str{"{0} kcal/100g, {1} g/serving"}}
     foods_page:portion_kcal{str{"{0} kcal/serving"}}
     history_page:today{str{"{0} (today)"}}
     settings_dialog:title{str{Settings}}
-    settings_dialog:save_button{str{Save}}
-    settings_dialog:cancel_button{str{Cancel}}
     settings_dialog:day_flip_time{str{"Day flip time"}}
     settings_dialog:day_flip_time_hint{str{"e.g. 3:00"}}
     settings_dialog:language{str{Language}}
@@ -44,8 +34,6 @@ vocabulary{
     settings_dialog:theme_dark{str{Dark}}
     settings_dialog:theme_light{str{Light}}
     log_weight_dialog:title{str{"Log Weight"}}
-    log_weight_dialog:save_button{str{Save}}
-    log_weight_dialog:cancel_button{str{Cancel}}
     log_weight_dialog:weight{str{"Weight (kg)"}}
     log_weight_dialog:weight_hint{str{"e.g. 72.5"}}
     delete_confirm_dialog:title{str{"Delete item?"}}

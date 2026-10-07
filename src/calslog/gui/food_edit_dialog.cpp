@@ -106,11 +106,8 @@ void show_food_edit_dialog(
 	// Create the Save and Cancel buttons.
 	// The primary button's caption is "Save" when editing an existing food,
 	// otherwise "Add".
-	auto save_button = make_button(
-		is_editing ? "food_edit_dialog:save_button"sv : "food_edit_dialog:add_button"sv,
-		c.get().style().get_color_special()
-	);
-	auto cancel_button = make_button("food_edit_dialog:cancel_button"sv, c.get().style().get_color_primary());
+	auto save_button = make_button(is_editing ? "save_button"sv : "add_button"sv, c.get().style().get_color_special());
+	auto cancel_button = make_button("cancel_button"sv, c.get().style().get_color_primary());
 
 	// The Cancel button closes the dialog.
 	cancel_button.get().click_handler = [](ruis::push_button& b) {
@@ -185,14 +182,14 @@ void show_food_edit_dialog(
 	// Create the input fields, pre-filled with the food's current values when
 	// editing, left empty when adding.
 	auto food_name_field = make_field(
-		"food_edit_dialog:food_name"sv, //
-		"food_edit_dialog:food_name_hint"sv,
+		"food_name"sv, //
+		"food_name_hint"sv,
 		{}, // no input filter
 		is_editing ? ruis::string(food.name) : ruis::string{}
 	);
 	auto calories_field = make_field(
-		"food_edit_dialog:calories_per_100g"sv, //
-		"food_edit_dialog:calories_per_100g_hint"sv,
+		"calories_per_100g"sv, //
+		"calories_per_100g_hint"sv,
 		make_numeric_filter(4),
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(food.kcal))) : ruis::string{}
 	);

@@ -4,39 +4,29 @@ vocabulary{
     tabs:history{str{Historia}}
     context_menu:edit{str{Muokkaa}}
     context_menu:delete{str{Poista}}
+    save_button{str{Tallenna}}
+    cancel_button{str{Peru}}
+    add_button{str{Lisää}}
+    food_name{str{"Nimi"}}
+    food_name_hint{str{"esim. Omena"}}
+    calories_per_100g{str{"kcal / 100 g"}}
+    calories_per_100g_hint{str{"esim. 52"}}
+    entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     log_food_dialog:title{str{Kirjaa ruoka}}
-    log_food_dialog:add_button{str{Lisää}}
-    log_food_dialog:save_button{str{Tallenna}}
-    log_food_dialog:cancel_button{str{Peru}}
-    log_food_dialog:food_name{str{"Nimi"}}
     log_food_dialog:num_servings{str{"Annostusten määrä"}}
     log_food_dialog:num_servings_hint{str{"esim. 2"}}
-    log_food_dialog:food_name_hint{str{"esim. Omena"}}
-    log_food_dialog:calories_per_100g{str{"kcal / 100 g"}}
-    log_food_dialog:calories_per_100g_hint{str{"esim. 52"}}
-    log_food_dialog:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     food_edit_dialog:title{str{"Muokkaa ruokaa"}}
     food_edit_dialog:add_title{str{"Lisää ruoka"}}
-    food_edit_dialog:save_button{str{Tallenna}}
-    food_edit_dialog:add_button{str{Lisää}}
-    food_edit_dialog:cancel_button{str{Peru}}
-    food_edit_dialog:food_name{str{"Nimi"}}
-    food_edit_dialog:food_name_hint{str{"esim. Omena"}}
-    food_edit_dialog:calories_per_100g{str{"kcal / 100 g"}}
-    food_edit_dialog:calories_per_100g_hint{str{"esim. 52"}}
     mass_per_serving{str{"Massa annosta kohti (g)"}}
     mass_per_serving_hint{str{"esim. 200"}}
     kcal{str{"{0} kcal"}}
     total_label{str{Yhteensä:}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
-    today_page:entry_detail{str{"{0} kpl x {1} g x {2} kcal/100g"}}
     foods_page:entry_detail{str{"{0} kcal/100 g, {1} g/annos"}}
     foods_page:portion_kcal{str{"{0} kcal/annos"}}
     history_page:today{str{"{0} (tänään)"}}
     settings_dialog:title{str{Asetukset}}
-    settings_dialog:save_button{str{Tallenna}}
-    settings_dialog:cancel_button{str{Peru}}
     settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
     settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}
     settings_dialog:language{str{Kieli}}
@@ -44,8 +34,6 @@ vocabulary{
     settings_dialog:theme_dark{str{Tumma}}
     settings_dialog:theme_light{str{Vaalea}}
     log_weight_dialog:title{str{Kirjaa paino}}
-    log_weight_dialog:save_button{str{Tallenna}}
-    log_weight_dialog:cancel_button{str{Peru}}
     log_weight_dialog:weight{str{"Paino (kg)"}}
     log_weight_dialog:weight_hint{str{"esim. 72.5"}}
     delete_confirm_dialog:title{str{"Poistetaanko kohde?"}}

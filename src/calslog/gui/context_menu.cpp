@@ -21,8 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "context_menu.hpp"
 
-#include "delete_confirm_dialog.hpp"
-
 #include <ruis/widget/container.hpp>
 #include <ruis/widget/group/context_menu.hpp>
 #include <ruis/widget/group/touch/context_menu.hpp>
@@ -32,6 +30,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/text.hpp>
 #include <utki/shared.hpp>
 
+#include "delete_confirm_dialog.hpp"
 #include "style.hpp"
 
 using namespace std::string_view_literals;

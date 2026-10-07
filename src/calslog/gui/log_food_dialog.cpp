@@ -110,11 +110,8 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 
 	// Create the primary button separately so we can reference it in the validator
 	// below. Its caption is "Save" when editing an existing entry, otherwise "Add".
-	auto add_button = make_button(
-		is_editing ? "log_food_dialog:save_button"sv : "log_food_dialog:add_button"sv,
-		c.get().style().get_color_special()
-	);
-	auto cancel_button = make_button("log_food_dialog:cancel_button"sv, c.get().style().get_color_primary());
+	auto add_button = make_button(is_editing ? "save_button"sv : "add_button"sv, c.get().style().get_color_special());
+	auto cancel_button = make_button("cancel_button"sv, c.get().style().get_color_primary());
 
 	// The Cancel button closes the dialog.
 	cancel_button.get().click_handler = [](ruis::push_button& b) {
@@ -224,14 +221,14 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	// Create the input fields as separate variables so that the validator below
 	// can observe their text and control the enabled state of the Add button.
 	auto food_name_field = make_field(
-		"log_food_dialog:food_name"sv, //
-		"log_food_dialog:food_name_hint"sv,
+		"food_name"sv, //
+		"food_name_hint"sv,
 		{}, //
 		is_editing ? ruis::string(editing_entry.name) : ruis::string{}
 	);
 	auto calories_field = make_field(
-		"log_food_dialog:calories_per_100g"sv, //
-		"log_food_dialog:calories_per_100g_hint"sv,
+		"calories_per_100g"sv, //
+		"calories_per_100g_hint"sv,
 		make_numeric_filter(4), //
 		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.kcal))) : ruis::string{}
 	);
@@ -421,7 +418,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 
 		detail_lbl.set_string(c.get()
 								  .localization.get()
-								  .get("log_food_dialog:entry_detail"sv)
+								  .get("entry_detail"sv)
 								  .format({or_unknown(pcs_str), or_unknown(mass_str), or_unknown(cal_str)})
 								  .string());
 

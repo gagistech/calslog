@@ -315,8 +315,8 @@ void show_settings_dialog(ruis::widget& owner_widget)
 	};
 
 	// Create the Save and Cancel buttons.
-	auto save_button = make_button("settings_dialog:save_button"sv, c.get().style().get_color_special());
-	auto cancel_button = make_button("settings_dialog:cancel_button"sv, c.get().style().get_color_primary());
+	auto save_button = make_button("save_button"sv, c.get().style().get_color_special());
+	auto cancel_button = make_button("cancel_button"sv, c.get().style().get_color_primary());
 
 	// Helper to create a gap with the standard vertical spacing
 	auto make_vert_gap = [&c]() {

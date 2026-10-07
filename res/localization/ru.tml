@@ -4,39 +4,29 @@ vocabulary{
     tabs:history{str{История}}
     context_menu:edit{str{Изменить}}
     context_menu:delete{str{Удалить}}
+    save_button{str{Сохранить}}
+    cancel_button{str{Отмена}}
+    add_button{str{Добавить}}
+    food_name{str{"Название"}}
+    food_name_hint{str{"напр. Яблоко"}}
+    calories_per_100g{str{"ккал / 100 г"}}
+    calories_per_100g_hint{str{"напр. 52"}}
+    entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
     log_food_dialog:title{str{Записать еду}}
-    log_food_dialog:add_button{str{Добавить}}
-    log_food_dialog:save_button{str{Сохранить}}
-    log_food_dialog:cancel_button{str{Отмена}}
-    log_food_dialog:food_name{str{"Название"}}
     log_food_dialog:num_servings{str{"Количество порций"}}
     log_food_dialog:num_servings_hint{str{"напр. 2"}}
-    log_food_dialog:food_name_hint{str{"напр. Яблоко"}}
-    log_food_dialog:calories_per_100g{str{"ккал / 100 г"}}
-    log_food_dialog:calories_per_100g_hint{str{"напр. 52"}}
-    log_food_dialog:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
     food_edit_dialog:title{str{"Изменить еду"}}
     food_edit_dialog:add_title{str{"Добавить еду"}}
-    food_edit_dialog:save_button{str{Сохранить}}
-    food_edit_dialog:add_button{str{Добавить}}
-    food_edit_dialog:cancel_button{str{Отмена}}
-    food_edit_dialog:food_name{str{"Название"}}
-    food_edit_dialog:food_name_hint{str{"напр. Яблоко"}}
-    food_edit_dialog:calories_per_100g{str{"ккал / 100 г"}}
-    food_edit_dialog:calories_per_100g_hint{str{"напр. 52"}}
     mass_per_serving{str{"Масса порции (г)"}}
     mass_per_serving_hint{str{"напр. 200"}}
     kcal{str{"{0} ккал"}}
     total_label{str{Итого:}}
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}
-    today_page:entry_detail{str{"{0} шт x {1} г x {2} ккал/100г"}}
     foods_page:entry_detail{str{"{0} ккал/100г, {1} г/порция"}}
     foods_page:portion_kcal{str{"{0} ккал/порция"}}
     history_page:today{str{"{0} (сегодня)"}}
     settings_dialog:title{str{Настройки}}
-    settings_dialog:save_button{str{Сохранить}}
-    settings_dialog:cancel_button{str{Отмена}}
     settings_dialog:day_flip_time{str{"Время смены дня"}}
     settings_dialog:day_flip_time_hint{str{"напр. 3:00"}}
     settings_dialog:language{str{Язык}}
@@ -44,8 +34,6 @@ vocabulary{
     settings_dialog:theme_dark{str{Тёмная}}
     settings_dialog:theme_light{str{Светлая}}
     log_weight_dialog:title{str{Записать вес}}
-    log_weight_dialog:save_button{str{Сохранить}}
-    log_weight_dialog:cancel_button{str{Отмена}}
     log_weight_dialog:weight{str{"Вес (кг)"}}
     log_weight_dialog:weight_hint{str{"напр. 72.5"}}
     delete_confirm_dialog:title{str{"Удалить элемент?"}}
