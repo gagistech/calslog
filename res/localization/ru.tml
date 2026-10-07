@@ -2,6 +2,8 @@ vocabulary{
     tabs:today{str{Сегодня}}
     tabs:foods{str{Еда}}
     tabs:history{str{История}}
+    context_menu:edit{str{Изменить}}
+    context_menu:delete{str{Удалить}}
     log_food_dialog:title{str{Записать еду}}
     log_food_dialog:add_button{str{Добавить}}
     log_food_dialog:save_button{str{Сохранить}}

@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "foods_page.hpp"
 
 #include <cmath>
+#include <memory>
 
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
@@ -36,6 +37,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../application.hpp"
 #include "../model/model.hpp"
 
+#include "context_menu.hpp"
 #include "food_edit_dialog.hpp"
 #include "style.hpp"
 
@@ -72,8 +74,8 @@ public:
 		const auto color_text_secondary = style.get_color_text_secondary();
 		const auto color_text = style.get_color_text();
 
-		// Three dots button on the right side of the item; pressing it opens the
-		// food edit dialog for this food.
+		// Three dots button on the right side of the item; pressing it opens a
+		// context menu with the "Edit" and "Delete" options for this food.
 		// clang-format off
 		auto menu_button = m::ellipse_push_button(this->context,
 			{
@@ -113,8 +115,28 @@ public:
 				)
 			}
 		);
-		menu_button.get().click_handler = [index](ruis::push_button& b) {
-			show_food_edit_dialog(b, index);
+		// Keep a weak reference to the button so that it can be used as the owner
+		// widget of the edit dialog later (when the "Edit" menu item is clicked),
+		// without forming a reference cycle through the button's own click handler.
+		std::weak_ptr<ruis::ellipse_push_button> weak_menu_button = menu_button;
+		menu_button.get().click_handler = [index, weak_menu_button](ruis::push_button& b) {
+			auto menu_button_ref = weak_menu_button.lock();
+			if (!menu_button_ref) {
+				return;
+			}
+			show_item_context_menu(
+				b, //
+				[menu_button_ref, index]() {
+					// Edit: open the food edit dialog for this food.
+					show_food_edit_dialog(*menu_button_ref, index);
+				}, //
+				[index]() {
+					// Delete: remove this food from the model.
+					auto& app = application::inst();
+					app.model.foods.erase(app.model.foods.begin() + index);
+					app.model.model_changed_signal.emit();
+				}
+			);
 		};
 		return m::column(this->context,
 			// column for item content and separator

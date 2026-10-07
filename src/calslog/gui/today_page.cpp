@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "today_page.hpp"
 
 #include <functional>
+#include <memory>
 
 #include <ruis/widget/button/impl/ellipse_push_button.hpp>
 #include <ruis/widget/button/impl/flip_switch.hpp>
@@ -37,6 +38,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../application.hpp"
 #include "../model/model.hpp"
 
+#include "context_menu.hpp"
 #include "log_food_dialog.hpp"
 #include "log_weight_dialog.hpp"
 #include "style.hpp"
@@ -86,7 +88,8 @@ public:
 		const auto color_text_secondary = style.get_color_text_secondary();
 		const auto color_text = style.get_color_text();
 
-		// Three dots button to the right of the flip switch.
+		// Three dots button to the right of the flip switch; pressing it opens a
+		// context menu with the "Edit" and "Delete" options for this entry.
 		// clang-format off
 		auto menu_button = m::ellipse_push_button(this->context,
 			{
@@ -126,8 +129,29 @@ public:
 				)
 			}
 		);
-		menu_button.get().click_handler = [index](ruis::push_button& b) {
-			show_log_food_dialog(b, index);
+		// Keep a weak reference to the button so that it can be used as the owner
+		// widget of the edit dialog later (when the "Edit" menu item is clicked),
+		// without forming a reference cycle through the button's own click handler.
+		std::weak_ptr<ruis::ellipse_push_button> weak_menu_button = menu_button;
+		menu_button.get().click_handler = [index, weak_menu_button](ruis::push_button& b) {
+			auto menu_button_ref = weak_menu_button.lock();
+			if (!menu_button_ref) {
+				return;
+			}
+			show_item_context_menu(
+				b, //
+				[menu_button_ref, index]() {
+					// Edit: open the log food dialog for this entry.
+					show_log_food_dialog(*menu_button_ref, index);
+				}, //
+				[index]() {
+					// Delete: remove this entry from today's entries.
+					auto& app = application::inst();
+					auto& entries = app.model.today().entries;
+					entries.erase(entries.begin() + index);
+					app.model.model_changed_signal.emit();
+				}
+			);
 		};
 		return m::column(this->context,
 			{
@@ -540,7 +564,7 @@ public:
 							.params{
 								.color = context.get().style().get_color_text(),
 								.specific{
-									.source = context.get().loader().load<ruis::res::image>("img_edit"sv),
+									.source = context.get().loader().load<ruis::res::image>("ruis_img_edit"sv),
 									.keep_aspect_ratio = true
 								}
 							}
