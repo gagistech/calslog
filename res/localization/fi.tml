@@ -48,4 +48,7 @@ vocabulary{
     log_weight_dialog:cancel_button{str{Peru}}
     log_weight_dialog:weight{str{"Paino (kg)"}}
     log_weight_dialog:weight_hint{str{"esim. 72.5"}}
+    delete_confirm_dialog:title{str{"Poistetaanko kohde?"}}
+    delete_confirm_dialog:no_button{str{Ei}}
+    delete_confirm_dialog:yes_button{str{Kyllä}}
 }

@@ -21,6 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "context_menu.hpp"
 
+#include "delete_confirm_dialog.hpp"
+
 #include <ruis/widget/container.hpp>
 #include <ruis/widget/group/context_menu.hpp>
 #include <ruis/widget/group/touch/context_menu.hpp>
@@ -161,11 +163,13 @@ void show_item_context_menu(
 
 	// When an item is clicked, invoke the corresponding callback. The context
 	// menu widget closes itself right after this handler returns.
-	menu.get().on_item_click = [on_edit, on_delete](size_t index) {
+	// "Delete" does not delete immediately: it shows a confirmation dialog and
+	// performs the deletion only when the user confirms it.
+	menu.get().on_item_click = [anchor = utki::make_shared_from(anchor), on_edit, on_delete](size_t index) {
 		if (index == 0) {
 			on_edit();
 		} else {
-			on_delete();
+			show_delete_confirm_dialog(anchor.get(), on_delete);
 		}
 	};
 

@@ -48,4 +48,7 @@ vocabulary{
     log_weight_dialog:cancel_button{str{Cancel}}
     log_weight_dialog:weight{str{"Weight (kg)"}}
     log_weight_dialog:weight_hint{str{"e.g. 72.5"}}
+    delete_confirm_dialog:title{str{"Delete item?"}}
+    delete_confirm_dialog:no_button{str{No}}
+    delete_confirm_dialog:yes_button{str{Yes}}
 }
