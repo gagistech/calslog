@@ -327,7 +327,7 @@ private:
 						},
 						.params{
 							.specific{
-								.borders = {context.get().style().get_len_gap_small()}
+								.borders = {context.get().style().get_len_gap()}
 							}
 						}
 					},
@@ -377,7 +377,7 @@ private:
 								m::gap(context,
 									{
 										.layout_params{
-											.dims = {context.get().style().get_len_gap_small(), 0}
+											.dims = {context.get().style().get_len_gap(), 0}
 										}
 									}
 								),
@@ -544,7 +544,7 @@ public:
 							.ellipse{
 								.padding{
 									.specific{
-										.borders = {context.get().style().get_len_gap()}
+										.borders = {context.get().style().get_len_gap_small()}
 									}
 								}
 							},
