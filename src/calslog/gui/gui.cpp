@@ -30,7 +30,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <utki/shared.hpp>
 
+#include "context_menu.hpp"
 #include "foods_page.hpp"
 #include "history_page.hpp"
 #include "settings_dialog.hpp"
@@ -133,11 +135,35 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 	return tabbed_book;
 }
 
+// Shows the top-bar (three-dots) context menu near the given anchor widget. The
+// "Settings" item (index 0) opens the settings dialog and the "About" item
+// (index 1) does nothing for now.
+void show_top_bar_menu(ruis::widget& anchor)
+{
+	auto& c = anchor.context;
+	show_context_menu(
+		anchor, //
+		{
+			{         c.get().loader().load<ruis::res::image>("ruis_img_cog"sv),
+			 c.get().localization.get().get("context_menu:settings"sv)},
+			{c.get().loader().load<ruis::res::image>("ruis_img_questionmark"sv),
+			 c.get().localization.get().get("context_menu:about"sv)   }
+    }, //
+		[anchor = utki::make_shared_from(anchor)](size_t index) {
+			if (index == 0) {
+				show_settings_dialog(anchor.get());
+			}
+			// "About" does nothing for now.
+		}
+	);
+}
+
 utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context>& c)
 {
-	// Settings button
+	// Three-dots (menu) button; clicking it opens the top-bar context menu with
+	// the "Settings" and "About" items.
 	// clang-format off
-	auto settings_button = m::ellipse_push_button(c,
+	auto menu_button = m::ellipse_push_button(c,
 		{
 			.layout_params{
 				.dims = {ruis::dim::min, ruis::dim::fill},
@@ -167,7 +193,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 					.params{
 						.color = c.get().style().get_color_text(),
 						.specific{
-							.source = c.get().loader().load<ruis::res::image>("img_cog"sv),
+							.source = c.get().loader().load<ruis::res::image>("ruis_img_more"sv),
 							.keep_aspect_ratio = true
 						}
 					}
@@ -177,8 +203,8 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 	);
 	// clang-format on
 
-	settings_button.get().click_handler = [](ruis::push_button& b) {
-		show_settings_dialog(b);
+	menu_button.get().click_handler = [](ruis::push_button& b) {
+		show_top_bar_menu(b);
 	};
 
 	// clang-format off
@@ -212,7 +238,7 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 				},
 				U"calslog"
 			),
-			std::move(settings_button)
+			std::move(menu_button)
 		}
 	);
 	// clang-format on

@@ -38,27 +38,32 @@ using namespace std::string_view_literals;
 namespace calslog {
 
 namespace {
-// A ruis::list_provider which provides the widgets of the two common context
-// menu items: "Edit" (index 0) and "Delete" (index 1). Each item is a row with
-// an icon on the left (a pencil for "Edit", a trash can for "Delete"), a gap,
-// and a text label, all wrapped with some padding. The icons are the shared ruis
-// resources (ruis_img_edit and ruis_img_delete) and the label is a localized
-// wording (not a string snapshot) so that it is re-resolved against the current
-// localization on reload (e.g. after a language change).
-class item_menu_provider : public ruis::list_provider
+// A ruis::list_provider which provides the widgets of a context menu whose items
+// are given as a list of (icon, wording) pairs. Each item is a row with an icon
+// on the left, a gap, and a text label, all wrapped with some padding. The icon
+// is a shared ruis resource (its resource id is given per item) and the label is
+// a localized wording (a localization key, not a string snapshot) so that it is
+// re-resolved against the current localization on reload (e.g. after a language
+// change). This single provider backs all the context menus in the app.
+class context_menu_provider : public ruis::list_provider
 {
 public:
-	item_menu_provider(const utki::shared_ref<ruis::context>& context) :
-		ruis::list_provider(context)
+	context_menu_provider(
+		const utki::shared_ref<ruis::context>& context, //
+		std::vector<context_menu_item> items
+	) :
+		ruis::list_provider(context),
+		items(std::move(items))
 	{}
 
 	size_t count() const noexcept override
 	{
-		return 2;
+		return this->items.size();
 	}
 
 	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
 	{
+		const auto& item = this->items[index];
 		const auto& style = this->context.get().style();
 		// clang-format off
 		return m::padding(this->context,
@@ -89,8 +94,7 @@ public:
 						}
 					},
 					{
-						// Icon on the left (pencil for "Edit", trash can for "Delete");
-						// its height matches the text height
+						// Icon on the left; its height matches the text height
 						m::image(this->context,
 							{
 								.layout_params{
@@ -100,8 +104,7 @@ public:
 								.params{
 									.color = style.get_color_text(),
 									.specific{
-										.source = this->context.get().loader().load<ruis::res::image>(
-											index == 0 ? "ruis_img_edit"sv : "ruis_img_delete"sv),
+										.source = item.icon.get(),
 										.keep_aspect_ratio = true
 									}
 								}
@@ -125,8 +128,7 @@ public:
 									.align = {ruis::align::center, ruis::align::center}
 								}
 							}, //
-							this->context.get().localization.get().get(
-								index == 0 ? "context_menu:edit"sv : "context_menu:delete"sv)
+							item.wording
 						)
 					}
 				)
@@ -134,8 +136,42 @@ public:
 		);
 		// clang-format on
 	}
+
+private:
+	std::vector<context_menu_item> items;
 };
 } // namespace
+
+void show_context_menu(
+	ruis::widget& anchor, //
+	std::vector<context_menu_item> items, //
+	std::function<void(size_t index)> on_item_click
+)
+{
+	auto& c = anchor.context;
+
+	// Create the context menu widget holding the given menu items.
+	// clang-format off
+	auto menu = ruis::touch::make::context_menu(c,
+		{
+			.layout_params{}, //
+			.widget{}, //
+			.params{
+				.list{
+					.provider = utki::make_unique<context_menu_provider>(c, std::move(items))
+				}
+			}
+		}
+	);
+	// clang-format on
+
+	// When an item is clicked, invoke the callback. The context menu widget closes
+	// itself right after this handler returns.
+	menu.get().on_item_click = std::move(on_item_click);
+
+	// Show the menu near the anchor widget, on the nearest overlay.
+	ruis::show_context_menu(anchor, std::move(menu));
+}
 
 void show_item_context_menu(
 	ruis::widget& anchor, //
@@ -144,36 +180,24 @@ void show_item_context_menu(
 )
 {
 	auto& c = anchor.context;
-
-	// Create the context menu widget holding the two common menu items.
-	// clang-format off
-	auto menu = ruis::touch::make::context_menu(c,
+	// "Delete" does not delete immediately: it shows a confirmation dialog and
+	// performs the deletion only when the user confirms it.
+	show_context_menu(
+		anchor, //
 		{
-			.layout_params{}, //
-			.widget{}, //
-			.params{
-				.list{
-					.provider = utki::make_unique<item_menu_provider>(c)
-				}
+			{  c.get().loader().load<ruis::res::image>("ruis_img_edit"sv),
+			 c.get().localization.get().get("context_menu:edit"sv)  },
+			{c.get().loader().load<ruis::res::image>("ruis_img_delete"sv),
+			 c.get().localization.get().get("context_menu:delete"sv)}
+    }, //
+		[anchor = utki::make_shared_from(anchor), on_edit, on_delete](size_t index) {
+			if (index == 0) {
+				on_edit();
+			} else {
+				show_delete_confirm_dialog(anchor.get(), on_delete);
 			}
 		}
 	);
-	// clang-format on
-
-	// When an item is clicked, invoke the corresponding callback. The context
-	// menu widget closes itself right after this handler returns.
-	// "Delete" does not delete immediately: it shows a confirmation dialog and
-	// performs the deletion only when the user confirms it.
-	menu.get().on_item_click = [anchor = utki::make_shared_from(anchor), on_edit, on_delete](size_t index) {
-		if (index == 0) {
-			on_edit();
-		} else {
-			show_delete_confirm_dialog(anchor.get(), on_delete);
-		}
-	};
-
-	// Show the menu near the anchor widget, on the nearest overlay.
-	ruis::show_context_menu(anchor, std::move(menu));
 }
 
 } // namespace calslog

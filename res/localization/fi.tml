@@ -4,6 +4,8 @@ vocabulary{
     tabs:history{str{Historia}}
     context_menu:edit{str{Muokkaa}}
     context_menu:delete{str{Poista}}
+    context_menu:settings{str{Asetukset}}
+    context_menu:about{str{Tietoja}}
     save_button{str{Tallenna}}
     cancel_button{str{Peru}}
     add_button{str{Lisää}}

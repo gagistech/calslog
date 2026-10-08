@@ -4,6 +4,8 @@ vocabulary{
     tabs:history{str{История}}
     context_menu:edit{str{Изменить}}
     context_menu:delete{str{Удалить}}
+    context_menu:settings{str{Настройки}}
+    context_menu:about{str{О программе}}
     save_button{str{Сохранить}}
     cancel_button{str{Отмена}}
     add_button{str{Добавить}}

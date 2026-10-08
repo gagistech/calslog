@@ -1,13 +1,5 @@
 include_subdirs
 
-img_cog{
-    file{cog.svg}
-}
-
-img_questionmark{
-    file{questionmark.svg}
-}
-
 img_burger{
     file{burger.svg}
 }

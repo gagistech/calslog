@@ -4,6 +4,8 @@ vocabulary{
     tabs:history{str{History}}
     context_menu:edit{str{Edit}}
     context_menu:delete{str{Delete}}
+    context_menu:settings{str{Settings}}
+    context_menu:about{str{About}}
     save_button{str{Save}}
     cancel_button{str{Cancel}}
     add_button{str{Add}}
