@@ -329,9 +329,12 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 	);
 	// clang-format on
 
-	// Show the dialog
-	c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), dialog]() {
+	// Show the dialog, focus the first text input field, and put the cursor at the
+	// end of its text on open.
+	auto first_field = utki::make_shared_from(weight_input);
+	c.get().post_to_ui_thread([olay = utki::make_shared_from(olay), dialog, first_field]() {
 		olay.get().push_back(dialog);
+		first_field.get().set_cursor_index(first_field.get().get_string().get().size());
 	});
 }
 
