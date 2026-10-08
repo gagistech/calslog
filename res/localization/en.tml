@@ -44,4 +44,10 @@ vocabulary{
     delete_confirm_dialog:title{str{"Delete item?"}}
     delete_confirm_dialog:no_button{str{No}}
     delete_confirm_dialog:yes_button{str{Yes}}
+    ok_button{str{OK}}
+    about_dialog:title{str{About}}
+    about_dialog:version{str{"Version: {0}"}}
+    about_dialog:description{str{"Calories logging application"}}
+    about_dialog:license{str{"Licensed under the GNU General Public License v3 or later"}}
+    about_dialog:copyright{str{"Copyright (C) 2026 Gagistech Oy <gagisechoy@gmail.com>"}}
 }

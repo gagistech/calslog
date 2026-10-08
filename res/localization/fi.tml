@@ -44,4 +44,10 @@ vocabulary{
     delete_confirm_dialog:title{str{"Poistetaanko kohde?"}}
     delete_confirm_dialog:no_button{str{Ei}}
     delete_confirm_dialog:yes_button{str{Kyllä}}
+    ok_button{str{OK}}
+    about_dialog:title{str{Tietoja}}
+    about_dialog:version{str{"Versio: {0}"}}
+    about_dialog:description{str{"Sovellus kalorien kirjaamiseen"}}
+    about_dialog:license{str{"Lisensoitu GNU General Public License v3 tai uudempi"}}
+    about_dialog:copyright{str{"Copyright (C) 2026 Gagistech Oy <gagisechoy@gmail.com>"}}
 }

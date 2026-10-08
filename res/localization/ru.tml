@@ -44,4 +44,10 @@ vocabulary{
     delete_confirm_dialog:title{str{"Удалить элемент?"}}
     delete_confirm_dialog:no_button{str{Нет}}
     delete_confirm_dialog:yes_button{str{Да}}
+    ok_button{str{ОК}}
+    about_dialog:title{str{О программе}}
+    about_dialog:version{str{"Версия: {0}"}}
+    about_dialog:description{str{"Приложение для учета калорий"}}
+    about_dialog:license{str{"Лицензия: GNU General Public License v3 или новее"}}
+    about_dialog:copyright{str{"Copyright (C) 2026 Gagistech Oy <gagisechoy@gmail.com>"}}
 }

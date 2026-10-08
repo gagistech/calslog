@@ -32,6 +32,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/text.hpp>
 #include <utki/shared.hpp>
 
+#include "about_dialog.hpp"
 #include "context_menu.hpp"
 #include "foods_page.hpp"
 #include "history_page.hpp"
@@ -137,7 +138,7 @@ utki::shared_ref<ruis::tabbed_book> make_tabbed_book(
 
 // Shows the top-bar (three-dots) context menu near the given anchor widget. The
 // "Settings" item (index 0) opens the settings dialog and the "About" item
-// (index 1) does nothing for now.
+// (index 1) opens the about dialog.
 void show_top_bar_menu(ruis::widget& anchor)
 {
 	auto& c = anchor.context;
@@ -152,8 +153,9 @@ void show_top_bar_menu(ruis::widget& anchor)
 		[anchor = utki::make_shared_from(anchor)](size_t index) {
 			if (index == 0) {
 				show_settings_dialog(anchor.get());
+			} else if (index == 1) {
+				show_about_dialog(anchor.get());
 			}
-			// "About" does nothing for now.
 		}
 	);
 }
