@@ -59,6 +59,7 @@ history{
             mass{30}
         }
         weight{72400}
+        goal{2000}
     }
     "2026-01-16"{
         "Banana"{
@@ -72,5 +73,6 @@ history{
             mass{150}
         }
         weight{71500}
+        goal{2000}
     }
 }

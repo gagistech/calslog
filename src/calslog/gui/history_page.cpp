@@ -34,6 +34,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../model/model.hpp"
 
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -141,9 +142,7 @@ public:
                                 ),
                                 m::text(this->context,
                                     {},
-                                    this->context.get().localization.get()
-                                        .get("kcal"sv)
-                                        .format({utki::to_utf32(std::to_string(day.calc_total_kcal()))})
+                                    make_kcal_wording(this->context.get().localization.get(), day)
                                 )
                             }
                         ),

@@ -130,6 +130,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n\t\t\tenabled{true}" //
 			"\n\t\t}" //
 			"\n\t\tweight{0}" //
+			"\n\t\tgoal{0}" //
 			"\n\t}" //
 			"\n}" //
 			"\n";
@@ -269,6 +270,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n\t\t\tenabled{true}" //
 			"\n\t\t}" //
 			"\n\t\tweight{0}" //
+			"\n\t\tgoal{0}" //
 			"\n\t}" //
 			"\n}" //
 			"\n";
@@ -371,6 +373,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n\t\t\tenabled{true}" //
 			"\n\t\t}" //
 			"\n\t\tweight{72400}" //
+			"\n\t\tgoal{0}" //
 			"\n\t}" //
 			"\n}" //
 			"\n";
@@ -383,6 +386,97 @@ const tst::set set("calslog", [](tst::suite& suite) {
 
 		tst::check_eq(root3.history.size(), size_t(1));
 		tst::check_eq(root3.history.at(0).weight, uint32_t(72400));
+		tst::check_eq(root3.history.at(0).entries.size(), size_t(1));
+	});
+
+	suite.add("day_goal_field", []() {
+		// === reading the 'goal' field ===
+		auto tml_str = R"qwertyuiop(
+			history{
+				2026-08-24{
+					egg{
+						kcal{145}
+						mass{55}
+						pcs{2}
+					}
+					weight{72400}
+					goal{1850}
+				}
+				2026-08-25{
+					egg{
+						kcal{145}
+						mass{55}
+						pcs{2}
+					}
+				}
+			}
+		)qwertyuiop"sv;
+
+		auto root = calslog::model::read(fsif::span_file(tml_str));
+
+		tst::check_eq(root.history.size(), size_t(2));
+
+		tst::check_eq(root.history.at(0).day_goal_kcal, uint32_t(1850));
+		// absent 'goal' field defaults to 0 (no goal set)
+		tst::check_eq(root.history.at(1).day_goal_kcal, uint32_t(0));
+
+		// the 'goal' node is not treated as a food entry
+		tst::check_eq(root.history.at(0).entries.size(), size_t(1));
+		tst::check_eq(root.history.at(0).entries.at(0).name, U"egg"s);
+
+		// === next_day_goal: this day's goal if set, otherwise the default ===
+		tst::check_eq(root.history.at(0).next_day_goal(), uint32_t(1850));
+		tst::check_eq(root.history.at(1).next_day_goal(), calslog::model::default_day_goal_kcal);
+		tst::check_eq(calslog::model::default_day_goal_kcal, uint32_t(2000));
+
+		// === writing the 'goal' field ===
+		calslog::model::root root2;
+
+		root2.foods.push_back({.name = U"small egg", .kcal = 145, .mass = 50});
+
+		calslog::model::day day;
+		day.date = std::chrono::year_month_day{std::chrono::year{2026}, std::chrono::month{8}, std::chrono::day{24}};
+		day.entries.push_back({.name = U"egg", .pcs = 2, .mass = 55, .kcal = 145});
+		day.weight = 72400;
+		day.day_goal_kcal = 1850;
+		root2.history.push_back(day);
+
+		fsif::vector_file fi;
+
+		calslog::model::write(root2, fi);
+
+		auto data = fi.reset_data();
+
+		const std::string expected =
+			"foods{" //
+			"\n\t\"small egg\"{" //
+			"\n\t\tkcal{145}" //
+			"\n\t\tmass{50}" //
+			"\n\t}" //
+			"\n}" //
+			"\n" //
+			"history{" //
+			"\n\t2026-08-24{" //
+			"\n\t\tegg{" //
+			"\n\t\t\tkcal{145}" //
+			"\n\t\t\tpcs{2}" //
+			"\n\t\t\tmass{55}" //
+			"\n\t\t\tenabled{true}" //
+			"\n\t\t}" //
+			"\n\t\tweight{72400}" //
+			"\n\t\tgoal{1850}" //
+			"\n\t}" //
+			"\n}" //
+			"\n";
+
+		const std::string str(reinterpret_cast<const char*>(data.data()), data.size());
+		tst::check_eq(str, expected);
+
+		// === round trip preserves the day goal ===
+		auto root3 = calslog::model::read(fsif::span_file(utki::make_span(data)));
+
+		tst::check_eq(root3.history.size(), size_t(1));
+		tst::check_eq(root3.history.at(0).day_goal_kcal, uint32_t(1850));
 		tst::check_eq(root3.history.at(0).entries.size(), size_t(1));
 	});
 });

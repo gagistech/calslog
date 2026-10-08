@@ -42,6 +42,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "log_food_dialog.hpp"
 #include "log_weight_dialog.hpp"
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -459,9 +460,7 @@ public:
 					}
 				},
 				// clang-format on
-				context.get().localization.get().get("kcal"sv).format(
-					{utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))}
-				)
+				make_kcal_wording(context.get().localization.get(), application::inst().model.today())
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
@@ -593,9 +592,9 @@ public:
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->total_kcal_value.get().set_string(this->context.get().localization.get().get("kcal"sv).format(
-				{utki::to_utf32(std::to_string(application::inst().model.today().calc_total_kcal()))}
-			));
+			this->total_kcal_value.get().set_string(
+				make_kcal_wording(this->context.get().localization.get(), application::inst().model.today())
+			);
 			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()

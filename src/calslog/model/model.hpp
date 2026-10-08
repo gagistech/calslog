@@ -32,6 +32,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog::model {
 
+// The default calorie goal for a day, used when no goal has been set yet.
+constexpr uint32_t default_day_goal_kcal = 2000;
+
 struct entry {
 	std::u32string name;
 	float pcs; // number of pieces (may be fractional, e.g. 0.5 or 0.25)
@@ -52,6 +55,7 @@ struct day {
 	std::chrono::year_month_day date;
 	std::vector<entry> entries;
 	uint32_t weight = 0; // weight in grams, 0 means the weight was not logged for that day
+	uint32_t day_goal_kcal = 0; // calorie goal for this day, 0 means no goal was set
 
 	uint32_t calc_total_kcal() const
 	{
@@ -67,6 +71,13 @@ struct day {
 	// Formats the weight in kilograms with up to one digit after the decimal point
 	// (e.g. "1.2"). Returns "?" if the weight was not logged (0 grams).
 	std::string get_weight_string() const;
+
+	// Returns the calorie goal to prefill for the next day: this day's goal if it
+	// is set, otherwise the default goal.
+	uint32_t next_day_goal() const
+	{
+		return this->day_goal_kcal != 0 ? this->day_goal_kcal : default_day_goal_kcal;
+	}
 };
 
 struct food {

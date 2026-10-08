@@ -78,15 +78,11 @@ application::application(
 	// Make sure the history ends with the current log day: new entries are always
 	// logged to the last day in the history. If the history is empty, or the
 	// current log day is later than the last day (e.g. the app was left open across
-	// a day boundary), push a fresh (empty) day for the current log day. If the
-	// current log day is not later than the last day (for example because a
-	// timezone change made the clock run backwards) do not add a new day.
-	{
-		const auto today = current_log_date(this->settings.get().day_flip_minutes);
-		if (this->model.history.empty() || this->model.history.back().date < today) {
-			this->model.history.push_back(model::day{.date = today});
-		}
-	}
+	// a day boundary), push a fresh (empty) day for the current log day, prefilled
+	// with the previous day's calorie goal. If the current log day is not later
+	// than the last day (for example because a timezone change made the clock run
+	// backwards) do not add a new day.
+	this->push_new_day();
 
 	// Set up a timer which, once a minute, checks whether the food-log "day" has
 	// flipped over (i.e. the current time has crossed the configured day-flip
@@ -96,9 +92,7 @@ application::application(
 		this->day_flip_timer = utki::make_shared<ruis::timer>( //
 			this->window.gui.context.get().updater,
 			[this](uint32_t) {
-				const auto today = current_log_date(this->settings.get().day_flip_minutes);
-				if (this->model.history.empty() || this->model.history.back().date < today) {
-					this->model.history.push_back(model::day{.date = today});
+				if (this->push_new_day()) {
 					this->model.model_changed_signal.emit();
 				}
 
@@ -150,6 +144,18 @@ void application::load_theme(ruis::theme theme)
 application::~application()
 {
 	this->save();
+}
+
+bool application::push_new_day()
+{
+	const auto today = current_log_date(this->settings.get().day_flip_minutes);
+	if (this->model.history.empty() || this->model.history.back().date < today) {
+		const uint32_t goal =
+			this->model.history.empty() ? model::default_day_goal_kcal : this->model.history.back().next_day_goal();
+		this->model.history.push_back(model::day{.date = today, .day_goal_kcal = goal});
+		return true;
+	}
+	return false;
 }
 
 void application::save() noexcept

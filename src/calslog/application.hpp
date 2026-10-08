@@ -56,6 +56,16 @@ public:
 	void save() noexcept;
 
 	/**
+	 * @brief Make sure the model's history ends with the current log day.
+	 * If the history is empty, or the current log day is later than the last
+	 * day in the history, push a fresh (empty) day for the current log day,
+	 * prefilled with the previous day's calorie goal (or the default goal if
+	 * there is no previous day).
+	 * @return True if a new day was pushed, false otherwise.
+	 */
+	bool push_new_day();
+
+	/**
 	 * @brief Load and activate the UI localization with the given index
 	 * in settings_model::language_id_to_name_mapping and reload the UI.
 	 */

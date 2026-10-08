@@ -20,6 +20,7 @@ vocabulary{
     mass_per_serving{str{"Масса порции (г)"}}
     mass_per_serving_hint{str{"напр. 200"}}
     kcal{str{"{0} ккал"}}
+    kcal_with_goal{str{"{0}/{1} ккал"}}
     total_label{str{Итого:}}
     total_kcal{str{"Итого: {0} ккал"}}
     weight{str{"Вес: {0} кг"}}
@@ -36,6 +37,8 @@ vocabulary{
     log_weight_dialog:title{str{Записать вес}}
     log_weight_dialog:weight{str{"Вес (кг)"}}
     log_weight_dialog:weight_hint{str{"напр. 72.5"}}
+    log_weight_dialog:day_goal{str{"Цель на день (ккал)"}}
+    log_weight_dialog:day_goal_hint{str{"напр. 2000"}}
     delete_confirm_dialog:title{str{"Удалить элемент?"}}
     delete_confirm_dialog:no_button{str{Нет}}
     delete_confirm_dialog:yes_button{str{Да}}

@@ -89,6 +89,8 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 	// The weight is stored in the model in grams; 0 means it was not logged yet,
 	// in which case the dialog opens with an empty field.
 	const uint32_t current_weight = application::inst().model.today().weight;
+	// 0 means no day goal was set, in which case the field opens empty.
+	const uint32_t current_goal = application::inst().model.today().day_goal_kcal;
 
 	// Helper to create a push button with a localized caption and the given color.
 	auto make_button = [&c](std::string_view text_loc_id, ruis::styled<ruis::color> color) {
@@ -181,6 +183,23 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 		};
 	};
 
+	// Factory that creates an input filter restricting a field to an integer of at
+	// most 4 digits (used for the day goal field).
+	auto make_day_goal_filter = []() {
+		return [](std::u32string_view original, size_t replace_start, size_t replace_end, std::u32string_view to_insert
+			   ) -> bool {
+			for (auto ch : to_insert) {
+				if (ch < U'0' || ch > U'9') {
+					return false;
+				}
+			}
+			// Limit the resulting string to at most 4 digits. The result is the original
+			// string with the [replace_start, replace_end) range replaced by to_insert.
+			const size_t result_length = original.size() - (replace_end - replace_start) + to_insert.size();
+			return result_length <= 4;
+		};
+	};
+
 	// Create the weight field, prefilled with the current weight (if any) formatted
 	// in kilograms.
 	auto weight_field = m::labeled_text_field(
@@ -206,6 +225,30 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 		current_weight == 0 ? ruis::string{} : ruis::string(grams_to_kg_string(current_weight))
 	);
 
+	// Create the day goal field, prefilled with the current day goal (if any).
+	auto goal_field = m::labeled_text_field(
+		c,
+		// clang-format off
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::min}
+			},
+			.params{
+				.label{
+					.string = c.get().localization.get().get("log_weight_dialog:day_goal"sv)
+				},
+				.text_input{
+					.specific{
+						.hint = c.get().localization.get().get("log_weight_dialog:day_goal_hint"sv),
+						.filter = make_day_goal_filter()
+					}
+				}
+			}
+		},
+		// clang-format on
+		current_goal == 0 ? ruis::string{} : ruis::string(utki::to_utf32(std::to_string(current_goal)))
+	);
+
 	// The Save button is enabled only when the weight field is non-empty.
 	// The field and the button are owned by the dialog and outlive this function, so
 	// it is safe to capture them by reference in the change handler.
@@ -228,10 +271,18 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 	// kilograms value, emits the model change signal and closes the dialog.
 	// The field is owned by the dialog and outlives this function, so it is safe
 	// to capture it by reference.
-	save_button.get().click_handler = [&weight_input](ruis::push_button& b) {
+	save_button.get().click_handler = [&weight_input,
+									   &goal_input = goal_field.get().get_text_input()](ruis::push_button& b) {
 		auto& app = application::inst();
 		const float kg = to_float(weight_input.get_string().get());
 		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * 1000.f));
+		// Update the day goal only when the field is non-empty, so that leaving it
+		// empty keeps the previously set goal.
+		const auto goal_str = goal_input.get_string().get();
+		if (!goal_str.empty()) {
+			utki::string_parser p(utki::to_utf8(goal_str));
+			app.model.today().day_goal_kcal = p.read_number<uint32_t>();
+		}
 		app.model.model_changed_signal.emit();
 		b.get_ancestor<ruis::touch::dialog>().close();
 	};
@@ -257,6 +308,8 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 			),
 			make_vert_gap(),
 			std::move(weight_field),
+			make_vert_gap(),
+			std::move(goal_field),
 			make_vert_gap(),
 			m::row(c,
 				{

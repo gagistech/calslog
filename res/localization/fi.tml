@@ -20,6 +20,7 @@ vocabulary{
     mass_per_serving{str{"Massa annosta kohti (g)"}}
     mass_per_serving_hint{str{"esim. 200"}}
     kcal{str{"{0} kcal"}}
+    kcal_with_goal{str{"{0}/{1} kcal"}}
     total_label{str{Yhteensä:}}
     total_kcal{str{"Yhteensä: {0} kcal"}}
     weight{str{"Paino: {0} kg"}}
@@ -36,6 +37,8 @@ vocabulary{
     log_weight_dialog:title{str{Kirjaa paino}}
     log_weight_dialog:weight{str{"Paino (kg)"}}
     log_weight_dialog:weight_hint{str{"esim. 72.5"}}
+    log_weight_dialog:day_goal{str{"Päivän tavoite (kcal)"}}
+    log_weight_dialog:day_goal_hint{str{"esim. 2000"}}
     delete_confirm_dialog:title{str{"Poistetaanko kohde?"}}
     delete_confirm_dialog:no_button{str{Ei}}
     delete_confirm_dialog:yes_button{str{Kyllä}}

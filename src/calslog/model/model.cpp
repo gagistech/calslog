@@ -47,6 +47,8 @@ history{
             pcs{<number-of-portions>}
             mass{<grams-per-portion>}
         }
+        weight{<grams>}
+        goal{<kcal>}
     }
     ...
 }
@@ -59,6 +61,7 @@ constexpr auto mass_word = "mass"sv;
 constexpr auto pcs_word = "pcs"sv;
 constexpr auto enabled_word = "enabled"sv;
 constexpr auto weight_word = "weight"sv;
+constexpr auto goal_word = "goal"sv;
 } // namespace
 
 std::string calslog::model::day::get_weight_string() const
@@ -159,10 +162,13 @@ model::day parse_day(const tml::tree& tree)
 {
 	std::vector<model::entry> entries;
 	uint32_t weight = 0;
+	uint32_t day_goal_kcal = 0;
 
 	for (auto& e : tree.children) {
 		if (e.value == weight_word) {
 			weight = e.children.at(0).value.to_uint32();
+		} else if (e.value == goal_word) {
+			day_goal_kcal = e.children.at(0).value.to_uint32();
 		} else {
 			entries.push_back(parse_entry(e));
 		}
@@ -171,7 +177,8 @@ model::day parse_day(const tml::tree& tree)
 	return {
 		.date = parse_yyyy_mm_dd(tree.value.string), //
 		.entries = std::move(entries), //
-		.weight = weight
+		.weight = weight, //
+		.day_goal_kcal = day_goal_kcal
 	};
 }
 } // namespace
@@ -264,6 +271,7 @@ tml::tree make_day_node(const model::day& d)
 		node.children.push_back(make_entry_node(e));
 	}
 	node.children.push_back(make_key_value_node(weight_word, tml::leaf(d.weight)));
+	node.children.push_back(make_key_value_node(goal_word, tml::leaf(d.day_goal_kcal)));
 	return node;
 }
 } // namespace
