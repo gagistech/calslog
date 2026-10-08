@@ -27,11 +27,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog {
 
-// Formats a day's total calories for display: as "XXX/YYY" (the logged amount
-// vs. the day goal) when a goal is set, or as just "XXX" when it is not.
-// Returns a (formatted) wording rather than a plain string so that a text label
-// holding it is re-localized on language switch, with the numeric arguments
-// preserved.
-ruis::wording make_kcal_wording(const ruis::localization& loc, const model::day& day);
+// A day's total calories formatted for display as a pair of texts:
+// - `total`: the logged total - just the number (e.g. "1234") when a goal is
+//   set, or the number with the unit (e.g. "1234 kcal") when it is not;
+// - `goal`: the goal suffix in the form "/XXX kcal", empty when no goal is set;
+// - `exceeded`: true when a goal is set and the total exceeds it.
+// The `total` text should be displayed with the style's color_critical when
+// `exceeded` is true, otherwise with the usual text color; the `goal` text is
+// always displayed with the primary text color. The texts are wordings (where
+// applicable) so that a text label holding them is re-localized on language
+// switch, with the numeric arguments preserved.
+struct kcal_wording {
+	ruis::string total;
+	ruis::string goal;
+	bool exceeded = false;
+};
+
+kcal_wording make_kcal_wording(const ruis::localization& loc,//
+	 const model::day& day);
 
 } // namespace calslog

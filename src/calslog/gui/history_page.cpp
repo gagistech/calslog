@@ -93,8 +93,11 @@ public:
 		const auto len_gap = style.get_len_gap();
 		const auto len_gap_small = style.get_len_gap_small();
 		const auto color_secondary = style.get_color_secondary();
+		const auto color_text = style.get_color_text();
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
+
+		const auto kcal = make_kcal_wording(this->context.get().localization.get(), day);
 
 		const std::u32string weight_str = utki::to_utf32(day.get_weight_string());
 
@@ -140,9 +143,34 @@ public:
                                     },
                                     date_label
                                 ),
-                                m::text(this->context,
-                                    {},
-                                    make_kcal_wording(this->context.get().localization.get(), day)
+                                // Total calories (in the "exceeded" color when the day goal is
+                                // exceeded) and the goal suffix ("/XXX kcal", primary text color)
+                                m::row(this->context,
+                                    {
+                                        .layout_params{
+                                            .dims = {ruis::dim::min, ruis::dim::min}
+                                        }
+                                    },
+                                    {
+                                        m::text(this->context,
+                                            {
+                                                .params{
+                                                    .color = kcal.exceeded ? //
+                                                        style.get_color_critical() : //
+                                                        color_text
+                                                }
+                                            },
+                                            kcal.total
+                                        ),
+                                        m::text(this->context,
+                                            {
+                                                .params{
+                                                    .color = color_text
+                                                }
+                                            },
+                                            kcal.goal
+                                        )
+                                    }
                                 )
                             }
                         ),

@@ -292,12 +292,14 @@ private:
 	utki::shared_ref<ruis::rectangle_push_button> fab_button;
 	utki::shared_ref<ruis::ellipse_push_button> weight_edit_button;
 	utki::shared_ref<ruis::text> total_kcal_value;
+	utki::shared_ref<ruis::text> goal_kcal_value;
 	utki::shared_ref<ruis::text> weight_text;
 	utki::shared_ref<ruis::touch::list> list_widget;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
 		utki::shared_ref<ruis::text> total_kcal_value_param, //
+		utki::shared_ref<ruis::text> goal_kcal_value_param, //
 		utki::shared_ref<ruis::text> weight_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param, //
@@ -362,8 +364,20 @@ private:
 											},
 											context.get().localization.get().get("total_label"sv)
 										),
-										// Total kcal value, centered, special text color
-										total_kcal_value_param
+										// Total kcal value (red when the day goal is exceeded) and the
+										// goal suffix ("/XXX kcal", primary text color), centered
+										m::row(
+											context,
+											{
+												.layout_params{
+													.align = {ruis::align::center, ruis::align::center}
+												}
+											},
+											{
+												total_kcal_value_param,
+												goal_kcal_value_param
+											}
+										)
 									}
 								),
 								m::gap(context,
@@ -435,23 +449,38 @@ private:
 		fab_button(fab_button_param),
 		weight_edit_button(weight_edit_button_param),
 		total_kcal_value(total_kcal_value_param),
+		goal_kcal_value(goal_kcal_value_param),
 		weight_text(weight_text_param),
 		list_widget(list_widget)
 	// clang-format on
 	{}
 
+	// Refreshes the total kcal value and goal suffix texts: the total is shown
+	// in the "exceeded" color when the day goal is exceeded, in the special
+	// color otherwise; the goal suffix is always in the primary text color.
+	void update_total_kcal()
+	{
+		const auto kcal = make_kcal_wording(this->context.get().localization.get(), application::inst().model.today());
+		this->total_kcal_value.get().set_string(kcal.total);
+		this->total_kcal_value.get().set_color(
+			kcal.exceeded ? //
+				this->context.get().style().get_color_critical()
+						  : //
+				this->context.get().style().get_color_text_special()
+		);
+		this->goal_kcal_value.get().set_string(kcal.goal);
+	}
+
 public:
 	today_page(const utki::shared_ref<ruis::context>& context) :
 		today_page(
 			context,
-			// Total kcal field, kept as a member so it can be updated when an entry is enabled/disabled
+			// Total kcal value, kept as a member so it can be updated when an entry is
+			// enabled/disabled: red when the day goal is exceeded, special color otherwise
 			m::text(
 				context,
 				// clang-format off
 				{
-					.layout_params{
-						.align = {ruis::align::center, ruis::align::center}
-					},
 					.params{
 						.color = context.get().style().get_color_text_special(),
 						.specific{
@@ -460,7 +489,23 @@ public:
 					}
 				},
 				// clang-format on
-				make_kcal_wording(context.get().localization.get(), application::inst().model.today())
+				make_kcal_wording(context.get().localization.get(), application::inst().model.today()).total
+			),
+			// The goal suffix ("/XXX kcal"), kept as a member so it can be updated the
+			// same way; always shown in the primary text color
+			m::text(
+				context,
+				// clang-format off
+				{
+					.params{
+						.color = context.get().style().get_color_text(),
+						.specific{
+							.style = ruis::res::font::style::bold
+						}
+					}
+				},
+				// clang-format on
+				make_kcal_wording(context.get().localization.get(), application::inst().model.today()).goal
 			),
 			// Weight field, kept as a member so it can be updated when the model changes
 			m::text(
@@ -586,15 +631,17 @@ public:
 			show_log_weight_dialog(b);
 		};
 
+		// Initialize the total kcal value and goal suffix texts (the total is
+		// colored according to whether the day goal is exceeded).
+		this->update_total_kcal();
+
 		// Listen to model changes and refresh the day total kcal display and the
 		// entries list.
 		// No explicit disconnect is required: the model (and its
 		// model_changed_signal) is a member of the application and is destroyed
 		// before the GUI, so the signal can never emit into a dangling page.
 		application::inst().model.model_changed_signal.connect([this]() {
-			this->total_kcal_value.get().set_string(
-				make_kcal_wording(this->context.get().localization.get(), application::inst().model.today())
-			);
+			this->update_total_kcal();
 			this->weight_text.get().set_string(
 				this->context.get()
 					.localization.get()

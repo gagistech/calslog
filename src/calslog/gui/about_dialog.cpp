@@ -32,7 +32,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <utki/shared.hpp>
 #include <utki/unicode.hpp>
 
-#include "../../version.hpp"
+#include "../../version.hxx"
+
 #include "style.hpp"
 
 using namespace std::string_view_literals;

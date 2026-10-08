@@ -27,15 +27,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog {
 
-ruis::wording make_kcal_wording(const ruis::localization& loc, const model::day& day)
+kcal_wording make_kcal_wording(const ruis::localization& loc,//
+	 const model::day& day)
 {
 	using namespace std::string_view_literals;
 
-	const auto total = utki::to_utf32(std::to_string(day.calc_total_kcal()));
+	const auto total_kcal = day.calc_total_kcal();
+	const auto total = utki::to_utf32(std::to_string(total_kcal));
 	if (day.day_goal_kcal != 0) {
-		return loc.get("kcal_with_goal"sv).format({total, utki::to_utf32(std::to_string(day.day_goal_kcal))});
+		return {
+			.total = total, //
+			.goal = loc.get("kcal_goal_suffix"sv).format({utki::to_utf32(std::to_string(day.day_goal_kcal))}), //
+			.exceeded = total_kcal > day.day_goal_kcal
+		};
 	}
-	return loc.get("kcal"sv).format({total});
+	return {
+		.total = loc.get("kcal"sv).format({total}), //
+		.goal = std::u32string{},
+		.exceeded = false
+	};
 }
 
 } // namespace calslog
