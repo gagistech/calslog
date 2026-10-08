@@ -25,19 +25,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <cstdint>
 #include <functional>
 #include <limits>
+#include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
+#include <vector>
 
+#include <ruis/widget/base/list_widget.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
+#include <ruis/widget/group/touch/context_menu.hpp>
 #include <ruis/widget/group/touch/dialog.hpp>
 #include <ruis/widget/input/impl/rectangle_text_field.hpp>
 #include <ruis/widget/input/labeled_text_field.hpp>
 #include <ruis/widget/label/gap.hpp>
+#include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/text.hpp>
 #include <ruis/widget/widget.hpp>
 #include <utki/string.hpp>
 #include <utki/unicode.hpp>
+#include <utki/unique_ref.hpp>
 
 #include "../application.hpp"
 #include "../model/model.hpp"
@@ -64,6 +71,87 @@ std::u32string or_unknown(std::u32string_view s)
 {
 	return s.empty() ? std::u32string(U"?") : std::u32string(s);
 }
+
+// Returns a lower-cased copy of the given UTF-32 string (only ASCII letters are
+// folded). Used for the case-insensitive food name search of the log food dialog.
+std::u32string to_lower_ascii(std::u32string_view s)
+{
+	std::u32string result;
+	result.reserve(s.size());
+	for (auto ch : s) {
+		if (ch >= U'A' && ch <= U'Z') {
+			ch = char32_t((ch - U'A') + U'a');
+		}
+		result.push_back(ch);
+	}
+	return result;
+}
+
+// A ruis::list_provider which provides the widgets of the "automatic food lookup"
+// drop down of the log food dialog. It displays the names of the foods matching
+// the current search query (a copy of the matches is kept, so the drop down
+// remains valid even if the model changes afterwards). Each item is a text label
+// with the food name, styled like a context menu item (this single provider backs
+// the food lookup drop down).
+class food_lookup_provider : public ruis::list_provider
+{
+public:
+	food_lookup_provider(
+		const utki::shared_ref<ruis::context>& context, //
+		utki::shared_ref<std::vector<calslog::model::food>> foods
+	) :
+		ruis::list_provider(context), //
+		foods(std::move(foods))
+	{}
+
+	size_t count() const noexcept override
+	{
+		return this->foods.get().size();
+	}
+
+	utki::shared_ref<ruis::widget> get_widget(size_t index) const override
+	{
+		const auto& style = this->context.get().style();
+		// clang-format off
+		return calslog::m::padding(this->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim::max, ruis::dim::min}
+				},
+				.params{
+					.container{
+						.layout = ruis::layout::pile
+					},
+					.specific{
+						.borders = {
+							ruis::length::make_pp(12), // left
+							ruis::length::make_pp(6), // top
+							ruis::length::make_pp(12), // right
+							ruis::length::make_pp(6) // bottom
+						}
+					}
+				}
+			},
+			{
+				calslog::m::text(this->context,
+					{
+						.layout_params{
+							.dims = {ruis::dim::min, ruis::dim::min}
+						},
+						.params{
+							.color = style.get_color_text()
+						}
+					},
+					ruis::string(this->foods.get()[index].name)
+				)
+			}
+		);
+		// clang-format on
+	}
+
+private:
+	utki::shared_ref<std::vector<calslog::model::food>> foods;
+};
 
 } // namespace
 
@@ -442,13 +530,144 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		update_labels();
 	};
 
+	// ---- Automatic food lookup -------------------------------------------------
+	// As soon as the user types into the food name field, the foods whose names
+	// contain the typed text (case-insensitively) are listed in a scrollable drop
+	// down below the field, left-aligned with it; selecting an item prefills the
+	// dialog fields.
+	//
+	// The drop down is a ruis context menu reused as a scrollable list of the
+	// matching food names. Its state (the currently shown popup, if any) is kept
+	// on the heap and captured by value in the text change handler, so that it
+	// outlives this function.
+	struct food_lookup_state {
+		std::optional<utki::shared_ref<ruis::widget>> dropdown_popup;
+	};
+
+	auto lookup_state = utki::make_shared<food_lookup_state>();
+	// The overlay and the food name field are captured as weak pointers (not shared): the
+	// lambda below is stored inside the very food name field's text change handler, so a
+	// shared reference to the field (or the overlay that contains it) would form a reference
+	// cycle and the field could never be released when the dialog is closed.
+	auto overlay_sp = utki::make_shared_from(olay);
+	auto name_field_sp = food_name_field;
+	auto overlay_weak = utki::make_weak(overlay_sp);
+	auto name_field_weak = utki::make_weak(name_field_sp);
+
+	// 'update_all' is captured here (even though it is not used directly by this lambda) so
+	// that it is in scope for the nested on_item_click handler to capture.
+	auto update_food_lookup =
+		[lookup_state, overlay_weak, name_field_weak, &fn_input, &cal_input, &mass_input, update_all]() {
+			// Resolve the weak references; bail out if the objects are gone by now.
+			auto overlay = overlay_weak.lock();
+			if (!overlay) {
+				return;
+			}
+			auto name_field = name_field_weak.lock();
+			if (!name_field) {
+				return;
+			}
+			// Close the currently shown drop down, if any. The removal is posted to the UI
+			// thread, so that the widget tree is not modified in the middle of the input
+			// event that triggered this lookup (the rest of the app only changes the overlay
+			// via post_to_ui_thread as well).
+			if (lookup_state.get().dropdown_popup.has_value()) {
+				auto old_popup = std::move(lookup_state.get().dropdown_popup.value());
+				lookup_state.get().dropdown_popup.reset();
+				overlay->context.get().post_to_ui_thread([old_popup]() mutable {
+					auto& p = old_popup.get();
+					if (p.parent()) {
+						p.remove_from_parent();
+					}
+				});
+			}
+			const auto& query = fn_input.get_string().get();
+			if (query.empty()) {
+				return;
+			}
+			// Find all foods whose name contains the typed text (case-insensitively).
+			const auto query_lower = to_lower_ascii(query);
+			std::vector<model::food> matches;
+			for (const auto& food : application::inst().model.foods) {
+				if (to_lower_ascii(food.name).find(query_lower) != std::u32string::npos) {
+					matches.push_back(food);
+				}
+			}
+			if (matches.empty()) {
+				return;
+			}
+			// Place the drop down below the food name field, left-aligned with it, and as wide
+			// as the field so that the drop down's right edge lines up with the field's right
+			// edge.
+			auto& field = *name_field;
+			const auto field_pos = field.get_pos_in_ancestor(ruis::vec2(0), overlay.get());
+			const auto field_width = field.rect().d.x();
+			// Build the drop down (a ruis context menu reused as a scrollable list).
+			// clang-format off
+		// The matched foods are shared between the list provider and the item click handler
+		// (via a shared_ptr), so that the handler can prefill the fields from the very same
+		// data that the list shows.
+		auto matches_data = utki::make_shared<std::vector<model::food>>(std::move(matches));
+		auto provider = utki::make_unique<food_lookup_provider>(overlay->context, matches_data);
+		auto menu = ruis::touch::make::context_menu(
+			overlay->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim(ruis::length::make_px(field_width)), ruis::dim::min} // match the field's width
+				}, //
+				.widget{}, //
+				.params{
+					.list{
+						.provider = std::move(provider)
+					}
+				}
+			}
+		);
+			// clang-format on
+			// Selecting an item prefills the food name, the calories per 100g and the
+			// mass fields with the chosen food's values. The text change handlers are
+			// temporarily detached while the strings are set, because this handler runs
+			// in the middle of a mouse button event and re-entering the handlers (which
+			// would re-run the automatic lookup and re-layout the fields) is not safe
+			// there; the button state and the total kcal labels are refreshed manually.
+			menu.get().on_item_click = [&fn_input, &cal_input, &mass_input, update_all, matches_data](size_t index) {
+				if (index >= matches_data.get().size()) {
+					return;
+				}
+				const auto& food = matches_data.get()[index];
+				auto& fn_handler = fn_input.text_change_handler;
+				auto& cal_handler = cal_input.text_change_handler;
+				auto& mass_handler = mass_input.text_change_handler;
+				std::function<void(ruis::text_string_widget&)> fn_saved = std::move(fn_handler);
+				std::function<void(ruis::text_string_widget&)> cal_saved = std::move(cal_handler);
+				std::function<void(ruis::text_string_widget&)> mass_saved = std::move(mass_handler);
+				fn_input.set_string(ruis::string(food.name));
+				cal_input.set_string(utki::to_utf32(std::to_string(food.kcal)));
+				mass_input.set_string(utki::to_utf32(std::to_string(food.mass)));
+				fn_handler = std::move(fn_saved);
+				cal_handler = std::move(cal_saved);
+				mass_handler = std::move(mass_saved);
+				update_all();
+			};
+			ruis::vec2 menu_pos;
+			menu_pos.x() = field_pos.x();
+			menu_pos.y() = field_pos.y() + field.rect().d.y();
+			auto menu_widget = utki::shared_ref<ruis::widget>(menu);
+			lookup_state.get().dropdown_popup = overlay->show_popup(std::move(menu_widget), menu_pos);
+		};
+	// -------------------------------------------------------------------------
+
 	// Watch the text of each field and recompute the button enabled state and total on change.
 	auto watch_field = [update_all](auto& input) {
 		input.text_change_handler = [update_all](auto&) {
 			update_all();
 		};
 	};
-	watch_field(fn_input);
+	// The food name field additionally triggers the automatic food lookup.
+	fn_input.text_change_handler = [update_all, update_food_lookup](auto&) {
+		update_all();
+		update_food_lookup();
+	};
 	watch_field(cal_input);
 	watch_field(mass_input);
 	watch_field(pcs_input);
