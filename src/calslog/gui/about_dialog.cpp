@@ -98,7 +98,7 @@ void show_about_dialog(ruis::widget& owner_widget)
 				c.get().localization.get().get("about_dialog:title"sv)
 			),
 			make_vert_gap(),
-			m::text(c, {}, U"calslog"),
+			m::text(c, {.params{.color = c.get().style().get_color_text_special()}}, U"calslog"),
 			make_vert_gap(),
 			m::text(c,
 				{},
@@ -107,9 +107,12 @@ void show_about_dialog(ruis::widget& owner_widget)
 			make_vert_gap(),
 			m::text(c, {}, c.get().localization.get().get("about_dialog:description"sv)),
 			make_vert_gap(),
-			m::text(c, {}, c.get().localization.get().get("about_dialog:license"sv)),
+			m::text(c, {}, c.get().localization.get().get("about_dialog:license_label"sv)),
+			m::text(c, {}, c.get().localization.get().get("about_dialog:license_name"sv)),
 			make_vert_gap(),
-			m::text(c, {}, c.get().localization.get().get("about_dialog:copyright"sv)),
+			m::text(c, {}, c.get().localization.get().get("about_dialog:copyright_year"sv)),
+			m::text(c, {}, c.get().localization.get().get("about_dialog:copyright_holder"sv)),
+			m::text(c, {}, c.get().localization.get().get("about_dialog:copyright_email"sv)),
 			make_vert_gap(),
 			std::move(ok_button)
 		}

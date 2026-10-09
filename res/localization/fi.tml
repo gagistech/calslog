@@ -48,6 +48,9 @@ vocabulary{
     about_dialog:title{str{Tietoja}}
     about_dialog:version{str{"Versio: {0}"}}
     about_dialog:description{str{"Sovellus kalorien kirjaamiseen"}}
-    about_dialog:license{str{"Lisensoitu GNU General Public License v3 tai uudempi"}}
-    about_dialog:copyright{str{"Copyright (C) 2026 Gagistech Oy <gagisechoy@gmail.com>"}}
+    about_dialog:license_label{str{"Lisenssi"}}
+    about_dialog:license_name{str{"GNU GPL-3"}}
+    about_dialog:copyright_year{str{"Copyright (c) 2026"}}
+    about_dialog:copyright_holder{str{"Gagistech Oy"}}
+    about_dialog:copyright_email{str{"<gagistechoy@gmail.com>"}}
 }

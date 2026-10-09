@@ -48,6 +48,9 @@ vocabulary{
     about_dialog:title{str{О программе}}
     about_dialog:version{str{"Версия: {0}"}}
     about_dialog:description{str{"Приложение для учета калорий"}}
-    about_dialog:license{str{"Лицензия: GNU General Public License v3 или новее"}}
-    about_dialog:copyright{str{"Copyright (C) 2026 Gagistech Oy <gagisechoy@gmail.com>"}}
+    about_dialog:license_label{str{"Лицензия"}}
+    about_dialog:license_name{str{"GNU GPL-3"}}
+    about_dialog:copyright_year{str{"Copyright (c) 2026"}}
+    about_dialog:copyright_holder{str{"Gagistech Oy"}}
+    about_dialog:copyright_email{str{"<gagistechoy@gmail.com>"}}
 }

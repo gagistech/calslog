@@ -27,8 +27,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace calslog {
 
-kcal_wording make_kcal_wording(const ruis::localization& loc,//
-	 const model::day& day)
+kcal_wording make_kcal_wording(
+	const ruis::localization& loc, //
+	const model::day& day
+)
 {
 	using namespace std::string_view_literals;
 

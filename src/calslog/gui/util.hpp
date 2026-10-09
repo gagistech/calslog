@@ -43,7 +43,9 @@ struct kcal_wording {
 	bool exceeded = false;
 };
 
-kcal_wording make_kcal_wording(const ruis::localization& loc,//
-	 const model::day& day);
+kcal_wording make_kcal_wording(
+	const ruis::localization& loc, //
+	const model::day& day
+);
 
 } // namespace calslog
