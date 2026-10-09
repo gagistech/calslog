@@ -136,7 +136,8 @@ public:
 				calslog::m::text(this->context,
 					{
 						.layout_params{
-							.dims = {ruis::dim::min, ruis::dim::min}
+							.dims = {ruis::dim::min, ruis::dim::min},
+							.align = {ruis::align::front, ruis::align::front}
 						},
 						.params{
 							.color = style.get_color_text()

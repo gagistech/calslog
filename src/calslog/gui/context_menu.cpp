@@ -118,14 +118,14 @@ public:
 								}
 							}
 						),
-						// Item text, centered in the remaining space
+						// Item text, left-aligned in the remaining space
 						m::text(
 							this->context, //
 							{
 								.layout_params{
 									.dims = {ruis::dim::min, ruis::dim::min},
 									.weight = 1,
-									.align = {ruis::align::center, ruis::align::center}
+									.align = {ruis::align::front, ruis::align::center}
 								}
 							}, //
 							item.wording
