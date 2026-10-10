@@ -6,12 +6,19 @@ apply(plugin = "com.ydq.android.gradle.native-aar.import") // must go after andr
 
 android {
     namespace = "com.gagistech.app.calslog"
-    compileSdk = 37
+    // NOTE: use an integer compile SDK (36), not 37.
+    // API 37 is a *floating* level: the SDK installs it as platform dir 'android-37.0'
+    // (source.properties ApiLevel=37.0), but AGP computes the target hash from the
+    // integer 37 as 'android-37', which does not match that dir. On CI the platform is
+    // auto-installed during the build, so the hash lookup 'android-37' fails with
+    // "Failed to find target with hash string 'android-37'". 36 is a plain integer
+    // (dir 'android-36' == hash 'android-36') and is within AGP 8.13.2's tested range.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.gagistech.app.calslog"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
