@@ -1,7 +1,7 @@
 {
   "default-registry": {
     "kind": "git",
-    "baseline": "d9ccd77bb554e67137f3f754a2e2f11f4188c82c",
+    "baseline": "9b5cb8e554487f3edb5d50b80188883846f81e14",
     "repository": "https://github.com/microsoft/vcpkg"
   },
   "registries": [
@@ -13,7 +13,7 @@
     {
       "kind": "git",
       "repository": "https://github.com/cppfw/vcpkg-repo/",
-      "baseline": "9b92bdc92c8c5dec99f7ff2885a21208dc71a79a",
+      "baseline": "64a6c77c837a447d2254d09dab1d364776b373ea",
       "reference": "main",
       "packages": [
         "myci",
