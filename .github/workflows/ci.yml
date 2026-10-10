@@ -256,6 +256,25 @@ jobs:
           echo "${{ secrets.GAGISTECH_SSH_KEY }}" > gagistech_ssh_key && chmod 600 gagistech_ssh_key
           myci-upload-ssh.sh --key gagistech_ssh_key --server gagistech.com --user gagistech --dir /srv/gagistech/apps src/out/emsc/${PACKAGE_NAME}-opengles-sdl.html
         if: startsWith(github.ref, 'refs/tags/')
+##### android #####
+  android:
+    runs-on: ubuntu-latest
+    container: mingc/android-build-box:latest
+    name: android
+    steps:
+    - name: git clone
+      uses: myci-actions/checkout@main
+    - name: add cppfw deb repo
+      uses: myci-actions/add-deb-repo@main
+      with:
+        repo: deb https://gagis.hopto.org/repo/cppfw/$(lsb_release --id --short | tr '[:upper:]' '[:lower:]') $(lsb_release --codename --short) main
+        repo-name: cppfw
+        keys-asc: https://gagis.hopto.org/repo/cppfw/pubkey.gpg
+        install: myci
+    - name: build
+      run: |
+        cd build/android
+        ./gradlew assembleDebug assembleRelease --warning-mode all
 ##### vcpkg-linux #####
   vcpkg-linux:
     strategy:
