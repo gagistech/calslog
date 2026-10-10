@@ -30,7 +30,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <tml/tree.hpp>
 #include <utki/debug.hpp>
 
-#if CFG_OS_NAME != CFG_OS_NAME_EMSCRIPTEN
+#if CFG_OS_NAME != CFG_OS_NAME_EMSCRIPTEN && CFG_OS_NAME != CFG_OS_NAME_ANDROID
 #	include <clargs/parser.hpp>
 #endif
 
@@ -175,6 +175,11 @@ std::unique_ptr<application> calslog::make_application(
 {
 #if CFG_OS_NAME == CFG_OS_NAME_EMSCRIPTEN
 	bool windowed = true;
+	std::string res_path = "res/"s;
+#elif CFG_OS_NAME == CFG_OS_NAME_ANDROID
+	// On android the application is created by the ruisapp glue without any
+	// command line arguments, and the resources are bundled in the APK assets.
+	bool windowed = false;
 	std::string res_path = "res/"s;
 #else
 	bool windowed = false;

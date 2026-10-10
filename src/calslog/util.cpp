@@ -21,6 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "util.hpp"
 
+#include <ctime>
+
 namespace calslog {
 std::chrono::year_month_day log_date_for(
 	std::chrono::year_month_day calendar_date, //
@@ -41,15 +43,23 @@ std::chrono::year_month_day log_date_for(
 
 std::chrono::year_month_day current_log_date(uint32_t day_flip_minutes)
 {
+	// std::chrono::current_zone() (the C++20 chrono time zone API) is not
+	// implemented in the Android NDK libc++, so convert the current UTC time
+	// point to local time with localtime_r() instead.
 	const auto now = std::chrono::system_clock::now();
-	const auto& tz = std::chrono::current_zone();
-	const auto lt = std::chrono::zoned_time(tz, now).get_local_time();
-	const auto ld = std::chrono::floor<std::chrono::days>(lt);
-	const auto minutes_since_midnight = std::chrono::duration_cast<std::chrono::minutes>(lt - ld).count();
+	const std::time_t tt = std::chrono::system_clock::to_time_t(now);
+
+	std::tm lt{};
+	localtime_r(&tt, &lt);
+
+	const auto minutes_since_midnight = //
+		static_cast<uint32_t>(lt.tm_hour) * 60u + static_cast<uint32_t>(lt.tm_min);
 
 	return log_date_for(
-		std::chrono::year_month_day{ld}, //
-		static_cast<uint32_t>(minutes_since_midnight), //
+		std::chrono::year{lt.tm_year + 1900} / //
+		static_cast<std::chrono::month>(lt.tm_mon + 1) / //
+		lt.tm_mday, //
+		minutes_since_midnight, //
 		day_flip_minutes //
 	);
 }

@@ -19,6 +19,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("http://gagis.hopto.org/nexus/repository/android/")
+            isAllowInsecureProtocol = true
+        }
     }
 }
 

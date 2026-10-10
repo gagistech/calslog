@@ -10,6 +10,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Calslog" />
+        android:theme="@style/Theme.Calslog">
+
+        <!-- launcher activity coming from the ruisapp AAR; targetSdk 31+ requires
+             an explicit android:exported -->
+        <activity
+            android:name="io.github.cppfw.ruisapp.RuisappActivity"
+            android:exported="true" />
+
+    </application>
 
 </manifest>
