@@ -252,7 +252,7 @@ void show_food_edit_dialog(
 		if (!cal_str.empty() && !mass_str.empty()) {
 			const float kcal_per_100g = to_float(cal_str);
 			const float mass_g = to_float(mass_str);
-			const uint32_t total = std::round(kcal_per_100g * mass_g / 100.f);
+			const uint32_t total = uint32_t(std::round(kcal_per_100g * mass_g / 100.f));
 			value_str = utki::to_utf32(std::to_string(total));
 		} else {
 			value_str = std::u32string(U"?");

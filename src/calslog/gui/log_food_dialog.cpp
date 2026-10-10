@@ -516,7 +516,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			const float kcal_per_100g = to_float(cal_str);
 			const float mass_g = to_float(mass_str);
 			const float pcs = to_float(pcs_str);
-			const uint32_t total_kcal = std::round(kcal_per_100g * mass_g * pcs / 100.f);
+			const uint32_t total_kcal = uint32_t(std::round(kcal_per_100g * mass_g * pcs / 100.f));
 			total_str = utki::to_utf32(std::to_string(total_kcal));
 		} else {
 			total_str = std::u32string(U"?");
