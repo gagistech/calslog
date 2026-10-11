@@ -21,10 +21,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <ruis/style/styled.hpp>
+#include <ruis/util/length.hpp>
+#include <ruis/util/sides.hpp>
 #include <ruis/widget/widget.hpp>
 
 namespace calslog {
 
-utki::shared_ref<ruis::widget> make_root_widget(const utki::shared_ref<ruis::context>& c);
+/**
+ * @brief Create the root widget of the main window.
+ * @param c - ruis context.
+ * @param insets - the live content insets of the window (see
+ *        ruisapp::window::get_insets()). The top / bottom insets push the top
+ *        bar and the tab bar away from the system status bar and navigation
+ *        bar when the window draws edge-to-edge; they are live, so a window
+ *        resize (e.g. rotation) is reflected without re-querying.
+ */
+utki::shared_ref<ruis::widget> make_root_widget(
+	const utki::shared_ref<ruis::context>& c, //
+	const ruis::sides<ruis::styled<ruis::length>>& insets
+);
 
 } // namespace calslog

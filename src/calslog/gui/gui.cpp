@@ -247,13 +247,17 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 }
 } // namespace
 
-utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<ruis::context>& c)
+utki::shared_ref<ruis::widget> calslog::make_root_widget(
+	const utki::shared_ref<ruis::context>& c, //
+	const ruis::sides<ruis::styled<ruis::length>>& insets
+)
 {
 	// clang-format off
 	return m::overlay(c,
 		{},
 		{
-			// Background rectangle covering the whole screen
+			// Background rectangle covering the whole screen (drawn edge-to-edge
+			// behind the system bars).
 			m::rectangle(c,
 				{
 					.layout_params = {
@@ -266,10 +270,22 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(const utki::shared_ref<
 					}
 				}
 			),
-			m::column(c,
+			// Content is inset by the live window insets so that the top bar and
+			// the tab bar are not obscured by the system status / navigation
+			// bars when the window draws edge-to-edge. The padding itself acts as
+			// the column container, so there is no separate column widget.
+			m::padding(c,
 				{
 					.layout_params = {
 						.dims = {ruis::dim::fill, ruis::dim::fill}
+					},
+					.params = {
+						.container = {
+							.layout = ruis::layout::column
+						},
+						.specific = {
+							.borders = insets
+						}
 					}
 				},
 				{

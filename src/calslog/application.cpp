@@ -116,7 +116,7 @@ application::application(
 	// Load localization according to the current settings
 	this->load_language(this->settings.get().cur_language_index);
 
-	auto c = make_root_widget(this->window.gui.context);
+	auto c = make_root_widget(this->window.gui.context, this->window.get_insets());
 
 	this->window.gui.set_root(c);
 }
