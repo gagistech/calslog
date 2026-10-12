@@ -57,8 +57,8 @@ std::chrono::year_month_day current_log_date(uint32_t day_flip_minutes)
 
 	return log_date_for(
 		std::chrono::year{lt.tm_year + 1900} / //
-		static_cast<std::chrono::month>(lt.tm_mon + 1) / //
-		lt.tm_mday, //
+			static_cast<std::chrono::month>(lt.tm_mon + 1) / //
+			lt.tm_mday, //
 		minutes_since_midnight, //
 		day_flip_minutes //
 	);

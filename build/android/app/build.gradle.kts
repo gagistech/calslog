@@ -66,11 +66,4 @@ tasks.named("preBuild") { dependsOn(copyRes) }
 
 dependencies {
     implementation(libs.ruisapp)
-
-    // TODO: are all these needed?
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
 }
