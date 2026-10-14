@@ -51,6 +51,7 @@ constexpr auto hours_per_day = 24;
 constexpr auto minutes_per_hour = std::chrono::minutes::period::den;
 constexpr auto max_hours = hours_per_day - 1;
 constexpr auto max_minutes = minutes_per_hour - 1;
+constexpr auto max_deci_minutes = uint32_t(max_minutes / std::deci::den);
 
 // Formats the time of day, given as minutes after midnight, as "H:MM".
 std::u32string format_day_flip_time(uint32_t minutes)
@@ -178,7 +179,7 @@ bool is_day_flip_time_prefix(std::u32string_view str)
 	}
 	if (minutes_digits == 1) {
 		// A one-digit prefix can only be extended to 00-59 if it is 0-5.
-		return minutes <= 5;
+		return minutes <= max_deci_minutes;
 	}
 	return true; // "H:" or "HH:" can still be completed.
 }
