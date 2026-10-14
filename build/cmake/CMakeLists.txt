@@ -19,7 +19,7 @@ function(calslog_declare_library_and_application variant)
     myci_declare_library(lib${PROJECT_NAME}-${variant}
         SOURCES
             ${srcs}
-        PRIVATE_INCLUDE_DIRECTORIES
+        PUBLIC_INCLUDE_DIRECTORIES
             ../../src
         DEPENDENCIES
             clargs
@@ -31,8 +31,6 @@ function(calslog_declare_library_and_application variant)
             ../../src/${PROJECT_NAME}/main.cpp
         RESOURCE_DIRECTORY
             ../../res
-        INCLUDE_DIRECTORIES
-            ../../src
         DEPENDENCIES
             ${PROJECT_NAME}::lib${PROJECT_NAME}-${variant}
         RUN_ARGUMENTS
