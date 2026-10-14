@@ -135,7 +135,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n}" //
 			"\n";
 
-		const std::string str(reinterpret_cast<const char*>(data.data()), data.size());
+		const std::string str(data.begin(), data.end());
 		tst::check_eq(str, expected);
 
 		// === round trip ===
@@ -275,7 +275,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n}" //
 			"\n";
 
-		const std::string str(reinterpret_cast<const char*>(data.data()), data.size());
+		const std::string str(data.begin(), data.end());
 		tst::check_eq(str, expected);
 
 		// === round trip preserves the enabled flag ===
@@ -378,7 +378,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n}" //
 			"\n";
 
-		const std::string str(reinterpret_cast<const char*>(data.data()), data.size());
+		const std::string str(data.begin(), data.end());
 		tst::check_eq(str, expected);
 
 		// === round trip preserves the weight ===
@@ -469,7 +469,7 @@ const tst::set set("calslog", [](tst::suite& suite) {
 			"\n}" //
 			"\n";
 
-		const std::string str(reinterpret_cast<const char*>(data.data()), data.size());
+		const std::string str(data.begin(), data.end());
 		tst::check_eq(str, expected);
 
 		// === round trip preserves the day goal ===
