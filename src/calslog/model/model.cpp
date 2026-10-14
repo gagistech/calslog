@@ -21,6 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "model.hpp"
 
+#include <format>
+
 #include <tml/tree.hpp>
 #include <utki/string.hpp>
 #include <utki/unicode.hpp>
@@ -216,17 +218,12 @@ calslog::model::root calslog::model::read(const fsif::file& fi)
 namespace {
 std::string make_date_string(std::chrono::year_month_day d)
 {
-	char buf[16];
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-	std::snprintf(
-		buf, //
-		sizeof buf, //
-		"%04d-%02u-%02u", //
+	return std::format(
+		"{:04d}-{:02d}-{:02d}", //
 		static_cast<int>(d.year()), //
 		static_cast<unsigned>(d.month()), //
 		static_cast<unsigned>(d.day())
 	);
-	return buf;
 } // make_date_string
 } // namespace
 
@@ -236,7 +233,7 @@ namespace {
 tml::tree make_key_value_node(std::string_view key, tml::leaf value)
 {
 	auto node = tml::tree(key);
-	node.children.push_back(std::move(value));
+	node.children.emplace_back(std::move(value));
 	return node;
 }
 } // namespace

@@ -30,6 +30,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #endif
 
 namespace calslog {
+// std::tm::tm_year is defined as the number of years since 1900.
+constexpr int tm_year_base = 1900;
+
 std::chrono::year_month_day log_date_for(
 	std::chrono::year_month_day calendar_date, //
 	uint32_t minutes_since_midnight, //
@@ -66,7 +69,7 @@ std::chrono::year_month_day current_log_date(uint32_t day_flip_minutes)
 		static_cast<uint32_t>(lt.tm_hour) * 60u + static_cast<uint32_t>(lt.tm_min);
 
 	return log_date_for(
-		std::chrono::year{lt.tm_year + 1900} / //
+		std::chrono::year{lt.tm_year + tm_year_base} / //
 			static_cast<std::chrono::month>(lt.tm_mon + 1) / //
 			lt.tm_mday, //
 		minutes_since_midnight, //
