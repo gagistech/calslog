@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "history_page.hpp"
 
-#include <cstdio>
+#include <format>
 
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
@@ -46,17 +46,13 @@ namespace calslog {
 namespace {
 std::u32string make_date_string(std::chrono::year_month_day d)
 {
-	char buf[16];
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-	std::snprintf(
-		buf, //
-		sizeof buf, //
-		"%04d-%02u-%02u", //
+	auto s = std::format(
+		"{:04d}-{:02d}-{:02d}", //
 		static_cast<int>(d.year()), //
 		static_cast<unsigned>(d.month()), //
 		static_cast<unsigned>(d.day())
 	);
-	return utki::to_utf32(buf);
+	return utki::to_utf32(s);
 }
 } // namespace
 

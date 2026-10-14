@@ -32,7 +32,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <utki/debug.hpp>
 #include <utki/string.hpp>
+#include <utki/utility.hpp>
 
 #include "../application.hpp"
 #include "../model/model.hpp"
@@ -133,7 +135,8 @@ public:
 				[index]() {
 					// Delete: remove this food from the model.
 					auto& app = application::inst();
-					app.model.foods.erase(app.model.foods.begin() + index);
+					utki::assert(index < app.model.foods.size(), SL);
+					app.model.foods.erase(utki::next(app.model.foods.begin(), index));
 					app.model.model_changed_signal.emit();
 				}
 			);

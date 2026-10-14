@@ -145,11 +145,15 @@ void show_top_bar_menu(ruis::widget& anchor)
 	show_context_menu(
 		anchor, //
 		{
-			{         c.get().loader().load<ruis::res::image>("ruis_img_cog"sv),
-			 c.get().localization.get().get("context_menu:settings"sv)},
-			{c.get().loader().load<ruis::res::image>("ruis_img_questionmark"sv),
-			 c.get().localization.get().get("context_menu:about"sv)   }
-    }, //
+			{
+				.icon = c.get().loader().load<ruis::res::image>("ruis_img_cog"sv),
+				.wording = c.get().localization.get().get("context_menu:settings"sv)
+			},
+			{
+				.icon = c.get().loader().load<ruis::res::image>("ruis_img_questionmark"sv),
+				.wording = c.get().localization.get().get("context_menu:about"sv)
+			}
+		}, //
 		[anchor = utki::make_shared_from(anchor)](size_t index) {
 			if (index == 0) {
 				show_settings_dialog(anchor.get());
