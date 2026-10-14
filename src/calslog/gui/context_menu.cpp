@@ -76,12 +76,7 @@ public:
 						.layout = ruis::layout::pile
 					},
 					.specific{
-						.borders = {
-							style.get_len_gap(), // left
-							style.get_len_gap_small(), // top
-							style.get_len_gap(), // right
-							style.get_len_gap_small() // bottom
-						}
+						.borders = {style.get_len_gap()}
 					}
 				}
 			},
