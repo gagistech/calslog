@@ -23,8 +23,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ctime>
 
-#ifdef _WIN32
-#include <windows.h>
+#include <utki/config.hpp>
+
+#if CFG_OS == CFG_OS_WINDOWS
+#	include <utki/windows.hpp>
 #endif
 
 namespace calslog {
@@ -54,7 +56,7 @@ std::chrono::year_month_day current_log_date(uint32_t day_flip_minutes)
 	const std::time_t tt = std::chrono::system_clock::to_time_t(now);
 
 	std::tm lt{};
-#ifdef _WIN32
+#if CFG_OS == CFG_OS_WINDOWS
 	localtime_s(&lt, &tt);
 #else
 	localtime_r(&tt, &lt);
