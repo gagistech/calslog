@@ -33,7 +33,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <utki/debug.hpp>
 #include <utki/string.hpp>
+#include <utki/utility.hpp>
 
 #include "../application.hpp"
 #include "../model/model.hpp"
@@ -149,7 +151,8 @@ public:
 					// Delete: remove this entry from today's entries.
 					auto& app = application::inst();
 					auto& entries = app.model.today().entries;
-					entries.erase(entries.begin() + index);
+					utki::assert(index < entries.size(), SL);
+					entries.erase(utki::next(entries.begin(), index));
 					app.model.model_changed_signal.emit();
 				}
 			);

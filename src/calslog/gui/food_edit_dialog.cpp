@@ -42,20 +42,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../model/model.hpp"
 
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
-
-namespace {
-// Converts a numeric UTF-32 string to a float.
-// Empty or unparsable input yields 0.
-float to_float(const std::u32string& s)
-{
-	auto s8 = utki::to_utf8(s);
-	utki::string_parser parser{s8};
-	return parser.read_number<float>();
-}
-} // namespace
 
 namespace calslog {
 

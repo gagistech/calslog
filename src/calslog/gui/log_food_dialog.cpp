@@ -50,21 +50,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../model/model.hpp"
 
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace {
-
-// Converts a numeric UTF-32 string to a float.
-// Empty or unparsable input yields 0.
-float to_float(const std::u32string& s)
-{
-	auto s8 = utki::to_utf8(s);
-	float value = 0;
-	utki::from_chars(s8.data(), s8.data() + s8.size(), value);
-	return value;
-}
 
 // Returns the given string, or U"?" if it is empty.
 std::u32string or_unknown(std::u32string_view s)
@@ -123,12 +114,7 @@ public:
 						.layout = ruis::layout::pile
 					},
 					.specific{
-						.borders = {
-							ruis::length::make_pp(12), // left
-							ruis::length::make_pp(6), // top
-							ruis::length::make_pp(12), // right
-							ruis::length::make_pp(6) // bottom
-						}
+						.borders = {style.get_len_gap()}
 					}
 				}
 			},
@@ -516,7 +502,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 			const float kcal_per_100g = to_float(cal_str);
 			const float mass_g = to_float(mass_str);
 			const float pcs = to_float(pcs_str);
-			const uint32_t total_kcal = uint32_t(std::round(kcal_per_100g * mass_g * pcs / 100.f));
+			const auto total_kcal = uint32_t(std::round(kcal_per_100g * mass_g * pcs / 100.f));
 			total_str = utki::to_utf32(std::to_string(total_kcal));
 		} else {
 			total_str = std::u32string(U"?");

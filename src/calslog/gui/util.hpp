@@ -21,11 +21,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <string>
+
 #include <ruis/util/localization.hpp>
 
 #include "../model/model.hpp"
 
 namespace calslog {
+
+// Converts a numeric UTF-32 string to a float.
+// Empty or unparsable input yields 0.
+float to_float(const std::u32string& s);
 
 // A day's total calories formatted for display as a pair of texts:
 // - `total`: the logged total - just the number (e.g. "1234") when a goal is

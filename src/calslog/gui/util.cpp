@@ -23,9 +23,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <string>
 
+#include <utki/string.hpp>
 #include <utki/unicode.hpp>
 
 namespace calslog {
+
+float to_float(const std::u32string& s)
+{
+	auto s8 = utki::to_utf8(s);
+	utki::string_parser p(s8);
+	return p.read_number<float>();
+}
 
 kcal_wording make_kcal_wording(
 	const ruis::localization& loc, //

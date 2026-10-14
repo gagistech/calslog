@@ -23,8 +23,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <cstdint>
-#include <cstdio>
+#include <format>
 #include <functional>
+#include <ratio>
 #include <string>
 #include <string_view>
 
@@ -42,19 +43,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../model/model.hpp"
 
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
-
-namespace {
-// Converts a numeric UTF-32 string to a float.
-// Empty or unparsable input yields 0.
-float to_float(const std::u32string& s)
-{
-	auto s8 = utki::to_utf8(s);
-	utki::string_parser p(s8);
-	return p.read_number<float>();
-}
 
 // Formats a weight given in grams as a kilograms string with at most one digit
 // after the decimal point (e.g. 72500 -> "72.5", 72000 -> "72"). The value is
@@ -71,12 +63,8 @@ std::u32string grams_to_kg_string(uint32_t grams)
 		return utki::to_utf32(std::to_string(kg));
 	}
 
-	char buf[16];
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-	std::snprintf(buf, sizeof buf, "%u.%u", static_cast<unsigned>(kg), static_cast<unsigned>(frac));
-	return utki::to_utf32(buf);
+	return utki::to_utf32(std::format("{}.{}", kg, frac));
 }
-} // namespace
 
 namespace calslog {
 
@@ -275,7 +263,7 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 									   &goal_input = goal_field.get().get_text_input()](ruis::push_button& b) {
 		auto& app = application::inst();
 		const float kg = to_float(weight_input.get_string().get());
-		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * 1000.f));
+		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * std::kilo::den));
 		// Update the day goal only when the field is non-empty, so that leaving it
 		// empty keeps the previously set goal.
 		const auto goal_str = goal_input.get_string().get();

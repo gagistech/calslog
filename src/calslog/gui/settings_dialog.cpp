@@ -21,7 +21,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "settings_dialog.hpp"
 
-#include <cstdio>
+#include <chrono>
+#include <format>
+#include <ratio>
 #include <string_view>
 
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
@@ -45,13 +47,19 @@ using namespace std::string_view_literals;
 using namespace calslog;
 
 namespace {
+constexpr auto hours_per_day = 24;
+constexpr auto minutes_per_hour = std::chrono::minutes::period::den;
+constexpr auto max_hours = hours_per_day - 1;
+constexpr auto max_minutes = minutes_per_hour - 1;
+
 // Formats the time of day, given as minutes after midnight, as "H:MM".
 std::u32string format_day_flip_time(uint32_t minutes)
 {
-	char buf[32];
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-	std::snprintf(buf, sizeof buf, "%u:%02u", minutes / 60, minutes % 60);
-	return utki::to_utf32(buf);
+	return utki::to_utf32(std::format(
+		"{:d}:{:02d}", //
+		minutes / minutes_per_hour, //
+		minutes % minutes_per_hour
+	));
 }
 
 // Parses the time of day, given as an "H:MM"/"HH:MM" or "H.MM"/"HH.MM" string,
@@ -84,10 +92,12 @@ uint32_t parse_day_flip_time(std::string_view str)
 
 		p.skip_whitespaces();
 
-		if (hours_digits > 2 || minutes_digits != 2 || hours > 23 || minutes > 59 || !p.get_view().empty()) {
+		if (hours_digits > 2 || minutes_digits != 2 || hours > max_hours || minutes > max_minutes ||
+			!p.get_view().empty())
+		{
 			throw std::invalid_argument("invalid time of day");
 		}
-		return hours * 60 + minutes;
+		return hours * minutes_per_hour + minutes;
 	} catch (...) {
 		// std::string_parser also throws std::invalid_argument on malformed input
 		throw std::invalid_argument("invalid time of day");
@@ -120,7 +130,7 @@ bool is_day_flip_time_prefix(std::u32string_view str)
 		if (c < '0' || c > '9') {
 			break;
 		}
-		hours = hours * 10 + (c - '0');
+		hours = hours * std::deca::den + (c - '0');
 		++hours_digits;
 		if (hours_digits > 2) {
 			return false;
@@ -128,7 +138,7 @@ bool is_day_flip_time_prefix(std::u32string_view str)
 		++i;
 	}
 
-	if (hours_digits == 2 && hours > 23) {
+	if (hours_digits == 2 && hours > max_hours) {
 		// Cannot be extended to a valid hours value.
 		return false;
 	}
@@ -155,7 +165,7 @@ bool is_day_flip_time_prefix(std::u32string_view str)
 		if (c < '0' || c > '9') {
 			return false;
 		}
-		minutes = minutes * 10 + (c - '0');
+		minutes = minutes * std::deca::den + (c - '0');
 		++minutes_digits;
 		if (minutes_digits > 2) {
 			return false;
@@ -164,7 +174,7 @@ bool is_day_flip_time_prefix(std::u32string_view str)
 	}
 
 	if (minutes_digits == 2) {
-		return minutes <= 59;
+		return minutes <= max_minutes;
 	}
 	if (minutes_digits == 1) {
 		// A one-digit prefix can only be extended to 00-59 if it is 0-5.
