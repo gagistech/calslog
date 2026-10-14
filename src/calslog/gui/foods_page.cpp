@@ -206,7 +206,7 @@ public:
 											this->context.get().localization.get()
 												.get("kcal"sv)
 												.format({
-													utki::to_utf32(utki::to_string(uint32_t(std::round(food.kcal * food.mass / 100.f))))
+													utki::to_utf32(utki::to_string(uint32_t(std::round(float(food.kcal) * float(food.mass) / 100.f))))
 												})
 										)
 									}

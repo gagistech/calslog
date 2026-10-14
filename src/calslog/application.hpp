@@ -53,6 +53,11 @@ public:
 
 	~application() override;
 
+	application(const application&) = delete;
+	application& operator=(const application&) = delete;
+	application(application&&) = delete;
+	application& operator=(application&&) = delete;
+
 	void save() noexcept;
 
 	/**

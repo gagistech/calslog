@@ -47,7 +47,7 @@ struct entry {
 		// The number of pieces may be fractional, so the calculation is done with
 		// floating point arithmetic and the result is rounded to the nearest
 		// integer, since fractions of kcal are not representative.
-		return uint32_t(std::round(this->kcal * this->mass * this->pcs / 100.f));
+		return uint32_t(std::round(float(this->kcal) * float(this->mass) * this->pcs / 100.f));
 	}
 };
 
