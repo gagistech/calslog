@@ -23,6 +23,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ctime>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace calslog {
 std::chrono::year_month_day log_date_for(
 	std::chrono::year_month_day calendar_date, //
@@ -50,7 +54,11 @@ std::chrono::year_month_day current_log_date(uint32_t day_flip_minutes)
 	const std::time_t tt = std::chrono::system_clock::to_time_t(now);
 
 	std::tm lt{};
+#ifdef _WIN32
+	localtime_s(&lt, &tt);
+#else
 	localtime_r(&tt, &lt);
+#endif
 
 	const auto minutes_since_midnight = //
 		static_cast<uint32_t>(lt.tm_hour) * 60u + static_cast<uint32_t>(lt.tm_min);
