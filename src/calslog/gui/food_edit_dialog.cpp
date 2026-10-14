@@ -52,9 +52,8 @@ namespace {
 float to_float(const std::u32string& s)
 {
 	auto s8 = utki::to_utf8(s);
-	float value = 0;
-	utki::from_chars(s8.data(), s8.data() + s8.size(), value);
-	return value;
+	utki::string_parser parser{s8};
+	return parser.read_number<float>();
 }
 } // namespace
 

@@ -536,7 +536,7 @@ public:
 				context,
 				{
 					.layout_params{
-						.dims = {56_pp}
+						.dims = {ruis::dim::min, ruis::dim::min}
 					},
 					.params{
 						.rectangle_button{
@@ -546,11 +546,11 @@ public:
 										.layout = ruis::layout::pile
 									},
 									.specific{
-										.borders = {14_pp} // TODO: use len_gap
+										.borders = {context.get().style().get_len_gap()}
 									}
 								},
 								.specific{
-									.corner_radii = {14_pp} // TODO: use len_gap
+									.corner_radii = {context.get().style().get_len_gap()}
 								}
 							},
 							.specific{
@@ -564,7 +564,7 @@ public:
 						context,
 						{
 							.layout_params{
-								.dims = {ruis::dim::fill}
+								.dims = {context.get().style().get_len_gap_big()}
 							},
 							.params{
 								.specific{

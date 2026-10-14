@@ -77,10 +77,10 @@ public:
 					},
 					.specific{
 						.borders = {
-							ruis::length::make_pp(12), // left
-							ruis::length::make_pp(6), // top
-							ruis::length::make_pp(12), // right
-							ruis::length::make_pp(6) // bottom
+							style.get_len_gap(), // left
+							style.get_len_gap_small(), // top
+							style.get_len_gap(), // right
+							style.get_len_gap_small() // bottom
 						}
 					}
 				}
@@ -185,11 +185,15 @@ void show_item_context_menu(
 	show_context_menu(
 		anchor, //
 		{
-			{  c.get().loader().load<ruis::res::image>("ruis_img_edit"sv),
-			 c.get().localization.get().get("context_menu:edit"sv)  },
-			{c.get().loader().load<ruis::res::image>("ruis_img_delete"sv),
-			 c.get().localization.get().get("context_menu:delete"sv)}
-    }, //
+			{
+				.icon = c.get().loader().load<ruis::res::image>("ruis_img_edit"sv),
+				.wording = c.get().localization.get().get("context_menu:edit"sv)
+			},
+			{
+				.icon = c.get().loader().load<ruis::res::image>("ruis_img_delete"sv),
+				.wording = c.get().localization.get().get("context_menu:delete"sv)
+			}
+		}, //
 		[anchor = utki::make_shared_from(anchor), on_edit, on_delete](size_t index) {
 			if (index == 0) {
 				on_edit();
