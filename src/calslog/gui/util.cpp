@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "util.hpp"
 
+#include <format>
 #include <string>
 
 #include <utki/string.hpp>
@@ -33,6 +34,16 @@ float to_float(const std::u32string& s)
 	auto s8 = utki::to_utf8(s);
 	utki::string_parser p(s8);
 	return p.read_number<float>();
+}
+
+std::u32string make_date_string(std::chrono::year_month_day date)
+{
+	return utki::to_utf32(std::format(
+		"{:04d}-{:02d}-{:02d}", //
+		static_cast<int>(date.year()), //
+		static_cast<unsigned>(date.month()), //
+		static_cast<unsigned>(date.day())
+	));
 }
 
 kcal_wording make_kcal_wording(

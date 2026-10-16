@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <chrono>
 #include <string>
 
 #include <ruis/util/localization.hpp>
@@ -32,6 +33,9 @@ namespace calslog {
 // Converts a numeric UTF-32 string to a float.
 // Empty or unparsable input yields 0.
 float to_float(const std::u32string& s);
+
+// Formats a date as a UTF-32 string in the "YYYY-MM-DD" form.
+std::u32string make_date_string(std::chrono::year_month_day date);
 
 // A day's total calories formatted for display as a pair of texts:
 // - `total`: the logged total - just the number (e.g. "1234") when a goal is

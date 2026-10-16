@@ -21,18 +21,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "history_page.hpp"
 
-#include <format>
+#include <memory>
 
 #include <ruis/widget/group/touch/list.hpp>
 #include <ruis/widget/label/gap.hpp>
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <ruis/widget/proxy/click_proxy.hpp>
 #include <utki/string.hpp>
 
 #include "../application.hpp"
 #include "../model/model.hpp"
 
+#include "day_entries_dialog.hpp"
 #include "style.hpp"
 #include "util.hpp"
 
@@ -42,19 +44,6 @@ using namespace std::string_view_literals;
 using namespace ruis::length_literals;
 
 namespace calslog {
-
-namespace {
-std::u32string make_date_string(std::chrono::year_month_day d)
-{
-	auto s = std::format(
-		"{:04d}-{:02d}-{:02d}", //
-		static_cast<int>(d.year()), //
-		static_cast<unsigned>(d.month()), //
-		static_cast<unsigned>(d.day())
-	);
-	return utki::to_utf32(s);
-}
-} // namespace
 
 namespace {
 class history_page_provider : public ruis::list_provider
@@ -89,6 +78,7 @@ public:
 		const auto len_gap = style.get_len_gap();
 		const auto len_gap_small = style.get_len_gap_small();
 		const auto color_secondary = style.get_color_secondary();
+		const auto color_highlight = style.get_color_highlight();
 		const auto color_text = style.get_color_text();
 		const auto font_size_secondary = style.get_font_size_secondary();
 		const auto color_text_secondary = style.get_color_text_secondary();
@@ -97,105 +87,164 @@ public:
 
 		const std::u32string weight_str = utki::to_utf32(day.get_weight_string());
 
+		// Press state of the item, shared between the handlers of the item's click proxy.
+		auto pressed = std::make_shared<bool>();
+
 		// clang-format off
+		// Background of the item, shown in the highlight color while the item is pressed,
+		// same as the highlighting of the context menu items.
+		auto background = m::rectangle(this->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::fill}
+				},
+				.widget{
+					.visible = false
+				},
+				.params{
+					.specific{
+						.fill_color = color_highlight
+					}
+				}
+			},
+			{}
+		);
+
+		auto* background_ptr = &background.get();
+
+		auto update_background = [pressed, background_ptr]() {
+			background_ptr->set_visible(*pressed);
+		};
+
+		// Click proxy covering the item: clicking the item opens the day entries dialog
+		auto click_proxy = m::click_proxy(this->context,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::fill}
+				},
+				.click_proxy_params{
+					.pressed_change_handler = [pressed, update_background](auto& cp) {
+						*pressed = cp.is_pressed();
+						update_background();
+					},
+					.click_handler = [date = day.date](auto& cp) {
+						show_day_entries_dialog(cp, date);
+					}
+				}
+			}
+		);
+
+		// Item: highlight background, content and a click proxy stacked in a pile, with a
+		// separator below
         return m::column(this->context,
-            // column for item content and separator
             {
                 .layout_params{
                     .dims = {ruis::dim::fill, ruis::dim::min}
                 }
             },
             {
-                // Item content
-                m::padding(this->context,
+                m::pile(this->context,
                     {
                         .layout_params{
                             .dims = {ruis::dim::fill, ruis::dim::min}
-                        },
-                        .params{
-                            .container{
-                                .layout = ruis::layout::column
-                            },
-                            .specific{
-                                .borders = {len_gap}
-                            }
                         }
                     },
                     {
-                        // Line 1: date (left) and total calories (right), default font
-                        m::row(this->context,
+                        std::move(background),
+                        // Item content
+                        m::padding(this->context,
                             {
                                 .layout_params{
                                     .dims = {ruis::dim::fill, ruis::dim::min}
+                                },
+                                .params{
+                                    .container{
+                                        .layout = ruis::layout::column
+                                    },
+                                    .specific{
+                                        .borders = {len_gap}
+                                    }
                                 }
                             },
                             {
-                                m::text(this->context,
-                                    {
-                                        .layout_params{
-                                            .weight = 1,
-                                            .align = {ruis::align::front, ruis::align::center}
-                                        }
-                                    },
-                                    date_label
-                                ),
-                                // Total calories (in the "exceeded" color when the day goal is
-                                // exceeded) and the goal suffix ("/XXX kcal", primary text color)
+                                // Line 1: date (left) and total calories (right), default font
                                 m::row(this->context,
                                     {
                                         .layout_params{
-                                            .dims = {ruis::dim::min, ruis::dim::min}
+                                            .dims = {ruis::dim::fill, ruis::dim::min}
                                         }
                                     },
                                     {
                                         m::text(this->context,
                                             {
-                                                .params{
-                                                    .color = kcal.exceeded ? //
-                                                        style.get_color_critical() : //
-                                                        color_text
+                                                .layout_params{
+                                                    .weight = 1,
+                                                    .align = {ruis::align::front, ruis::align::center}
                                                 }
                                             },
-                                            kcal.total
+                                            date_label
                                         ),
-                                        m::text(this->context,
+                                        // Total calories (in the "exceeded" color when the day goal is
+                                        // exceeded) and the goal suffix ("/XXX kcal", primary text color)
+                                        m::row(this->context,
                                             {
-                                                .params{
-                                                    .color = color_text
+                                                .layout_params{
+                                                    .dims = {ruis::dim::min, ruis::dim::min}
                                                 }
                                             },
-                                            kcal.goal
+                                            {
+                                                m::text(this->context,
+                                                    {
+                                                        .params{
+                                                            .color = kcal.exceeded ? //
+                                                                style.get_color_critical() : //
+                                                                color_text
+                                                        }
+                                                    },
+                                                    kcal.total
+                                                ),
+                                                m::text(this->context,
+                                                    {
+                                                        .params{
+                                                            .color = color_text
+                                                        }
+                                                    },
+                                                    kcal.goal
+                                                )
+                                            }
                                         )
                                     }
+                                ),
+                                m::gap(this->context,
+                                    {
+                                        .layout_params{
+                                            .dims = {0_pp, len_gap_small}
+                                        }
+                                    }
+                                ),
+                                // Line 2: weight, secondary text style
+                                m::text(this->context,
+                                    {
+                                        .layout_params{
+                                            .align = {ruis::align::front, ruis::align::front}
+                                        },
+                                        .params{
+                                            .color = color_text_secondary,
+                                            .font{
+                                                .size = font_size_secondary
+                                            }
+                                        }
+                                    },
+                                    this->context.get().localization.get()
+                                        .get("weight"sv)
+                                        .format({weight_str})
                                 )
                             }
                         ),
-                        m::gap(this->context,
-                            {
-                                .layout_params{
-                                    .dims = {0_pp, len_gap_small}
-                                }
-                            }
-                        ),
-                        // Line 2: weight, secondary text style
-                        m::text(this->context,
-                            {
-                                .layout_params{
-                                    .align = {ruis::align::front, ruis::align::front}
-                                },
-                                .params{
-                                    .color = color_text_secondary,
-                                    .font{
-                                        .size = font_size_secondary
-                                    }
-                                }
-                            },
-                            this->context.get().localization.get()
-                                .get("weight"sv)
-                                .format({weight_str})
-                        )
+                        std::move(click_proxy)
                     }
                 ),
+
                 // separator
                 m::rectangle(this->context,
                     {

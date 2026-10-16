@@ -29,6 +29,7 @@ vocabulary{
     foods_page:entry_detail{str{"{0} kcal/100 g, {1} g/annos"}}
     foods_page:portion_kcal{str{"{0} kcal/annos"}}
     history_page:today{str{"{0} (tänään)"}}
+    day_entries_dialog:no_entries{str{"Ei merkintöjä tälle päivälle"}}
     settings_dialog:title{str{Asetukset}}
     settings_dialog:day_flip_time{str{"Päivän vaihtoaika"}}
     settings_dialog:day_flip_time_hint{str{"esim. 3:00"}}

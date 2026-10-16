@@ -29,6 +29,7 @@ vocabulary{
     foods_page:entry_detail{str{"{0} ккал/100г, {1} г/порция"}}
     foods_page:portion_kcal{str{"{0} ккал/порция"}}
     history_page:today{str{"{0} (сегодня)"}}
+    day_entries_dialog:no_entries{str{"Нет записей за этот день"}}
     settings_dialog:title{str{Настройки}}
     settings_dialog:day_flip_time{str{"Время смены дня"}}
     settings_dialog:day_flip_time_hint{str{"напр. 3:00"}}
