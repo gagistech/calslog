@@ -84,6 +84,16 @@ application::application(
 	// backwards) do not add a new day.
 	this->push_new_day();
 
+	// Persist the model to disk on every change. This is done eagerly (rather
+	// than in a destructor) because on Android the OS frequently kills the
+	// process without a clean C++ teardown (force-stop, swiping the app away
+	// from recents, or memory pressure), so a destructor-based save would never
+	// run and the data would be lost. Saving on every model change keeps the
+	// data durable regardless of how the app is closed.
+	this->model.model_changed_signal.connect([this]() {
+		this->save();
+	});
+
 	// Set up a timer which, once a minute, checks whether the food-log "day" has
 	// flipped over (i.e. the current time has crossed the configured day-flip
 	// time). When it has, a fresh (empty) day is pushed onto the model's history
@@ -139,11 +149,6 @@ void application::load_theme(ruis::theme theme)
 	// so there is no need to rebuild the UI.
 	auto style_res = this->window.gui.context.get().loader().load<ruis::res::tml>(ruis::to_resource_id(theme));
 	this->window.gui.context.get().style().set(utki::make_shared<ruis::style_sheet>(style_res.get().forest));
-}
-
-application::~application()
-{
-	this->save();
 }
 
 bool application::push_new_day()

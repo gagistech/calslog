@@ -36,6 +36,10 @@ namespace calslog {
  *        bar and the tab bar away from the system status bar and navigation
  *        bar when the window draws edge-to-edge; they are live, so a window
  *        resize (e.g. rotation) is reflected without re-querying.
+ *        The dialog-host overlay is nested inside the inset area, so every
+ *        dialog / context menu / popup follows the same insets: when the
+ *        on-screen keyboard is shown the bottom inset grows and an open dialog
+ *        is pushed up with it instead of being covered by the keyboard.
  */
 utki::shared_ref<ruis::widget> make_root_widget(
 	const utki::shared_ref<ruis::context>& c, //

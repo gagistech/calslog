@@ -270,10 +270,17 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(
 					}
 				}
 			),
-			// Content is inset by the live window insets so that the top bar and
-			// the tab bar are not obscured by the system status / navigation
-			// bars when the window draws edge-to-edge. The padding itself acts as
-			// the column container, so there is no separate column widget.
+			// The main content is inset by the live window insets so that the top
+			// bar and the tab bar are not obscured by the system status / navigation
+			// bars when the window draws edge-to-edge.
+			//
+			// Crucially, the dialog-host overlay is nested *inside* this inset
+			// padding: ruis dialogs, context menus and popups are always pushed onto
+			// the nearest overlay ancestor of their anchor widget, so by placing the
+			// overlay here every dialog and popup is laid out in the inset area too.
+			// In particular, when the on-screen keyboard is shown the bottom inset
+			// grows and the whole inset area - the open dialog included - is pushed
+			// up, so the dialog is no longer covered by the keyboard.
 			m::padding(c,
 				{
 					.layout_params = {
@@ -289,11 +296,33 @@ utki::shared_ref<ruis::widget> calslog::make_root_widget(
 					}
 				},
 				{
-					make_top_bar(c),
-					make_tabbed_book(c,
-						ruis::layout_parameters{
-							.dims = {ruis::dim::fill, ruis::dim::fill},
-							.weight = 1
+					// Dialog-host overlay. Dialogs / context menus / popups are pushed
+					// onto it (it is the nearest overlay ancestor of every interactive
+					// widget), so they follow the live window insets.
+					m::overlay(c,
+						{
+							.layout_params = {
+								.dims = {ruis::dim::fill, ruis::dim::fill},
+								.weight = 1
+							}
+						},
+						{
+							m::column(c,
+								{
+									.layout_params = {
+										.dims = {ruis::dim::fill, ruis::dim::fill}
+									}
+								},
+								{
+									make_top_bar(c),
+									make_tabbed_book(c,
+										ruis::layout_parameters{
+											.dims = {ruis::dim::fill, ruis::dim::fill},
+											.weight = 1
+										}
+									)
+								}
+							)
 						}
 					)
 				}

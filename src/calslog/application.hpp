@@ -51,8 +51,6 @@ public:
 		std::string_view res_path
 	);
 
-	~application() override;
-
 	application(const application&) = delete;
 	application& operator=(const application&) = delete;
 	application(application&&) = delete;
