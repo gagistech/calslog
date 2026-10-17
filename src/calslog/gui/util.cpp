@@ -91,8 +91,7 @@ utki::shared_ref<ruis::touch::scroll_area> make_dialog_scroll_area(
 	// need, but the layouts clamp it to the space actually available (see linear_layout::lay_out()),
 	// so the scroll area - and the dialog panel holding it - never get bigger than the screen
 	// and are resized as the available space changes.
-	// review: why not using m::scroll_area factory function?
-	return utki::make_shared<ruis::touch::scroll_area>(
+	return ruis::touch::make::scroll_area(
 		c, //
 		ruis::touch::scroll_area::all_parameters{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}}},
 		std::move(column)

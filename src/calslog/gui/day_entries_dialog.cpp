@@ -26,7 +26,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <string>
 #include <string_view>
 
-#include <ruis/layout/measure_mode.hpp>
 #include <ruis/widget/button/impl/rectangle_push_button.hpp>
 #include <ruis/widget/group/overlay.hpp>
 #include <ruis/widget/group/touch/dialog.hpp>
@@ -364,58 +363,67 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 	// clang-format on
 
 	// The day's entries.
-	// The dialog panel is sized to fit its contents and a weighted fill-sized child
-	// contributes nothing to that size, so a fill-sized list would collapse to zero
-	// height inside the dialog. Hence the list is given an explicit height: as much as
-	// it needs to show all the entries, but no more than a part of the screen, so that
-	// the dialog always fits on the screen and the list scrolls if there are too many
-	// entries.
+	// The list requests as much height as all its items need, but the layouts clamp it to the
+	// space actually available (see linear_layout::lay_out()), so the dialog never gets bigger
+	// than the screen, the list is resized as the available space changes and its items are
+	// scrolled when they do not fit.
+	// A 'fill' height dimension - with or without a weight - would not work here: the dialog
+	// panel is sized to fit its contents, so a fill-sized child contributes nothing to that
+	// size and would collapse to zero height.
 	utki::shared_ref<ruis::widget> entries_widget = [&]() -> utki::shared_ref<ruis::widget> {
 		if (day.get().entries.empty()) {
 			// Wrapped in the same padding as the list items
-			return m::padding(
-				c,
+			// clang-format off
+			return m::padding(c,
 				{
-					.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
-					.params{.container{.layout = ruis::layout::column}, .specific{.borders = {style.get_len_gap()}}}
-            },
-				{m::text(
-					c,
-					{// centered horizontally within the padding
-					 .layout_params{
-						 .dims = {ruis::dim::min, ruis::dim::min},
-						 .align = {ruis::align::center, ruis::align::front}
-					 },
-					 .params{.color = style.get_color_text_secondary(), .font{.size = style.get_font_size_secondary()}}
+					.layout_params{
+						.dims = {ruis::dim::fill, ruis::dim::min
+						}
+					},
+					.params{
+						.container{
+							.layout = ruis::layout::column
+						},
+						.specific{
+							.borders = {style.get_len_gap()}
+						}
+					}
+            	},
+				{
+					m::text(c,
+					{
+						// centered horizontally within the padding
+						.layout_params{
+							.dims = {ruis::dim::min, ruis::dim::min},
+							.align = {ruis::align::center, ruis::align::front}
+					 	},
+					 	.params{
+							.color = style.get_color_text_secondary(),
+							.font{
+								.size = style.get_font_size_secondary()
+							}
+						}
 					},
 					loc.get("day_entries_dialog:no_entries"sv)
 				)}
 			);
+			// clang-format on
 		}
 
-		auto list_widget = m::list(
-			c,
-			{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}},
-			 .params{.specific{.provider = utki::make_unique<day_entries_list_provider>(c, day)}}}
+		// clang-format off
+		return m::list(c,
+			{
+				.layout_params{
+					.dims = {ruis::dim::fill, ruis::dim::min}
+				},
+				.params{
+					.specific{
+						.provider = utki::make_unique<day_entries_list_provider>(c, day)
+					}
+				}
+			}
 		);
-
-		const auto natural_height =
-			list_widget.get()
-				.measure(
-					ruis::vec2(olay.rect().d.x(), ruis::measure_infinite_quotum), //
-					r4::vector2<ruis::measure_mode>(ruis::measure_mode::exactly, ruis::measure_mode::at_most)
-				)
-				.y();
-
-		using std::min;
-		const auto max_height = olay.rect().d.y() * ruis::real(0.4);
-
-		// NOTE: modifying the layout parameters invalidates the layout, which is fine:
-		// the dialog is not laid out yet at this point.
-		list_widget.get().get_layout_params().dims[1] =
-			ruis::dim(ruis::length::make_px(min(natural_height, max_height)));
-
-		return list_widget;
+		// clang-format on
 	}();
 
 	// Create the dialog with its content
@@ -447,7 +455,6 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 				{
 					.layout_params{
 						.dims = {ruis::dim::fill, ruis::dim::min},
-						.weight = 1,
 						.align = {ruis::align::front, ruis::align::back}
 					}
 				},
