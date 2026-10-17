@@ -277,12 +277,7 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 
 	// Create the dialog with its content
 	// clang-format off
-	auto dialog = ruis::touch::make::dialog(c,
-		{
-			.layout_params{
-				.dims = {ruis::dim::fill, ruis::dim::fill}
-			}
-		},
+	auto scroll_area = make_dialog_scroll_area(c,
 		{
 			m::text(c,
 				{
@@ -313,6 +308,17 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 					std::move(save_button)
 				}
 			)
+		}
+	);
+
+	auto dialog = ruis::touch::make::dialog(c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::fill}
+			}
+		},
+		{
+			std::move(scroll_area)
 		}
 	);
 	// clang-format on

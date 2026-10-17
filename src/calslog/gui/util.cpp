@@ -24,8 +24,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <format>
 #include <string>
 
+#include <ruis/context.hpp>
+#include <ruis/widget/container.hpp>
 #include <utki/string.hpp>
 #include <utki/unicode.hpp>
+
+#include "style.hpp"
 
 namespace calslog {
 
@@ -67,6 +71,32 @@ kcal_wording make_kcal_wording(
 		.goal = std::u32string{},
 		.exceeded = false
 	};
+}
+
+utki::shared_ref<ruis::touch::scroll_area> make_dialog_scroll_area(
+	const utki::shared_ref<ruis::context>& c, //
+	ruis::widget_list contents
+)
+{
+	// The contents laid out in a column.
+	// The 'min' height dimension lets the contents be taller than the scroll area, which is
+	// what makes them scrollable.
+	auto column = m::column(
+		c, //
+		{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}}},
+		std::move(contents)
+	);
+
+	// The 'min' height dimension makes the scroll area request as much height as its contents
+	// need, but the layouts clamp it to the space actually available (see linear_layout::lay_out()),
+	// so the scroll area - and the dialog panel holding it - never get bigger than the screen
+	// and are resized as the available space changes.
+	// review: why not using m::scroll_area factory function?
+	return utki::make_shared<ruis::touch::scroll_area>(
+		c, //
+		ruis::touch::scroll_area::all_parameters{.layout_params{.dims = {ruis::dim::fill, ruis::dim::min}}},
+		std::move(column)
+	);
 }
 
 } // namespace calslog

@@ -35,6 +35,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "../../version.hxx"
 
 #include "style.hpp"
+#include "util.hpp"
 
 using namespace std::string_view_literals;
 
@@ -80,12 +81,7 @@ void show_about_dialog(ruis::widget& owner_widget)
 
 	// Create the dialog with its content
 	// clang-format off
-	auto dialog = ruis::touch::make::dialog(c,
-		{
-			.layout_params{
-				.dims = {ruis::dim::fill, ruis::dim::fill}
-			}
-		},
+	auto scroll_area = make_dialog_scroll_area(c,
 		{
 			m::text(c,
 				{
@@ -115,6 +111,17 @@ void show_about_dialog(ruis::widget& owner_widget)
 			m::text(c, {}, c.get().localization.get().get("about_dialog:copyright_email"sv)),
 			make_vert_gap(),
 			std::move(ok_button)
+		}
+	);
+
+	auto dialog = ruis::touch::make::dialog(c,
+		{
+			.layout_params{
+				.dims = {ruis::dim::fill, ruis::dim::fill}
+			}
+		},
+		{
+			std::move(scroll_area)
 		}
 	);
 	// clang-format on

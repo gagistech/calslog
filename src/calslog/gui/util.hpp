@@ -25,6 +25,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <string>
 
 #include <ruis/util/localization.hpp>
+#include <ruis/util/widget_list.hpp>
+#include <ruis/widget/group/touch/scroll_area.hpp>
 
 #include "../model/model.hpp"
 
@@ -56,6 +58,18 @@ struct kcal_wording {
 kcal_wording make_kcal_wording(
 	const ruis::localization& loc, //
 	const model::day& day
+);
+
+// Creates a scroll area holding the given widgets laid out in a column, to be used as the
+// contents of a modal dialog (see ruis::touch::dialog).
+// The dialog panel is sized to fit its contents, so a scroll area which does not fit on the
+// screen would make the dialog overflow the screen. This scroll area requests as much space as
+// its contents need, but the layouts clamp it to the space actually available, so the dialog
+// always fits on the screen, is resized as the available space changes and its contents are
+// scrolled when they do not fit.
+utki::shared_ref<ruis::touch::scroll_area> make_dialog_scroll_area(
+	const utki::shared_ref<ruis::context>& c, //
+	ruis::widget_list contents
 );
 
 } // namespace calslog
