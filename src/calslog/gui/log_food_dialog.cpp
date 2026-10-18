@@ -351,15 +351,14 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 	auto& pcs_input = num_servings_input.get().get_text_input();
 
 	// Helper to create a small push button showing a number; pressing it sets the
-	// number of pieces field to that number.
+	// number of pieces field to that number. Buttons use dim::max so they measure
+	// at their natural (min) size but expand to share the remaining space equally.
 	auto make_num_button = [&c, &pcs_input](std::u32string number) {
 		// clang-format off
-		// All preset buttons have weight 1, so they are of equal width and
-		// together occupy the whole horizontal space of the dialog.
 		auto button = m::rectangle_push_button(c,
 			{
 				.layout_params{
-					.dims = {ruis::dim::fill, ruis::dim::min},
+					.dims = {ruis::dim::max, ruis::dim::min},
 					.weight = 1
 				}
 			},
@@ -394,13 +393,13 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				},
 				{
 					make_num_button(std::u32string(U"0.25")), //
-					make_hori_gap(),
+					m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap_small(), ruis::dim::fill}}}),
 					make_num_button(std::u32string(U"0.5")), //
-					make_hori_gap(),
+					m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap_small(), ruis::dim::fill}}}),
 					make_num_button(std::u32string(U"2")), //
-					make_hori_gap(),
+					m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap_small(), ruis::dim::fill}}}),
 					make_num_button(std::u32string(U"3")), //
-					make_hori_gap(),
+					m::gap(c, {.layout_params{.dims = {c.get().style().get_len_gap_small(), ruis::dim::fill}}}),
 					make_num_button(std::u32string(U"4"))
 				}
 			),
