@@ -414,7 +414,12 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 		return m::list(c,
 			{
 				.layout_params{
-					.dims = {ruis::dim::fill, ruis::dim::min}
+					// 'max' in the long direction: the list is measured as 'min' (its natural size is
+					// the sum of its items), but it is laid out as 'fill': it gets its share of the
+					// space left over by its siblings, so it shrinks when the dialog is too short for
+					// its contents and the button row below it stays fully visible
+					.dims = {ruis::dim::fill, ruis::dim::max},
+					.weight = 1
 				},
 				.params{
 					.specific{
