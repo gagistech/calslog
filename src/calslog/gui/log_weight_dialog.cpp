@@ -263,7 +263,7 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 									   &goal_input = goal_field.get().get_text_input()](ruis::push_button& b) {
 		auto& app = application::inst();
 		const float kg = to_float(weight_input.get_string().get());
-		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * std::kilo::den));
+		app.model.today().weight = static_cast<uint32_t>(std::lround(kg * std::kilo::num));
 		// Update the day goal only when the field is non-empty, so that leaving it
 		// empty keeps the previously set goal.
 		const auto goal_str = goal_input.get_string().get();
