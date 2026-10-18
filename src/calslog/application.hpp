@@ -55,6 +55,7 @@ public:
 	application& operator=(const application&) = delete;
 	application(application&&) = delete;
 	application& operator=(application&&) = delete;
+	~application() override = default;
 
 	void save() noexcept;
 

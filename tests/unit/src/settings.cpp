@@ -26,6 +26,11 @@ struct temp_dir {
 		std::filesystem::create_directories(this->path);
 	}
 
+	temp_dir(const temp_dir&) = delete;
+	temp_dir& operator=(const temp_dir&) = delete;
+	temp_dir(temp_dir&&) = delete;
+	temp_dir& operator=(temp_dir&&) = delete;
+
 	~temp_dir()
 	{
 		std::filesystem::remove_all(this->path);
@@ -35,7 +40,7 @@ struct temp_dir {
 std::string read_file(const std::filesystem::path& p)
 {
 	std::ifstream fi(p);
-	return std::string((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
+	return {(std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>()};
 }
 
 // calslog::settings concatenates the given directory and the file name
@@ -45,6 +50,7 @@ std::string dir_with_slash(const temp_dir& td)
 	return td.path.string() + "/";
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-interfaces-global-init, "tst::set uses a function-local static registry, so the initialization order is safe")
 const tst::set set("settings", [](tst::suite& suite) {
 	suite.add("defaults_when_file_absent", []() {
 		temp_dir td("defaults_when_file_absent");
