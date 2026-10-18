@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include <calslog/util.hpp>
+#include <calslog/util/util.hpp>
 #include <tst/check.hpp>
 #include <tst/set.hpp>
 
