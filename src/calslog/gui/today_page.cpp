@@ -33,6 +33,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ruis/widget/label/padding.hpp>
 #include <ruis/widget/label/rectangle.hpp>
 #include <ruis/widget/label/text.hpp>
+#include <ruis/widget/slider/touch/progress_bar.hpp>
 #include <utki/debug.hpp>
 #include <utki/string.hpp>
 #include <utki/utility.hpp>
@@ -298,6 +299,7 @@ private:
 	utki::shared_ref<ruis::text> goal_kcal_value;
 	utki::shared_ref<ruis::text> weight_text;
 	utki::shared_ref<ruis::touch::list> list_widget;
+	utki::shared_ref<ruis::touch::progress_bar> progress_bar;
 
 	today_page(
 		const utki::shared_ref<ruis::context>& context, //
@@ -306,7 +308,8 @@ private:
 		utki::shared_ref<ruis::text> weight_text_param, //
 		utki::shared_ref<ruis::touch::list> list_widget, //
 		utki::shared_ref<ruis::rectangle_push_button> fab_button_param, //
-		utki::shared_ref<ruis::ellipse_push_button> weight_edit_button_param
+		utki::shared_ref<ruis::ellipse_push_button> weight_edit_button_param, //
+		utki::shared_ref<ruis::touch::progress_bar> progress_bar_param
 	) :
 		ruis::widget(
 			context,
@@ -405,19 +408,9 @@ private:
 						)
 					}
 				),
-				// Separator between the total kcal field and the list
-				m::rectangle(context,
-					{
-						.layout_params{
-							.dims = {ruis::dim::fill, context.get().style().get_len_gap_small()}
-						},
-						.params{
-							.specific{
-								.fill_color = context.get().style().get_color_secondary()
-							}
-						}
-					}
-				),
+				// Progress bar between the total kcal field and the list, showing the total
+				// calories against the day goal
+				progress_bar_param,
 				// List and the floating action button on top of it
 				m::pile(
 					context,
@@ -454,7 +447,8 @@ private:
 		total_kcal_value(total_kcal_value_param),
 		goal_kcal_value(goal_kcal_value_param),
 		weight_text(weight_text_param),
-		list_widget(list_widget)
+		list_widget(list_widget),
+		progress_bar(progress_bar_param)
 	// clang-format on
 	{}
 
@@ -463,7 +457,8 @@ private:
 	// color otherwise; the goal suffix is always in the primary text color.
 	void update_total_kcal()
 	{
-		const auto kcal = make_kcal_wording(this->context.get().localization.get(), application::inst().model.today());
+		const auto& day = application::inst().model.today();
+		const auto kcal = make_kcal_wording(this->context.get().localization.get(), day);
 		this->total_kcal_value.get().set_string(kcal.total);
 		this->total_kcal_value.get().set_color(
 			kcal.exceeded ? //
@@ -472,6 +467,23 @@ private:
 				this->context.get().style().get_color_text_special()
 		);
 		this->goal_kcal_value.get().set_string(kcal.goal);
+
+		// Update the progress bar: show the total calories against the day goal. The fraction
+		// is the total out of the goal clamped to 1; when the total exceeds the goal the bar
+		// is at 100% and colored critical (red), otherwise it is in the special color.
+		const auto goal = day.day_goal_kcal;
+		const auto total = day.calc_total_kcal();
+		const ruis::real fraction = //
+			goal > 0 ? //
+				(total > goal ? ruis::real(1) : ruis::real(total) / ruis::real(goal)) //
+				: ruis::real(0);
+		this->progress_bar.get().set_fraction(fraction);
+		this->progress_bar.get().set_bar_color(
+			kcal.exceeded ? //
+				this->context.get().style().get_color_critical() //
+				: //
+				this->context.get().style().get_color_special()
+		);
 	}
 
 public:
@@ -617,6 +629,16 @@ public:
 							}
 						}
 					)
+				}
+			),
+			// Create the progress bar between the total kcal field and the list,
+			// showing the total calories against the day goal
+			m::progress_bar(
+				context,
+				{
+					.layout_params{
+						.dims = {ruis::dim::fill, context.get().style().get_len_gap_small()}
+					}
 				}
 			)
 			// clang-format on
