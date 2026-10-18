@@ -32,8 +32,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 namespace calslog {
 namespace {
 constexpr auto hours_per_day = 24;
-constexpr auto minutes_per_hour =
-	std::chrono::duration_cast<std::chrono::minutes>(std::chrono::hours{1}).count(); // 60
+constexpr auto minutes_per_hour = std::chrono::duration_cast<std::chrono::minutes>(std::chrono::hours{1}).count(); // 60
 constexpr auto max_hours = hours_per_day - 1;
 constexpr auto max_minutes = minutes_per_hour - 1;
 constexpr auto max_deci_minutes = uint32_t(max_minutes / std::deci::den); // 5

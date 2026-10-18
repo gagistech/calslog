@@ -35,7 +35,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #endif
 
 #include "gui/gui.hpp"
-
 #include "util/util.hpp"
 
 using namespace std::string_literals;
