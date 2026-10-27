@@ -75,11 +75,15 @@ public:
 		// Flip switch reflecting whether the entry is counted in the day total.
 		// When toggled, the entry's enabled state in the model is updated and the
 		// model's model_changed_signal is emitted so that dependent UI (the day
-		// total kcal display) is refreshed.
+		// total kcal display) is refreshed. The list rebuild is suppressed for this
+		// emission (see suppress_list_refresh_on_next_model_change): toggling only
+		// changes entry.enabled, so the list rows are unchanged and rebuilding it
+		// would destroy this very flip switch and cancel its knob animation.
 		auto flip_switch_widget = m::flip_switch(this->context, {.button{.pressed = entry.enabled}});
 		flip_switch_widget.get().pressed_change_handler = [index](ruis::button& b) {
 			auto& e = application::inst().model.today().entries.at(index);
 			e.enabled = b.is_pressed();
+			application::inst().suppress_list_refresh_on_next_model_change = true;
 			application::inst().model.model_changed_signal.emit();
 		};
 
@@ -673,7 +677,15 @@ public:
 					.get("weight"sv)
 					.format({utki::to_utf32(application::inst().model.today().get_weight_string())})
 			);
-			this->list_widget.get().notify_model_change();
+			// Rebuild the entries list on model change, unless the change originated from
+			// a flip switch toggle. In that case the list rows are unchanged (only
+			// entry.enabled changed) and rebuilding would destroy the toggled flip
+			// switch and interrupt its knob animation, so the list refresh is skipped.
+			if (auto& app = application::inst(); !app.suppress_list_refresh_on_next_model_change) {
+				this->list_widget.get().notify_model_change();
+			}
+			// Consume the flag so it only affects this emission.
+			application::inst().suppress_list_refresh_on_next_model_change = false;
 		});
 	}
 };

@@ -46,6 +46,16 @@ public:
 	// pushes a fresh (empty) day onto the model's history.
 	std::shared_ptr<ruis::timer> day_flip_timer;
 
+	// When set, the next model_changed_signal emission is treated as a no-op for the
+	// today-page entries list: the list is not rebuilt (notify_model_change() is
+	// skipped) even though the signal is still emitted and the other dependents
+	// (day total kcal, weight text) are refreshed. It is set when a row's flip switch
+	// is toggled, because that only changes entry.enabled (which changes the day total,
+	// but not the row count or any row's content), so rebuilding the list would also
+	// destroy the just-clicked flip switch and interrupt its knob animation. The slot
+	// that observes the signal consumes (clears) this flag.
+	bool suppress_list_refresh_on_next_model_change = false;
+
 	application(
 		bool windowed, //
 		std::string_view res_path
