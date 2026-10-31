@@ -207,9 +207,9 @@ void show_food_edit_dialog(
 			.layout_params{
 				.dims = {ruis::dim::fill, ruis::dim::min}
 			},
-			.params{
+			.params{ .text_string{
 				.color = c.get().style().get_color_text()
-			}
+			 } }
 		},
 		// clang-format on
 		std::u32string{}
@@ -298,11 +298,11 @@ void show_food_edit_dialog(
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get(
 					is_editing ? "food_edit_dialog:title"sv : "food_edit_dialog:add_title"sv)

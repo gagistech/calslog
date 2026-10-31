@@ -227,12 +227,12 @@ public:
 										.layout_params{
 											.align = {ruis::align::front, ruis::align::front}
 										},
-										.params{
+										.params{ .text_string{
 											.color = color_text_secondary,
 											.font{
 												.size = font_size_secondary
 											}
-										}
+										 } }
 									},
 									// Pass the wording (not a string snapshot) so that the text
 									// is re-resolved against the current localization on reload

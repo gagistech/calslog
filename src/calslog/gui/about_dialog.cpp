@@ -85,16 +85,16 @@ void show_about_dialog(ruis::widget& owner_widget)
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get("about_dialog:title"sv)
 			),
 			make_vert_gap(),
-			m::text(c, {.params{.color = c.get().style().get_color_text_special()}}, U"calslog"),
+			m::text(c, {.params{ .text_string{.color = c.get().style().get_color_text_special() } }}, U"calslog"),
 			make_vert_gap(),
 			m::text(c,
 				{},

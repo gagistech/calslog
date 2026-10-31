@@ -125,9 +125,9 @@ public:
 							.dims = {ruis::dim::min, ruis::dim::min},
 							.align = {ruis::align::front, ruis::align::front}
 						},
-						.params{
+						.params{ .text_string{
 							.color = style.get_color_text()
-						}
+						 } }
 					},
 					ruis::string(this->foods.get()[index].name)
 				)
@@ -324,9 +324,9 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				.dims = {ruis::dim::fill, ruis::dim::min},
 				.align = {ruis::align::front, ruis::align::center}
 			},
-			.params{
+			.params{ .text_string{
 				.color = c.get().style().get_color_text()
-			}
+			 } }
 		},
 		// clang-format on
 		c.get().localization.get().get("log_food_dialog:num_servings"sv)
@@ -442,12 +442,12 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				.dims = {ruis::dim::min, ruis::dim::min},
 				.align = {ruis::align::back, ruis::align::center}
 			},
-			.params{
+			.params{ .text_string{
 				.color = c.get().style().get_color_text_secondary(),
 				.font{
 					.size = c.get().style().get_font_size_secondary()
 				}
-			}
+			 } }
     	},
 		// clang-format on
 		std::u32string{}
@@ -462,12 +462,12 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 				.dims = {ruis::dim::min, ruis::dim::min},
 				.align = {ruis::align::back, ruis::align::center}
 			},
-			.params{
+			.params{ .text_string{
 				.color = c.get().style().get_color_text_special(),
 				.specific{
 					.style = ruis::res::font::style::bold
 				}
-			}
+			 } }
 		},
 		// clang-format on
 		std::u32string{}
@@ -692,11 +692,11 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get("log_food_dialog:title"sv)
 			),

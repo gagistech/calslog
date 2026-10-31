@@ -62,9 +62,9 @@ class language_selection_box_provider : public ruis::list_provider
 
 		return m::text(
 			c, //
-			{.params{
+			{.params{.text_string{
 				.color = is_highlighted ? c.get().style().get_color_text_special() : c.get().style().get_color_text()
-			}}, //
+			}}}, //
 			std::u32string(lang_name)
 		);
 	}
@@ -106,9 +106,9 @@ class theme_selection_box_provider : public ruis::list_provider
 
 		return m::text(
 			c, //
-			{.params{
+			{.params{.text_string{
 				.color = is_highlighted ? c.get().style().get_color_text_special() : c.get().style().get_color_text()
-			}}, //
+			}}}, //
 			c.get().localization.get().get(this->theme_loc_id(index))
 		);
 	}
@@ -323,11 +323,11 @@ void show_settings_dialog(ruis::widget& owner_widget)
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get("settings_dialog:title"sv)
 			),

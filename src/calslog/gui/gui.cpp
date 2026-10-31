@@ -232,11 +232,11 @@ utki::shared_ref<ruis::widget> make_top_bar(const utki::shared_ref<ruis::context
 		{
 			m::text(c,
 				{
-					.params = {
+					.params = { .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				U"calslog"
 			),

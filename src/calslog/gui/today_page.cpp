@@ -232,12 +232,12 @@ public:
 										.layout_params{
 											.align = {ruis::align::front, ruis::align::front}
 										},
-										.params{
+										.params{ .text_string{
 											.color = color_text_secondary,
 											.font{
 												.size = font_size_secondary
 											}
-										}
+										 } }
 									},
 									this->context.get().localization.get()
 										.get("entry_detail"sv)
@@ -479,13 +479,13 @@ private:
 		const auto total = day.calc_total_kcal();
 		const ruis::real fraction = //
 			goal > 0 ? //
-				(total > goal ? ruis::real(1) : ruis::real(total) / ruis::real(goal)) //
-				: ruis::real(0);
+			(total > goal ? ruis::real(1) : ruis::real(total) / ruis::real(goal)) //
+					 : ruis::real(0);
 		this->progress_bar.get().set_fraction(fraction);
 		this->progress_bar.get().set_bar_color(
 			kcal.exceeded ? //
 				this->context.get().style().get_color_critical() //
-				: //
+						  : //
 				this->context.get().style().get_color_special()
 		);
 	}
@@ -500,12 +500,12 @@ public:
 				context,
 				// clang-format off
 				{
-					.params{
+					.params{ .text_string{
 						.color = context.get().style().get_color_text_special(),
 						.specific{
 							.style = ruis::res::font::style::bold
 						}
-					}
+					 } }
 				},
 				// clang-format on
 				make_kcal_wording(context.get().localization.get(), application::inst().model.today()).total
@@ -516,12 +516,12 @@ public:
 				context,
 				// clang-format off
 				{
-					.params{
+					.params{ .text_string{
 						.color = context.get().style().get_color_text(),
 						.specific{
 							.style = ruis::res::font::style::bold
 						}
-					}
+					 } }
 				},
 				// clang-format on
 				make_kcal_wording(context.get().localization.get(), application::inst().model.today()).goal

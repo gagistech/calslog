@@ -195,19 +195,19 @@ public:
                                             {
                                                 m::text(this->context,
                                                     {
-                                                        .params{
+                                                        .params{ .text_string{
                                                             .color = kcal.exceeded ? //
                                                                 style.get_color_critical() : //
                                                                 color_text
-                                                        }
+                                                         } }
                                                     },
                                                     kcal.total
                                                 ),
                                                 m::text(this->context,
                                                     {
-                                                        .params{
+                                                        .params{ .text_string{
                                                             .color = color_text
-                                                        }
+                                                         } }
                                                     },
                                                     kcal.goal
                                                 )
@@ -228,12 +228,12 @@ public:
                                         .layout_params{
                                             .align = {ruis::align::front, ruis::align::front}
                                         },
-                                        .params{
+                                        .params{ .text_string{
                                             .color = color_text_secondary,
                                             .font{
                                                 .size = font_size_secondary
                                             }
-                                        }
+                                         } }
                                     },
                                     this->context.get().localization.get()
                                         .get("weight"sv)

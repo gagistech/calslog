@@ -281,11 +281,11 @@ void show_log_weight_dialog(ruis::widget& owner_widget)
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get("log_weight_dialog:title"sv)
 			),

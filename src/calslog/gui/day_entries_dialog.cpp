@@ -125,17 +125,17 @@ public:
 											.weight = 1,
 											.align = {ruis::align::front, ruis::align::center}
 										},
-										.params{
+										.params{ .text_string{
 											.color = color_text
-										}
+										 } }
 									},
 									entry.name
 								),
 								m::text(this->context,
 									{
-										.params{
+										.params{ .text_string{
 											.color = color_text
-										}
+										 } }
 									},
 									this->context.get().localization.get()
 										.get("kcal"sv)
@@ -156,12 +156,12 @@ public:
 								.layout_params{
 									.align = {ruis::align::front, ruis::align::front}
 								},
-								.params{
+								.params{ .text_string{
 									.color = color_text_secondary,
 									.font{
 										.size = font_size_secondary
 									}
-								}
+								 } }
 							},
 							this->context.get().localization.get()
 								.get("entry_detail"sv)
@@ -266,26 +266,26 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 	// clang-format off
 	auto total_text = m::text(c,
 		{
-			.params{
+			.params{ .text_string{
 				.color = kcal.exceeded ? //
 					style.get_color_critical() : //
 					style.get_color_text_special(),
 				.specific{
 					.style = ruis::res::font::style::bold
 				}
-			}
+			 } }
 		},
 		kcal.total
 	);
 
 	auto goal_text = m::text(c,
 		{
-			.params{
+			.params{ .text_string{
 				.color = style.get_color_text(),
 				.specific{
 					.style = ruis::res::font::style::bold
 				}
-			}
+			 } }
 		},
 		kcal.goal
 	);
@@ -397,12 +397,12 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 							.dims = {ruis::dim::min, ruis::dim::min},
 							.align = {ruis::align::center, ruis::align::front}
 					 	},
-					 	.params{
+					 	.params{ .text_string{
 							.color = style.get_color_text_secondary(),
 							.font{
 								.size = style.get_font_size_secondary()
 							}
-						}
+						 } }
 					},
 					loc.get("day_entries_dialog:no_entries"sv)
 				)}
@@ -442,11 +442,11 @@ void show_day_entries_dialog(ruis::widget& owner_widget, std::chrono::year_month
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = style.get_font_size_title()
 						}
-					}
+					 } }
 				},
 				title
 			),

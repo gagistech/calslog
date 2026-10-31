@@ -104,11 +104,11 @@ void show_delete_confirm_dialog(ruis::widget& owner_widget, std::function<void()
 		{
 			m::text(c,
 				{
-					.params{
+					.params{ .text_string{
 						.font{
 							.size = c.get().style().get_font_size_title()
 						}
-					}
+					 } }
 				},
 				c.get().localization.get().get("delete_confirm_dialog:title"sv)
 			),
