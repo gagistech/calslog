@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <ruis/util/timer.hpp>
 #include <ruisapp/application.hpp>
+#include <ruisapp/probe_server.hpp>
 
 #include "model/model.hpp"
 
@@ -55,6 +56,13 @@ public:
 	// destroy the just-clicked flip switch and interrupt its knob animation. The slot
 	// that observes the signal consumes (clears) this flag.
 	bool suppress_list_refresh_on_next_model_change = false;
+
+#ifdef DEBUG
+	// The probe server (debug builds only). It listens on a TCP port and executes
+	// the received probe commands via this application's probe() method, which is
+	// used to drive / inspect the GUI from an external tool.
+	ruisapp::probe_server probe_srv;
+#endif
 
 	application(
 		bool windowed, //
@@ -91,6 +99,10 @@ public:
 	 * so the UI updates without a rebuild.
 	 */
 	void load_theme(ruis::theme theme);
+
+	// Executes the probe commands received by the probe server; called once per
+	// main loop iteration.
+	void on_loop() override;
 
 	static application& inst()
 	{

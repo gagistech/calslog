@@ -172,6 +172,14 @@ void application::save() noexcept
 	}
 }
 
+void application::on_loop()
+{
+#ifdef DEBUG
+	// Execute the probe commands received by the probe server (if any).
+	this->probe_srv.exec();
+#endif
+}
+
 std::unique_ptr<application> calslog::make_application(
 	std::string_view executable, //
 	utki::span<std::string_view> args
