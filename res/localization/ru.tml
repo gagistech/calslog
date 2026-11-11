@@ -20,7 +20,7 @@ vocabulary{
     food_edit_dialog:title{str{"Изменить еду"}}
     food_edit_dialog:add_title{str{"Добавить еду"}}
     mass_per_serving{str{"Масса порции (г)"}}
-    mass_per_serving_hint{str{"напр. 200"}}
+    mass_per_serving_hint{str{"напр. 100"}}
     kcal{str{"{0} ккал"}}
     kcal_goal_suffix{str{"/{0} ккал"}}
     total_label{str{Итого:}}

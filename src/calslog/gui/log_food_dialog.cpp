@@ -311,7 +311,7 @@ void show_log_food_dialog(ruis::widget& owner_widget, size_t edit_entry_index)
 		"mass_per_serving"sv, //
 		"mass_per_serving_hint"sv,
 		make_numeric_filter(4), //
-		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.mass))) : ruis::string{}
+		is_editing ? ruis::string(utki::to_utf32(utki::to_string(editing_entry.mass))) : ruis::string(U"100")
 	);
 	// The number of servings field is built manually (instead of make_field) so
 	// that the row of preset buttons can be placed on a separate row between the
