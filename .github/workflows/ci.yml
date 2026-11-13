@@ -319,9 +319,12 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: vcpkg_linux_logs
+          # NOTE: upload only first level buildtrees subdir logs: on windows actions/upload-artifact fails with a stat() EPERM error when traversing too deep into dependency source trees
           path: |
-            vcpkg-installation/buildtrees/${{ env.PACKAGE_NAME }}/
+            vcpkg-installation/buildtrees/*/*.log
+            vcpkg-installation/buildtrees/*/*.txt
             build/vcpkg/**/*.log
+          if-no-files-found: warn
 ##### vcpkg-windows #####
   vcpkg-windows:
     runs-on: windows-latest
@@ -361,9 +364,12 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: vcpkg_windows_logs
+        # NOTE: upload only first level buildtrees subdir logs: on windows actions/upload-artifact fails with a stat() EPERM error when traversing too deep into dependency source trees
         path: |
-          vcpkg-installation/buildtrees/**/*.log
+          vcpkg-installation/buildtrees/*/*.log
+          vcpkg-installation/buildtrees/*/*.txt
           build/vcpkg/**/*.log
+        if-no-files-found: warn
 ##### vcpkg-macos #####
   vcpkg-macos:
     runs-on: macos-latest
@@ -411,9 +417,12 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: vcpkg_macos_${{ matrix.config }}_logs
+        # NOTE: upload only first level buildtrees subdir logs: on windows actions/upload-artifact fails with a stat() EPERM error when traversing too deep into dependency source trees
         path: |
-          vcpkg-installation/buildtrees/**/*.log
+          vcpkg-installation/buildtrees/*/*.log
+          vcpkg-installation/buildtrees/*/*.txt
           build/vcpkg/**/*.log
+        if-no-files-found: warn
 ##### vcpkg-ios #####
   vcpkg-ios:
     runs-on: macos-latest
@@ -460,6 +469,9 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: vcpkg_ios_${{ matrix.config }}_logs
+        # NOTE: upload only first level buildtrees subdir logs: on windows actions/upload-artifact fails with a stat() EPERM error when traversing too deep into dependency source trees
         path: |
-          vcpkg-installation/buildtrees/**/*.log
+          vcpkg-installation/buildtrees/*/*.log
+          vcpkg-installation/buildtrees/*/*.txt
           build/vcpkg/**/*.log
+        if-no-files-found: warn
