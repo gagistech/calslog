@@ -2,6 +2,11 @@
     "dependencies": [
         "tst",
         "clargs",
-        "ruisapp"
+        "ruisapp",
+        {
+            "name": "vulkan-loader",
+            "features": ["xlib", "wayland"],
+            "platform": "linux"
+        }
     ]
 }
