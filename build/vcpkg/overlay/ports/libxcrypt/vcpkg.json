@@ -1,0 +1,8 @@
+{
+  "name": "libxcrypt",
+  "version": "4.4.36",
+  "port-version": 0,
+  "description": "libxcrypt (system package wrapper)",
+  "license": "BSD-3-Clause",
+  "dependencies": []
+}
