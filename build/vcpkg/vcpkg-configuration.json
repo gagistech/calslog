@@ -36,6 +36,7 @@
         "ruis",
         "ruis-render-opengl",
         "ruis-render-opengles",
+        "ruis-render-vulkan",
         "ruisapp"
       ]
     }
