@@ -301,8 +301,8 @@ jobs:
       - name: install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git vcpkg-installation
-          # pinned: libsystemd port is broken on debian trixie (meson cryptsetup check fails)
-          (cd vcpkg-installation; git checkout 996a53ea040d4ebc1f272485d086d5af9cf2069b)
+          # pinned: libsystemd port broken on debian trixie since 2026-05 (meson cryptsetup check)
+          (cd vcpkg-installation; git checkout e4dd3a9b2d)
           (cd vcpkg-installation; ./bootstrap-vcpkg.sh)
       - name: set VCPKG_ROOT
         uses: myci-actions/export-env-var@main
