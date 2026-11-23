@@ -300,9 +300,10 @@ jobs:
           repo: deb https://gagis.hopto.org/repo/cppfw/${{ matrix.os }} ${{ matrix.codename }} main
           repo-name: cppfw
           keys-asc: https://gagis.hopto.org/repo/cppfw/pubkey.gpg
-          # libxcrypt vcpkg port is built from source via autotools (autoreconf),
-          # so the build host needs these autotools packages
-          install: myci cmake git curl zip unzip tar nodejs pkg-config libgl1-mesa-dev libglu1-mesa-dev libgles2-mesa-dev libgtk-4-dev autoconf autoconf-archive automake libtool
+          # Several vcpkg ports are built from source and need extra host tools:
+          #  - libxcrypt uses autotools (autoreconf): autoconf autoconf-archive automake libtool
+          #  - libsystemd sets up a python venv (for jinja2): python3-venv
+          install: myci cmake git curl zip unzip tar nodejs pkg-config libgl1-mesa-dev libglu1-mesa-dev libgles2-mesa-dev libgtk-4-dev autoconf autoconf-archive automake libtool python3-venv
       - name: git clone
         uses: myci-actions/checkout@main
       - name: install vcpkg
