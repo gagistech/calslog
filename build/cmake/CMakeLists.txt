@@ -16,6 +16,15 @@ myci_add_source_files(srcs
 list(FILTER srcs EXCLUDE REGEX ".*/main.cpp$")
 
 function(calslog_declare_library_and_application variant)
+    # On Linux the ruisapp library is built as per-backend variants
+    # (ruisapp-<renderer>-<backend>) and only those are exported; the xorg
+    # variant is the one we use. Other platforms export a plain
+    # ruisapp-<renderer> target.
+    if(LINUX)
+        set(ruisapp_variant_suffix "-xorg")
+    else()
+        set(ruisapp_variant_suffix "")
+    endif()
     myci_declare_library(lib${PROJECT_NAME}-${variant}
         SOURCES
             ${srcs}
@@ -23,7 +32,7 @@ function(calslog_declare_library_and_application variant)
             ../../src
         DEPENDENCIES
             clargs
-            ruisapp::ruisapp-${variant}
+            ruisapp::ruisapp-${variant}${ruisapp_variant_suffix}
     )
 
     myci_declare_application(${PROJECT_NAME}-${variant}
